@@ -75,11 +75,28 @@ def run_psp(psp_input_fname, initial_density):
     amor.get_gaff2(output_fname='amor_gaff2.lmps', atom_typing='antechamber', am1bcc_charges=True, swap_dict={'ns': 'n'})
 
 
+def build_dir(output_dir):
+    try:
+        os.mkdir(output_dir)
+    except OSError:
+        pass
+
+
 if __name__ == '__main__':
+    # Get system ID from command line argument
+    try:
+        system_id = sys.argv[1]
+    except BaseException:
+        print('System ID is not provided, please pass in ID as an argument')
+        exit()
+
     # Get system-dependent parameters from the csv file
-    system_info_csv = '../solvent_diffusivity.csv'
-    system_id = os.path.basename(os.getcwd())
-    smiles, solvent, ratio = get_system_info(system_info_csv, system_id)
+    try:
+        system_info_csv = 'solvent_diffusivity.csv'
+        smiles, solvent, ratio = get_system_info(system_info_csv, system_id)
+    except BaseException:
+        print('Having trouble getting info from the csv file')
+        exit()
 
     # Define system-independent parameters
     natoms_per_chain = 150
@@ -87,6 +104,14 @@ if __name__ == '__main__':
     initial_density = 0.85
     psp_input_fname = 'input.csv'
 
+    # Build a directory with the name of id and cd into it
+    build_dir(system_id)
+    previous_dir = os.getcwd()
+    os.chdir(system_id)
+
     # Make input files
     mk_psp_input(smiles, solvent, ratio, natoms_per_chain, natoms_target, psp_input_fname)
     run_psp(psp_input_fname, initial_density)
+
+    # Change directory back to the original
+    os.chdir(previous_dir)
