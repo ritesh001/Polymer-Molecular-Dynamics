@@ -1,0 +1,14 @@
+#PBS -A GT-rramprasad3-CODA20
+#PBS -q inferno
+#PBS -N equil
+#PBS -l nodes=3:ppn=24
+#PBS -l walltime=2:00:00
+#PBS -j oe
+#PBS -o out.$PBS_JOBID
+
+cd $PBS_O_WORKDIR
+module load intel/19.0.5  mvapich2/2.3.4
+module load lammps/09Jan20
+
+mpirun -np 72 lmp -in lmp.in
+qsub job_prod.pbs

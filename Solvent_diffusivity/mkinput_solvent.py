@@ -1,5 +1,5 @@
 import pandas as pd
-import os
+import os, sys
 
 
 def get_system_info(csv_file, id):

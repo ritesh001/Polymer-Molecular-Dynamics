@@ -1,0 +1,12 @@
+#PBS -A GT-rramprasad3-CODA20
+#PBS -q inferno
+#PBS -N equil
+#PBS -l nodes=1:ppn=4:gpus=4:RTX6000:default
+#PBS -l walltime=4:00:00
+#PBS -j oe
+#PBS -o out.$PBS_JOBID
+
+cd $PBS_O_WORKDIR
+module load gcc/8.3.0 mvapich2/2.3.2 lammps-gpu/29Oct20
+
+mpirun -np 4 lmp -sf gpu -pk gpu 4 -in lmp.in
