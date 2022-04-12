@@ -1,10 +1,8 @@
 # High-throughput-MD-simulations
-This repo include Polymer Molecular Dynamics (PMD) package and examples for high-throughput MD simulations 
-
-Properties
-- Glass transition temperature (Tg) [[Tutorial]](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Tg)
-- Gas diffusivity [[Tutorial]](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Gas_diffusivity)
-- Solvent diffusivity [[Tutorial]](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Solvent_diffusivity)
+This repo include the [Polymer Molecular Dynamics (PMD)](#polymer-molecular-dynamics-PMD-package) package and examples for high-throughput MD simulations for various properties including:
+- Glass transition temperature (Tg) [[Tutorial](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Tg)]
+- Gas diffusivity [[Tutorial](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Gas_diffusivity)]
+- Solvent diffusivity [[Tutorial](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Solvent_diffusivity)]
 - Thermal conductivity - upcoming
 - Mechanical properties - upcoming
 - Melting temperature (Tm)
