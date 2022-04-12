@@ -8,7 +8,6 @@ def get_smiles(csv_file, index):
     df = pd.read_csv(csv_file)
     return df.loc[df['ID'] == int(index), 'SMILES'].item()
 
-
 def mk_csv(smiles, natoms_per_chain, natoms_total, output_fname):
     from rdkit import Chem
     
@@ -25,7 +24,6 @@ def mk_csv(smiles, natoms_per_chain, natoms_total, output_fname):
     with open(output_fname, 'w') as f:
         f.write('ID,smiles,Len,Num,NumConf,Loop,LeftCap,RightCap\n')
         f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(smiles, length, nchains))
-
 
 def run_psp(output_fname, density):
     import psp.AmorphousBuilder as ab
@@ -47,6 +45,16 @@ def run_psp(output_fname, density):
     amor.Build()
     amor.get_gaff2(output_fname='amor_gaff2.lmps', atom_typing='antechamber', swap_dict={'ns': 'n', 'nt': 'n', 'nv': 'nh'})
 
+def run_pmd(jobname):
+    import pmd
+
+    lmp = pmd.Lammps(data_fname='amorphous_model/amor_gaff2.lmps', force_field='gaff2')
+    lmp.add_procedure('minimization', min_style='cg')
+    lmp.add_procedure('equilibration', Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163)
+    lmp.write_input(output_dir=".")
+                       
+    job = pmd.Job(jobname=jobname, project='GT-rramprasad3-CODA20', nodes=2, ppn=24, walltime='48:00:00')
+    job.write_pbs(output_dir=".")
 
 def build_dir(output_dir):
     try:
@@ -84,6 +92,7 @@ if __name__ == '__main__':
     # Make input files
     mk_csv(smiles, natoms_per_chain, natoms_total, output_fname)
     run_psp(output_fname, density)
+    run_pmd(system_id)
 
     # Change directory back to the original
     os.chdir(previous_dir)

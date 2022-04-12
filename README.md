@@ -33,7 +33,7 @@ for s in smiles:
     job.write_pbs(output_dir=s)
 ```
 
-A tutorial on using PMD to create simulations of hydrocarbon polymers can be found [here](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/Equilibration).
+A tutorial on using PMD to create simulations of a list of polymers can be found [here](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/Equilibration).
 
 ## Installation
 
