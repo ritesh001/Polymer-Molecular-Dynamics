@@ -1,7 +1,16 @@
 # High-throughput-MD-simulations
-High-throughput MD simulations 
+This repo include Polymer Molecular Dynamics (PMD) package and examples for high-throughput MD simulations 
 
-# Polymer Molecular Dynamics package
+Target properties
+- Gas diffusivity
+- Solvent diffusivity
+- Solubility (MC)
+- Thermal conductivity
+- Mechanical properties
+- Thermal properties (Tg, Tm)
+- Viscosity
+
+## Polymer Molecular Dynamics (PMD) package
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
 PMD automatically builds LAMMPS data and input files for molecular dynamics simulations
@@ -23,9 +32,6 @@ for s in smiles:
     job = pmd.Job(jobname=s, project='GT-rramprasad3-CODA20', nodes=2, ppn=24, walltime='48:00:00')
     job.write_pbs(output_dir=s)
 ```
-<p align="center">
-    <img src='./tutorial/img/temp_vs_density.png' width="70%"/>
-</p>
 
 A tutorial on using PMD to create simulations of hydrocarbon polymers can be found [here](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/Equilibration).
 
@@ -55,13 +61,4 @@ export PATH=$PATH:'/home/appls/utility/pysimm/bin'
 # AmberTools PATH
 export ANTECHAMBER_EXEC='/home/modules/anaconda3/bin/antechamber'" >> ~/.bashrc
 ```
-
-Target properties
-- Gas diffusivity
-- Solvent diffusivity
-- Solubility (MC)
-- Thermal conductivity
-- Mechanical properties
-- Thermal properties (Tg, Tm)
-- Viscosity
 
