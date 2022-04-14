@@ -124,16 +124,24 @@ class Lammps:
         # Write settings file
         settings_fname = 'settings.in'
         with open(output_dir + '/' + settings_fname, 'w') as f:
-            f.write('{:<15} lj/cut/coul/long 12.0 12.0\n'.format('pair_coeff'))
-            f.write('{:<15} mix arithmetic\n'.format('pair_modify'))
             if (self.force_field == 'gaff2'):
+                f.write('{:<15} lj/cut/coul/long 12.0 12.0\n'.format('pair_style'))
+                f.write('{:<15} mix arithmetic\n'.format('pair_modify'))
                 f.write('{:<15} pppm 1e-4\n'.format('kspace_style'))
                 f.write('{:<15} harmonic\n'.format('bond_style'))
                 f.write('{:<15} harmonic\n'.format('angle_style'))
                 f.write('{:<15} fourier\n'.format('dihedral_style'))
                 f.write('{:<15} cvff\n'.format('improper_style'))
                 f.write('{:<15} amber\n'.format('special_bonds'))
-            else:
+            else if (self.force_field == 'opls'):
+                f.write('{:<15} lj/cut/coul/long 9.0\n'.format('pair_style'))
+                f.write('{:<15} mix geometric tail yes\n'.format('pair_modify'))
+                f.write('{:<15} pppm 1e-4\n'.format('kspace_style'))
+                f.write('{:<15} harmonic\n'.format('bond_style'))
+                f.write('{:<15} harmonic\n'.format('angle_style'))
+                f.write('{:<15} opls\n'.format('dihedral_style'))
+                f.write('{:<15} cvff\n'.format('improper_style'))
+                f.write('{:<15} lj/coul 0.0 0.0 0.5\n'.format('special_bonds')):
                 # TODO: for OPLS
             f.write('\n')
             f.write('{:<15} {} bin\n'.format('neighbor', self.neighbor_skin))
