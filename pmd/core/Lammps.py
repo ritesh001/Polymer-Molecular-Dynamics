@@ -141,8 +141,7 @@ class Lammps:
                 f.write('{:<15} harmonic\n'.format('angle_style'))
                 f.write('{:<15} opls\n'.format('dihedral_style'))
                 f.write('{:<15} cvff\n'.format('improper_style'))
-                f.write('{:<15} lj/coul 0.0 0.0 0.5\n'.format('special_bonds')):
-                # TODO: for OPLS
+                f.write('{:<15} lj/coul 0.0 0.0 0.5\n'.format('special_bonds'))
             f.write('\n')
             f.write('{:<15} {} bin\n'.format('neighbor', self.neighbor_skin))
             f.write('{:<15} delay 0 every {} check yes\n'.format(
