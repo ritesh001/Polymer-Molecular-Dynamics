@@ -133,7 +133,7 @@ class Lammps:
                 f.write('{:<15} fourier\n'.format('dihedral_style'))
                 f.write('{:<15} cvff\n'.format('improper_style'))
                 f.write('{:<15} amber\n'.format('special_bonds'))
-            else if (self.force_field == 'opls'):
+            elif (self.force_field == 'opls'):
                 f.write('{:<15} lj/cut/coul/long 9.0\n'.format('pair_style'))
                 f.write('{:<15} mix geometric tail yes\n'.format('pair_modify'))
                 f.write('{:<15} pppm 1e-4\n'.format('kspace_style'))
