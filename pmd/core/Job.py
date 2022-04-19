@@ -20,13 +20,13 @@ class Job:
         LAMMPS_EXEC: str
             Directory of the LAMMPS executable file
     '''
-    def __init__(self, jobname, project, nodes, ppn, gpus=0, walltime):
+    def __init__(self, jobname, project, nodes, ppn, walltime, gpus=0):
         self.jobname = jobname
         self.project = project
         self.nodes = nodes
         self.ppn = ppn
-        self.gpus = gpus
         self.walltime = walltime
+        self.gpus = gpus
 
     def write_pbs(self, output_dir):
         Util.build_dir(output_dir)
@@ -35,7 +35,7 @@ class Job:
             f.write('#PBS -A {}\n'.format(self.project))
             f.write('#PBS -q inferno\n')
             f.write('#PBS -N {}\n'.format(self.jobname))
-            if gpus == 0:
+            if self.gpus == 0:
                 f.write('#PBS -l nodes={}:ppn={}\n'.format(self.nodes, self.ppn))
             else:
                 f.write('#PBS -l nodes={}:ppn={}:gpus={}:RTX6000\n'.format(self.nodes, self.ppn, self.gpus))
@@ -44,7 +44,7 @@ class Job:
             f.write('#PBS -o out.$PBS_JOBID\n')
             f.write('\n')
             f.write('cd $PBS_O_WORKDIR\n')
-            if gpus == 0:
+            if self.gpus == 0:
                 f.write('module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
             else:
                 f.write('module load gcc/8.3.0 mvapich2/2.3.2 lammps-gpu/29Oct20\n')
