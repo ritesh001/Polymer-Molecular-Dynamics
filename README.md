@@ -45,19 +45,4 @@ pip install .
 * [PSP](https://github.com/Ramprasad-Group/PSP) - for generating polymer topology
 * [RDKit](https://www.rdkit.org/)
 
-Note that, [PSP](https://github.com/Ramprasad-Group/PSP) and [RDKit](https://www.rdkit.org/) are required to be installed manually. NNMDKit requires PSP to create polymer structures. To configure the integration with PSP, environment variables are required to be addded:
-
-For Ramprasad Group users on Gaanams and Tyrions, simply type in the command line:
-
-```
-echo "# PACKMOL PATH
-export PACKMOL_EXEC='/home/appls/utility/packmol/packmol'
-
-# pysimm PATHs
-export PYTHONPATH=$PYTHONPATH:'/home/appls/utility/pysimm'
-export PATH=$PATH:'/home/appls/utility/pysimm/bin'
-
-# AmberTools PATH
-export ANTECHAMBER_EXEC='/home/modules/anaconda3/bin/antechamber'" >> ~/.bashrc
-```
-
+Note that, [PSP](https://github.com/Ramprasad-Group/PSP) and [RDKit](https://www.rdkit.org/) are required to be installed manually. PMD requires PSP to create polymer structures. For more details about installation, please see the [installation guide](https://github.com/Ramprasad-Group/High-throughput-MD-simulations/tree/main/tutorials/Installation).
