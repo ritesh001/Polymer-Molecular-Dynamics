@@ -166,6 +166,7 @@ class Lammps:
             f.write('{:<15} {}\n'.format('thermo', self.thermo))
             f.write('{:<15} {}\n'.format('timestep', self.timestep))
             f.write('\n')
+            f.write('\n')
 
             # If minimization is added to the lammps procedure
             if hasattr(self, 'min_kwargs'):
