@@ -163,8 +163,8 @@ class Lammps:
             f.write('### Initialization\n')
             f.write('{:<15} full\n'.format('atom_style'))
             f.write('{:<15} {}\n'.format('units', self.units))
-            f.write('{:<15} {}\n'.format('read_data', self.data_fname))
             f.write('{:<15} {}\n'.format('include', settings_fname))
+            f.write('{:<15} {}\n'.format('read_data', self.data_fname))
             f.write('\n')
             f.write('\n')
 

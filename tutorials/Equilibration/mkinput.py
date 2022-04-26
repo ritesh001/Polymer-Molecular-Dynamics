@@ -48,7 +48,7 @@ def run_psp(output_fname, density):
 def run_pmd(jobname):
     import pmd
 
-    lmp = pmd.Lammps(data_fname='amorphous_model/amor_gaff2.lmps', force_field='gaff2')
+    lmp = pmd.Lammps(data_fname='amorphous_models/amor_gaff2.lmps', force_field='gaff2')
     lmp.add_procedure('minimization', min_style='cg')
     lmp.add_procedure('equilibration', Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163)
     lmp.write_input(output_dir=".")
