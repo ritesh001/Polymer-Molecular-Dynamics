@@ -142,16 +142,6 @@ class Lammps:
                 f.write('{:<15} opls\n'.format('dihedral_style'))
                 f.write('{:<15} cvff\n'.format('improper_style'))
                 f.write('{:<15} lj/coul 0.0 0.0 0.5\n'.format('special_bonds'))
-            f.write('\n')
-            f.write('{:<15} {} bin\n'.format('neighbor', self.neighbor_skin))
-            f.write('{:<15} delay 0 every {} check yes\n'.format(
-                'neigh_modify', self.neighbor_every))
-            f.write('\n')
-            f.write(
-                '{:<15} custom step temp density vol press ke pe ebond evdwl ecoul elong\n'
-                .format('thermo_style'))
-            f.write('{:<15} {}\n'.format('thermo', self.thermo))
-            f.write('{:<15} {}\n'.format('timestep', self.timestep))
 
         # Write LAMMPS input file
         lmp_input_fname = 'lmp.in'
@@ -166,6 +156,15 @@ class Lammps:
             f.write('{:<15} {}\n'.format('include', settings_fname))
             f.write('{:<15} {}\n'.format('read_data', self.data_fname))
             f.write('\n')
+            f.write('{:<15} {} bin\n'.format('neighbor', self.neighbor_skin))
+            f.write('{:<15} delay 0 every {} check yes\n'.format(
+                'neigh_modify', self.neighbor_every))
+            f.write('\n')
+            f.write(
+                '{:<15} custom step temp density vol press ke pe ebond evdwl ecoul elong\n'
+                .format('thermo_style'))
+            f.write('{:<15} {}\n'.format('thermo', self.thermo))
+            f.write('{:<15} {}\n'.format('timestep', self.timestep))
             f.write('\n')
 
             # If minimization is added to the lammps procedure
