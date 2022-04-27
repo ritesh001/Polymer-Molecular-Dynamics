@@ -23,9 +23,9 @@ smiles = ['*CC*', '*CC(*)C', '*CC(*)CC', '*CC(*)CCC', '*CC(*)CCCC','*CC(*)c1cccc
 
 for s in smiles:
     lmp = pmd.Lammps(s, force_field='gaff2')
-    lmp.add_procedure('minimization', min_style='cg')
-    lmp.add_procedure('equilibration', Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163)
-    lmp.add_procedure('Tg_measurement', Tinit=600, Tfinal=100, Tinterval=25, step=1000000)
+    lmp.add_procedure(pmd.Minimization(min_style='cg'))
+    lmp.add_procedure(pmd.Equilibration(Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163))
+    lmp.add_procedure(pmd.TgMeasurement(Tinit=600, Tfinal=100, Tinterval=25, step=1000000))
     lmp.write_input(output_dir=s)
                        
     job = pmd.Job(jobname=s, project='GT-rramprasad3-CODA20', nodes=2, ppn=24, walltime='48:00:00')

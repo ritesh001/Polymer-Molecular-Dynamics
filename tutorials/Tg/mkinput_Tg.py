@@ -8,13 +8,14 @@ def get_smiles(csv_file, index):
     df = pd.read_csv(csv_file)
     return df.loc[df['ID'] == int(index), 'SMILES'].item()
 
+
 def mk_csv(smiles, natoms_per_chain, natoms_total, output_fname):
     from rdkit import Chem
-    
+
     mol = Chem.MolFromSmiles(smiles)
-    natoms = mol.GetNumAtoms(onlyExplicit=0)-2
-    length = round(natoms_per_chain/natoms)
-    nchains = round(natoms_total/(natoms*length + 2))
+    natoms = mol.GetNumAtoms(onlyExplicit=0) - 2
+    length = round(natoms_per_chain / natoms)
+    nchains = round(natoms_total / (natoms * length + 2))
 
     print('SMILES:', smiles)
     print('Natom_per_RU:', natoms)
@@ -23,39 +24,54 @@ def mk_csv(smiles, natoms_per_chain, natoms_total, output_fname):
 
     with open(output_fname, 'w') as f:
         f.write('ID,smiles,Len,Num,NumConf,Loop,LeftCap,RightCap\n')
-        f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(smiles, length, nchains))
+        f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(
+            smiles, length, nchains))
+
 
 def run_psp(output_fname, density):
     import psp.AmorphousBuilder as ab
 
     input_df = pd.read_csv(output_fname, low_memory=False)
-    amor = ab.Builder(
-        input_df,
-        ID_col='ID',
-        SMILES_col='smiles',
-        Length='Len',
-        NumConf='NumConf',
-        LeftCap = 'LeftCap',
-        RightCap = 'RightCap',
-        Loop='Loop',
-        density=density,
-        box_type='c',
-        BondInfo=False
-    )
+    amor = ab.Builder(input_df,
+                      ID_col='ID',
+                      SMILES_col='smiles',
+                      Length='Len',
+                      NumConf='NumConf',
+                      LeftCap='LeftCap',
+                      RightCap='RightCap',
+                      Loop='Loop',
+                      density=density,
+                      box_type='c',
+                      BondInfo=False)
     amor.Build()
-    amor.get_gaff2(output_fname='amor_gaff2.lmps', atom_typing='antechamber', swap_dict={'ns': 'n', 'nt': 'n', 'nv': 'nh'})
+    amor.get_gaff2(output_fname='amor_gaff2.lmps',
+                   atom_typing='antechamber',
+                   swap_dict={
+                       'ns': 'n',
+                       'nt': 'n',
+                       'nv': 'nh'
+                   })
+
 
 def run_pmd(jobname):
     import pmd
 
-    lmp = pmd.Lammps(data_fname='amorphous_models/amor_gaff2.lmps', force_field='gaff2')
-    lmp.add_procedure('minimization', min_style='cg')
-    lmp.add_procedure('equilibration', Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163)
-    lmp.add_procedure('Tg_measurement', Tinit=600, Tfinal=100, Tinterval=25, step=1000000)
+    lmp = pmd.Lammps(data_fname='amorphous_models/amor_gaff2.lmps',
+                     force_field='gaff2')
+    lmp.add_procedure(pmd.Minimization(min_style='cg'))
+    lmp.add_procedure(
+        pmd.Equilibration(Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163))
+    lmp.add_procedure(
+        pmd.TgMeasurement(Tinit=600, Tfinal=100, Tinterval=25, step=1000000))
     lmp.write_input(output_dir=".")
-                       
-    job = pmd.Job(jobname=jobname, project='GT-rramprasad3-CODA20', nodes=2, ppn=24, walltime='48:00:00')
+
+    job = pmd.Job(jobname=jobname,
+                  project='GT-rramprasad3-CODA20',
+                  nodes=2,
+                  ppn=24,
+                  walltime='48:00:00')
     job.write_pbs(output_dir=".")
+
 
 def build_dir(output_dir):
     try:
