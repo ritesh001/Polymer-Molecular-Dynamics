@@ -6,9 +6,9 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "High-Throughput Polymer Molecular Dynamics Simulations",
+  title: "High-Throughput Polymer MD Simulations",
   tagline:
-    "Python toolkit and guides for in-silico prediction of polymer properties",
+    "Python toolkit and guides for molecular dynamics prediction of polymer properties",
   url: "https://high-throughput-pmd.netlify.app/",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -103,19 +103,11 @@ const config = {
             ],
           },
           {
-            title: "Community",
+            title: "Developer",
             items: [
               {
-                label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
-              },
-              {
-                label: "Discord",
-                href: "https://discordapp.com/invite/docusaurus",
-              },
-              {
-                label: "Twitter",
-                href: "https://twitter.com/docusaurus",
+                label: "Kuan-Hsuan (Kevin) Shen",
+                href: "https://github.com/kevinshen56714",
               },
             ],
           },

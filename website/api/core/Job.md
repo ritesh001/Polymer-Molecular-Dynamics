@@ -20,7 +20,7 @@ Template object to contain job initialization settings
 - `walltime` _str_ - Job walltime
 - `gpus` _int_ - Number of processors (GPU)
 
-#### write\_pbs
+### write\_pbs
 
 ```python
 def write_pbs(output_dir: str, pbs_fname: str) -> None
@@ -37,7 +37,7 @@ Method to make the PBS job scheduler input file
 
   None
 
-#### write\_slurm
+### write\_slurm
 
 ```python
 def write_slurm(output_dir: str) -> None

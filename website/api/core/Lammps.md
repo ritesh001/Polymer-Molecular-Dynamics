@@ -36,7 +36,7 @@ Template object to contain LAMMPS initialization settings
 - `thermo` _int_ - LAMMPS [thermo](https://docs.lammps.org/thermo.html) to use during
   simulation; default=1000 timestep
 
-#### add\_procedure
+### add\_procedure
 
 ```python
 def add_procedure(procedure: Procedure)
@@ -53,7 +53,7 @@ Method to add simulation procedure
 
 - `Lammps` _Lammps_ - Lammps instance itself (builder design pattern)
 
-#### write\_input
+### write\_input
 
 ```python
 def write_input(output_dir: str, lmp_input_fname: str)
