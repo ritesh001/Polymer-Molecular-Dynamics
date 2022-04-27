@@ -5,14 +5,28 @@ class Lammps:
     '''Template object to contain LAMMPS initialization settings
 
     Attributes:
-        data_fname (str): File name of the data file, which will be read in by LAMMPS [read_data](https://docs.lammps.org/read_data.html) command
+        data_fname (str): File name of the data file, which will be read in by LAMMPS 
+                          [read_data](https://docs.lammps.org/read_data.html) command
+
         force_field (str): Force field (`GAFF2` or `OPLS`)
-        atom_style (str): LAMMPS [atom_style](https://docs.lammps.org/atom_style.html) to use during simulation; default=full
-        units (str): LAMMPS [units](https://docs.lammps.org/units.html) to use during simulation; default=real
-        timestep (float): LAMMPS [timestep](https://docs.lammps.org/timestep.html) to use during simulation; default=1 fs
-        neighbor_skin (float): LAMMPS [neighbor](https://docs.lammps.org/neighbor.html) skin size to use during simulation; default=2.0 Angstrom
-        neighbor_every (int): LAMMPS [neighbor](https://docs.lammps.org/neighbor.html) list checking frequency to use during simulation; default=1 fs
-        thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) to use during simulation; default=1000 timestep
+
+        atom_style (str): LAMMPS [atom_style](https://docs.lammps.org/atom_style.html)
+                          to use during simulation; default=full
+
+        units (str): LAMMPS [units](https://docs.lammps.org/units.html) to use during 
+                     simulation; default=real
+                     
+        timestep (float): LAMMPS [timestep](https://docs.lammps.org/timestep.html) to 
+                          use during simulation; default=1 fs
+
+        neighbor_skin (float): LAMMPS [neighbor](https://docs.lammps.org/neighbor.html) 
+                               skin size to use during simulation; default=2.0 Angstrom
+
+        neighbor_every (int): LAMMPS [neighbor](https://docs.lammps.org/neighbor.html) 
+                              list checking frequency to use during simulation; default=1 fs
+
+        thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) to use during 
+                      simulation; default=1000 timestep
     '''
 
     def __init__(self,
@@ -144,7 +158,8 @@ class Lammps:
                 f.write('{:<15} amber\n'.format('special_bonds'))
             elif (self.force_field == 'opls'):
                 f.write('{:<15} lj/cut/coul/long 9.0\n'.format('pair_style'))
-                f.write('{:<15} mix geometric tail yes\n'.format('pair_modify'))
+                f.write(
+                    '{:<15} mix geometric tail yes\n'.format('pair_modify'))
                 f.write('{:<15} pppm 1e-4\n'.format('kspace_style'))
                 f.write('{:<15} harmonic\n'.format('bond_style'))
                 f.write('{:<15} harmonic\n'.format('angle_style'))
