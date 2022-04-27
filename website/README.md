@@ -39,3 +39,19 @@ $ GIT_USER=<Your GitHub username> yarn deploy
 ```
 
 If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+# API doc
+
+The API documentation is generated using [pydoc-markdown](https://github.com/NiklasRosenstein/pydoc-markdown)
+
+### Installation
+
+```
+$ pip install pydoc-markdown[novella]
+```
+
+### Build
+
+```
+$ pydoc-markdown
+```

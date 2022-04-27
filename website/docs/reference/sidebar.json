@@ -1,0 +1,8 @@
+{
+  "items": [
+    "reference/core/Job",
+    "reference/core/Lammps"
+  ],
+  "label": "core",
+  "type": "category"
+}

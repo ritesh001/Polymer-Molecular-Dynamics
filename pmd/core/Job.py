@@ -20,6 +20,7 @@ class Job:
         LAMMPS_EXEC: str
             Directory of the LAMMPS executable file
     '''
+
     def __init__(self, jobname, project, nodes, ppn, walltime, gpus=0):
         self.jobname = jobname
         self.project = project
@@ -29,6 +30,15 @@ class Job:
         self.gpus = gpus
 
     def write_pbs(self, output_dir):
+        '''Method to make the PBS job scheduler input file
+
+        Parameters:
+            output_dir (str): Directory for the PBS job scheduler input file
+
+        Returns:
+            None
+        '''
+
         Util.build_dir(output_dir)
         pbs_fname = 'job.pbs'
         with open(output_dir + '/' + pbs_fname, 'w') as f:
@@ -38,7 +48,8 @@ class Job:
             if self.gpus == 0:
                 f.write('#PBS -l nodes={}:ppn={}\n'.format(self.nodes, self.ppn))
             else:
-                f.write('#PBS -l nodes={}:ppn={}:gpus={}:RTX6000\n'.format(self.nodes, self.ppn, self.gpus))
+                f.write(
+                    '#PBS -l nodes={}:ppn={}:gpus={}:RTX6000\n'.format(self.nodes, self.ppn, self.gpus))
             f.write('#PBS -l walltime={}\n'.format(self.walltime))
             f.write('#PBS -j oe\n')
             f.write('#PBS -o out.$PBS_JOBID\n')

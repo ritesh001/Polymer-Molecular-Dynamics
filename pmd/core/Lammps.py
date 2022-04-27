@@ -2,25 +2,17 @@ from pmd.util import Util
 
 
 class Lammps:
-    '''pmd.core.Lammps.Lammps
-    Template object to contain LAMMPS initialization settings
+    '''Template object to contain LAMMPS initialization settings
+
     Attributes:
-        data_fname: str
-            File name of the data file, which will be read in by read_data command
-        force_field: str
-            Force field (GAFF2 or OPLS)
-        atom_style: str
-            LAMMPS aomt_style to use during simulation; default=full
-        units: str
-            LAMMPS units to use during simulation; default=real
-        timestep: float
-            LAMMPS timestep to use during simulation; default=1 fs
-        neighbor_skin: float
-            LAMMPS neighbor skin size to use during simulation; default=2.0 Angstrom
-        neighbor_every: int
-            LAMMPS neighbor list checking frequency to use during simulation; default=1 fs
-        thermo: int
-            LAMMPS thermo to use during simulation; default=1000 timestep
+        data_fname (str): File name of the data file, which will be read in by LAMMPS [read_data](https://docs.lammps.org/read_data.html) command
+        force_field (str): Force field (`GAFF2` or `OPLS`)
+        atom_style (str): LAMMPS [atom_style](https://docs.lammps.org/atom_style.html) to use during simulation; default=full
+        units (str): LAMMPS [units](https://docs.lammps.org/units.html) to use during simulation; default=real
+        timestep (float): LAMMPS [timestep](https://docs.lammps.org/timestep.html) to use during simulation; default=1 fs
+        neighbor_skin (float): LAMMPS [neighbor](https://docs.lammps.org/neighbor.html) skin size to use during simulation; default=2.0 Angstrom
+        neighbor_every (int): LAMMPS [neighbor](https://docs.lammps.org/neighbor.html) list checking frequency to use during simulation; default=1 fs
+        thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) to use during simulation; default=1000 timestep
     '''
 
     def __init__(self,
@@ -42,6 +34,13 @@ class Lammps:
         self.thermo = thermo
 
     def add_procedure(self, procedure, **kwargs):
+        '''Method to add simulation procedure
+        Parameters:
+            procedure (str): One of `minimization`, `equilibration`, or `Tg_measurement`
+
+        Returns:
+            job (Job): Job instance itself (builder design pattern)
+        '''
 
         # key = min_style, etol, ftol, maxiter, maxeval
         if procedure == 'minimization':
@@ -117,7 +116,16 @@ class Lammps:
             }
             Util.register_kwargs(self.Tg_kwargs, kwargs)
 
+        return self
+
     def write_input(self, output_dir):
+        '''Method to make LAMMPS input files
+        Parameters:
+            output_dir (str): Directory for all the generated LAMMPS input files
+
+        Returns:
+            None
+        '''
 
         Util.build_dir(output_dir)
 
@@ -125,7 +133,8 @@ class Lammps:
         settings_fname = 'settings.in'
         with open(output_dir + '/' + settings_fname, 'w') as f:
             if (self.force_field == 'gaff2'):
-                f.write('{:<15} lj/cut/coul/long 12.0 12.0\n'.format('pair_style'))
+                f.write(
+                    '{:<15} lj/cut/coul/long 12.0 12.0\n'.format('pair_style'))
                 f.write('{:<15} mix arithmetic\n'.format('pair_modify'))
                 f.write('{:<15} pppm 1e-4\n'.format('kspace_style'))
                 f.write('{:<15} harmonic\n'.format('bond_style'))
