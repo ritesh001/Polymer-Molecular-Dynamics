@@ -1,6 +1,6 @@
 loaders:
   - type: python
-    search_path: [../pmd]
+    search_path: [../pmd/core]
 processors:
   - type: filter
     skip_empty_modules: true
@@ -8,7 +8,7 @@ processors:
   - type: crossref
 renderer:
   type: docusaurus
-  docs_base_path: docs
+  docs_base_path: api
   relative_output_path: reference
   relative_sidebar_path: sidebar.json
   sidebar_top_level_label: null

@@ -63,14 +63,14 @@ def run_pmd(jobname):
         pmd.Equilibration(Tfinal=600, Pfinal=1, Tmax=800, Pmax=49346.163))
     lmp.add_procedure(
         pmd.TgMeasurement(Tinit=600, Tfinal=100, Tinterval=25, step=1000000))
-    lmp.write_input(output_dir=".")
+    lmp.write_input(output_dir=".", lmp_input_fname='lmp.in')
 
     job = pmd.Job(jobname=jobname,
                   project='GT-rramprasad3-CODA20',
                   nodes=2,
                   ppn=24,
                   walltime='48:00:00')
-    job.write_pbs(output_dir=".")
+    job.write_pbs(output_dir=".", pbs_fname='job.pbs')
 
 
 def build_dir(output_dir):

@@ -1,3 +1,4 @@
+from cgitb import reset
 import pandas as pd
 import os, sys
 
@@ -12,28 +13,31 @@ def get_system_info(csv_file, id):
     return smiles, smiles_solvent, ratio
 
 
-def mk_psp_input(smiles, solvent, ratio, natoms_per_chain, natoms_target, psp_input_fname):
+def mk_psp_input(smiles, solvent, ratio, natoms_per_chain, natoms_target,
+                 psp_input_fname):
     from rdkit import Chem
 
     # Get the number of atoms of a repeating unit and determine the polymer chain length
     mol = Chem.MolFromSmiles(smiles)
-    natoms = mol.GetNumAtoms(onlyExplicit=0)-2
-    length = round(natoms_per_chain/natoms)
-    
+    natoms = mol.GetNumAtoms(onlyExplicit=0) - 2
+    length = round(natoms_per_chain / natoms)
+
     # Get the number of atoms of a solvent molecule
     mol_solvent = Chem.MolFromSmiles(solvent)
     natoms_solvent = mol_solvent.GetNumAtoms(onlyExplicit=0)
 
     # Calculate number of polymer chains and solvents based on target total number of atoms
-    ntotal_singlechain = ratio*length*natoms_solvent + (length*natoms+2)
-    nchains = round(natoms_target/ntotal_singlechain)
-    nsolvents = round(ratio*length*nchains)
+    ntotal_singlechain = ratio * length * natoms_solvent + (length * natoms +
+                                                            2)
+    nchains = round(natoms_target / ntotal_singlechain)
+    nsolvents = round(ratio * length * nchains)
 
     # Create PSP input file
     with open(psp_input_fname, 'w') as f:
         f.write('ID,smiles,Len,Num,NumConf,Loop,LeftCap,RightCap\n')
         f.write('Sol,{},{},{},1,False\n'.format(solvent, 1, nsolvents))
-        f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(smiles, length, nchains))
+        f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(
+            smiles, length, nchains))
 
     print('--------Polymer Stats--------')
     print('Polymer SMILES:', smiles)
@@ -46,9 +50,40 @@ def mk_psp_input(smiles, solvent, ratio, natoms_per_chain, natoms_target, psp_in
     print('')
     print('--------System Stats--------')
     print('Target Nsolvents/Nrepeatunits', ratio)
-    print('Final Nsolvents/Nrepeatunits', nsolvents/(length*nchains))
-    print('Total number of atoms:', nsolvents*natoms_solvent + (length*natoms+2)*nchains)
+    print('Final Nsolvents/Nrepeatunits', nsolvents / (length * nchains))
+    print('Total number of atoms:',
+          nsolvents * natoms_solvent + (length * natoms + 2) * nchains)
     print('')
+
+
+def run_pmd(jobname):
+    import pmd
+
+    lmp = pmd.Lammps(data_fname='amorphous_models/amor_gaff2.lmps',
+                     force_field='gaff2')
+    lmp.add_procedure(pmd.Minimization())
+    lmp.add_procedure(
+        pmd.Equilibration(Tfinal=300, Pfinal=1, Tmax=600, Pmax=49346.163))
+    lmp.add_procedure(
+        pmd.NPT(Tinit=300,
+                Tfinal=300,
+                Pinit=1,
+                Pfinal=1,
+                duration=10000000,
+                reset_timestep=True))
+    lmp.add_procedure(
+        pmd.NVT(Tinit=300,
+                Tfinal=300,
+                duration=200000000,
+                reset_timestep=False))
+    lmp.write_input(output_dir=".", lmp_input_fname='lmp.in')
+
+    job = pmd.Job(jobname=jobname,
+                  project='GT-rramprasad3-CODA20',
+                  nodes=2,
+                  ppn=24,
+                  walltime='48:00:00')
+    job.write_pbs(output_dir=".", pbs_fname='job.pbs')
 
 
 def run_psp(psp_input_fname, initial_density):
@@ -56,23 +91,22 @@ def run_psp(psp_input_fname, initial_density):
 
     print('--------Starting PSP--------')
     input_df = pd.read_csv(psp_input_fname, low_memory=False)
-    amor = ab.Builder(
-        input_df,
-        ID_col="ID",
-        SMILES_col="smiles",
-        Length='Len',
-        NumConf='NumConf',
-        LeftCap = "LeftCap",
-        RightCap = "RightCap",
-        Loop='Loop',
-        density=initial_density,
-        box_type='c',
-        BondInfo=False
-    )
+    amor = ab.Builder(input_df,
+                      ID_col="ID",
+                      SMILES_col="smiles",
+                      Length='Len',
+                      NumConf='NumConf',
+                      LeftCap="LeftCap",
+                      RightCap="RightCap",
+                      Loop='Loop',
+                      density=initial_density,
+                      box_type='c',
+                      BondInfo=False)
     amor.Build()
-
-    # Requires "export ANTECHAMBER_EXEC=/home/modules/anaconda3/bin/antechamber" in .bashrc
-    amor.get_gaff2(output_fname='amor_gaff2.lmps', atom_typing='antechamber', am1bcc_charges=True, swap_dict={'ns': 'n'})
+    amor.get_gaff2(output_fname='amor_gaff2.lmps',
+                   atom_typing='antechamber',
+                   am1bcc_charges=False,
+                   swap_dict={'ns': 'n'})
 
 
 def build_dir(output_dir):
@@ -110,7 +144,9 @@ if __name__ == '__main__':
     os.chdir(system_id)
 
     # Make input files
-    mk_psp_input(smiles, solvent, ratio, natoms_per_chain, natoms_target, psp_input_fname)
+    mk_psp_input(smiles, solvent, ratio, natoms_per_chain, natoms_target,
+                 psp_input_fname)
+    run_pmd(system_id)
     run_psp(psp_input_fname, initial_density)
 
     # Change directory back to the original

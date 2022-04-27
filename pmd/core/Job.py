@@ -14,7 +14,13 @@ class Job:
         LAMMPS_EXEC (str): Directory of the LAMMPS executable file
     '''
 
-    def __init__(self, jobname, project, nodes, ppn, walltime, gpus=0):
+    def __init__(self,
+                 jobname: str,
+                 project: str,
+                 nodes: int,
+                 ppn: int,
+                 walltime: str,
+                 gpus: int = 0):
         self.jobname = jobname
         self.project = project
         self.nodes = nodes
@@ -22,7 +28,7 @@ class Job:
         self.walltime = walltime
         self.gpus = gpus
 
-    def write_pbs(self, output_dir):
+    def write_pbs(self, output_dir: str, pbs_fname: str) -> None:
         '''Method to make the PBS job scheduler input file
 
         Parameters:
@@ -33,7 +39,6 @@ class Job:
         '''
 
         Util.build_dir(output_dir)
-        pbs_fname = 'job.pbs'
         with open(output_dir + '/' + pbs_fname, 'w') as f:
             f.write('#PBS -A {}\n'.format(self.project))
             f.write('#PBS -q inferno\n')
@@ -58,3 +63,16 @@ class Job:
                 )
             f.write('mpirun -np {} lmp -in lmp.in\n'.format(
                 int(self.nodes * self.ppn)))
+
+    def write_slurm(self, output_dir: str) -> None:
+        '''Method to make the Slurm job scheduler input file
+
+        Parameters:
+            output_dir (str): Directory for the PBS Slurm scheduler input file
+
+        Returns:
+            None
+        '''
+
+        Util.build_dir(output_dir)
+        # Todo
