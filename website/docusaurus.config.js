@@ -26,6 +26,7 @@ const config = {
           path: "guide",
           routeBasePath: "guide",
           sidebarPath: require.resolve("./sidebars.js"),
+          sidebarCollapsed: false,
           editUrl:
             "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/website",
         },
@@ -53,6 +54,7 @@ const config = {
           "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/website",
         editCurrentVersion: true,
         sidebarPath: require.resolve("./sidebars.js"),
+        sidebarCollapsed: false,
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
       }),
@@ -77,7 +79,7 @@ const config = {
             label: "Guide",
           },
           {
-            to: "/api/intro",
+            to: "/api/overview",
             label: "API Docs",
             position: "left",
           },
