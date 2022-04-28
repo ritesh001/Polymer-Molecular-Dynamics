@@ -3,7 +3,8 @@
     "core/Analysis",
     "core/Job",
     "core/Lammps",
-    "core/Procedure"
+    "core/Procedure",
+    "core/System"
   ],
   "label": "core",
   "type": "category"

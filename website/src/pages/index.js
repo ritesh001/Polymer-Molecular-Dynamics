@@ -57,20 +57,21 @@ function HomepageHeader() {
             <CodeBlock className="language-js" title="example-mkinput.py">
               {"import pmd\n" +
                 "\n" +
-                "smiles = ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']\n" +
+                "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
+                "    s = pmd.System(smiles=smiles, force_field='opls',\n" +
+                "                   density=0.8, natoms_total=5000\n" +
+                "                   natoms_per_chain=150)\n" +
+                "    s.write_data(output_dir=smiles)\n" +
                 "\n" +
-                "for s in smiles:\n" +
-                "    lmp = pmd.Lammps(s, force_field='gaff2')\n" +
+                "    lmp = pmd.Lammps(s)\n" +
                 "    lmp.add_procedure(pmd.Minimization())\n" +
                 "    lmp.add_procedure(pmd.Equilibration())\n" +
                 "    lmp.add_procedure(pmd.TgMeasurement())\n" +
-                "    lmp.write_input(output_dir=s)\n" +
+                "    lmp.write_input(output_dir=smiles)\n" +
                 "\n" +
-                "    job = pmd.Job(jobname=s,\n" +
-                "                  project='Your-project-ID',\n" +
-                "                  nodes=2, ppn=24,\n" +
-                "                  walltime='48:00:00')\n" +
-                "    job.write_pbs(output_dir=s)"}
+                "    job = pmd.Job(jobname=smiles, project='Your-pid',\n" +
+                "                  nodes=2, ppn=24, walltime='48:00:00')\n" +
+                "    job.write_pbs(output_dir=smiles)"}
             </CodeBlock>
           </div>
         </div>

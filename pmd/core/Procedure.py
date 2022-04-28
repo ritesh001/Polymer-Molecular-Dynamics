@@ -262,15 +262,16 @@ class TgMeasurement(Procedure):
     by iteratively cooling the system and equilibrate.
        
     Attributes:    
-        Tinit (float): Initial temperature of the cooling process
+        Tinit (float): Initial temperature of the cooling process; default: `500`
         
-        Tfinal (float): Final temperature of the cooling process
+        Tfinal (float): Final temperature of the cooling process; default: `100`
         
-        Tinterval (float): Temperature interval of the cooling process
+        Tinterval (float): Temperature interval of the cooling process; default: `20`
         
-        step_duration (int): Duration of each temperature step (timestep unit)
+        step_duration (int): Duration of each temperature step (timestep unit); default: 
+                             `1000000`
         
-        pressure (float): Pressure during the cooling process
+        pressure (float): Pressure during the cooling process; default: `1`
         
         Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
         

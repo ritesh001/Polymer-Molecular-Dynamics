@@ -3,12 +3,6 @@ sidebar_label: Analysis
 title: core.Analysis
 ---
 
-## Analysis Objects
-
-```python
-class Analysis()
-```
-
 ### calculate\_Tg
 
 ```python

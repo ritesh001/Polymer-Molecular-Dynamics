@@ -118,15 +118,16 @@ by iteratively cooling the system and equilibrate.
 
 **Attributes**:
 
-- `Tinit` _float_ - Initial temperature of the cooling process
+- `Tinit` _float_ - Initial temperature of the cooling process; default: `500`
   
-- `Tfinal` _float_ - Final temperature of the cooling process
+- `Tfinal` _float_ - Final temperature of the cooling process; default: `100`
   
-- `Tinterval` _float_ - Temperature interval of the cooling process
+- `Tinterval` _float_ - Temperature interval of the cooling process; default: `20`
   
-- `step_duration` _int_ - Duration of each temperature step (timestep unit)
+- `step_duration` _int_ - Duration of each temperature step (timestep unit); default:
+  `1000000`
   
-- `pressure` _float_ - Pressure during the cooling process
+- `pressure` _float_ - Pressure during the cooling process; default: `1`
   
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
   

@@ -1,4 +1,5 @@
 from pmd.core.Procedure import Procedure
+from pmd.core.System import System
 from pmd.util import Util
 
 
@@ -6,10 +7,7 @@ class Lammps:
     '''Template object to contain LAMMPS initialization settings
 
     Attributes:
-        data_fname (str): File name of the data file, which will be read in by LAMMPS 
-                          [read_data](https://docs.lammps.org/read_data.html) command
-
-        force_field (str): Force field (`GAFF2` or `OPLS`)
+        system (System): System object (needed to access `data_fname` and `force_field`)
 
         atom_style (str): LAMMPS [atom_style](https://docs.lammps.org/atom_style.html)
                           to use during simulation; default=full
@@ -31,16 +29,19 @@ class Lammps:
     '''
 
     def __init__(self,
-                 data_fname,
-                 force_field,
-                 atom_style='full',
-                 units='real',
-                 timestep=1,
-                 neighbor_skin=2.0,
-                 neighbor_every=1,
-                 thermo=1000):
-        self._data_fname = data_fname
-        self._force_field = force_field
+                 system: System,
+                 atom_style: str = 'full',
+                 units: str = 'real',
+                 timestep: int = 1,
+                 neighbor_skin: float = 2.0,
+                 neighbor_every: int = 1,
+                 thermo: int = 1000):
+
+        if (system.data_fname == ''):
+            raise Exception()
+
+        self._data_fname = system.data_fname
+        self._force_field = system.force_field
         self._atom_style = atom_style
         self._units = units
         self._timestep = timestep
@@ -64,6 +65,7 @@ class Lammps:
         '''Method to make LAMMPS input files
         Parameters:
             output_dir (str): Directory for all the LAMMPS input and data files
+            
             lmp_input_fname (str): Name of the LAMMPS input file
 
         Returns:

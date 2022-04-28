@@ -55,3 +55,5 @@ $ pip install pydoc-markdown[novella]
 ```
 $ pydoc-markdown
 ```
+
+Run `python cleanup_api.py` after `pydoc-markdown` to replace `####` with `###` in all the generated api markdown files. This is because pydoc-markdown make have methods as h4 in markdown files, but I think methods deserve to be h3.
