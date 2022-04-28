@@ -5,7 +5,7 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import styles from "./index.module.css";
 import HomepageFeatures from "@site/src/components/HomepageFeatures";
-import CodeBlock from '@theme/CodeBlock';
+import CodeBlock from "@theme/CodeBlock";
 
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
@@ -15,14 +15,15 @@ function HomepageHeader() {
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">{siteConfig.tagline}</p>
         <div className={styles.buttons}>
-          <CodeBlock className="language-bash">
-            {"pip install pmd"}
-          </CodeBlock>
+          <div style={{ width: 240 }}>
+            <CodeBlock className="language-bash">{"pip install pmd"}</CodeBlock>
+          </div>
         </div>
         <div className={styles.buttons}>
           <Link
             className="button button--secondary button--lg"
-            to="/guide/intro"
+            to="/docs/intro"
+            style={{ width: 250 }}
           >
             Get Started
           </Link>
@@ -36,7 +37,7 @@ export default function Home() {
   const { siteConfig } = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
+      title={`${siteConfig.title}`}
       description="Description will go into a meta tag in <head />"
     >
       <HomepageHeader />

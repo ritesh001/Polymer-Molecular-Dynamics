@@ -23,8 +23,8 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
-          path: "guide",
-          routeBasePath: "guide",
+          path: "docs",
+          routeBasePath: "docs",
           sidebarPath: require.resolve("./sidebars.js"),
           sidebarCollapsed: false,
           editUrl:
@@ -67,26 +67,27 @@ const config = {
       navbar: {
         title: "High Throughput Polymer MD Simulations",
         logo: {
-          alt: "My Site Logo",
+          alt: "Logo",
           src: "img/logo.svg",
         },
         items: [
           {
             type: "doc",
             docId: "intro",
-            to: "/guide",
+            to: "/docs",
             position: "left",
-            label: "Guide",
+            label: "Docs",
           },
           {
             to: "/api/overview",
-            label: "API Docs",
+            label: "API References",
             position: "left",
           },
           {
             href: "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations",
-            label: "GitHub",
             position: "right",
+            className: "header-github-link",
+            "aria-label": "GitHub repository",
           },
         ],
       },
@@ -94,11 +95,15 @@ const config = {
         style: "dark",
         links: [
           {
-            title: "Guide",
+            title: "Docs",
             items: [
               {
-                label: "Guide",
-                to: "/guide/intro",
+                label: "Introduction",
+                to: "/docs/intro",
+              },
+              {
+                label: "Getting Started",
+                to: "/docs/getting-started/installation",
               },
             ],
           },
@@ -115,7 +120,7 @@ const config = {
             title: "More",
             items: [
               {
-                label: "API Docs",
+                label: "API References",
                 to: "/api/overview",
               },
               {
