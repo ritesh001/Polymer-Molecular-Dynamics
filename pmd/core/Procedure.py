@@ -69,8 +69,8 @@ class Equilibration(Procedure):
         
         dump_fname (str): Name of the dump file; default: `equil.lammpstrj`
         
-        reset_timestep (bool): Whether to reset timestep after the procedure; 
-                               default: `True`
+        reset_timestep (bool): Whether to reset timestep after the procedure; default:
+                               `True`
     '''
 
     def __init__(self,
@@ -162,8 +162,8 @@ class NPT(Procedure):
         
         dump_fname (str): Name of the dump file; default: `npt.lammpstrj`
         
-        reset_timestep (bool): Whether to reset timestep after the procedure; 
-                               default: `False`
+        reset_timestep (bool): Whether to reset timestep after the procedure; default:
+                               `False`
     '''
 
     def __init__(self,
@@ -220,8 +220,8 @@ class NVT(Procedure):
         
         dump_fname (str): Name of the dump file; default: `nvt.lammpstrj`
         
-        reset_timestep (bool): Whether to reset timestep after the procedure; 
-                               default: `False`
+        reset_timestep (bool): Whether to reset timestep after the procedure; default:
+                               `False`
     '''
 
     def __init__(self,

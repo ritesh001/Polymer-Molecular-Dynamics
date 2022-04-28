@@ -40,8 +40,8 @@ Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 201
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
 - `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
 - `dump_fname` _str_ - Name of the dump file; default: `equil.lammpstrj`
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure;
-- `default` - `True`
+- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
+  `True`
 
 ## NPT Objects
 
@@ -62,8 +62,8 @@ and barostat).
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
 - `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
 - `dump_fname` _str_ - Name of the dump file; default: `npt.lammpstrj`
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure;
-- `default` - `False`
+- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
+  `False`
 
 ## NVT Objects
 
@@ -80,8 +80,8 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
 - `Tfinal` _float_ - Final temperature
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
 - `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure;
-- `default` - `False`
+- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
+  `False`
 
 ## TgMeasurement Objects
 
