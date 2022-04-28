@@ -13,6 +13,18 @@ class Minimization(Procedure):
     '''Perform an energy minimization of the system, by iteratively adjusting atom coordinates. 
     Iterations are terminated when one of the stopping criteria is satisfied. At that point the 
     configuration will hopefully be in local potential energy minimum.
+
+    Attributes:
+        min_style (str): Minimization algorithm, see [here](https://docs.lammps.org/min_style.html)
+                         for all options; default: `cg`   
+                         
+        etol (float): Stopping tolerance for energy (unitless); default: `10**(-6)`
+        
+        ftol (float): Stopping tolerance for force (force units); default: `10**(-8)`
+        
+        maxiter (int): Max iterations of minimizer; default: `10**5`
+        
+        maxeval (int): Max number of force/energy evaluations; default: `10**7`
     '''
 
     def __init__(self,
@@ -40,20 +52,38 @@ class Minimization(Procedure):
 
 class Equilibration(Procedure):
     '''Perform a 21-step amorphous polymer equilibration process. 
-       Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
+    Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
+       
+    Attributes:
+        Teq (float): Target equilibration temperature; default: `300`
+        
+        Peq (float): Target equilibration pressure; default: `1`
+        
+        Tmax (float): Maximum temperature during the equilibration; default: `600`
+        
+        Pmax (float): Maximum pressure during the equilibration; default: `50000`
+        
+        Tdamp (str): Damping parameter for thermostats; default: `'$(100.0*dt)'`
+        
+        Pdamp (str): Damping parameter for barostats; default: `'$(100.0*dt)'`
+        
+        dump_fname (str): Name of the dump file; default: `'equil.lammpstrj'`
+        
+        reset_timestep (bool): Whether to reset timestep after the procedure; 
+                               default: `True`
     '''
 
     def __init__(self,
-                 Tfinal=300,
-                 Pfinal=1,
-                 Tmax=600,
-                 Pmax=50000,
-                 Tdamp='$(100.0*dt)',
-                 Pdamp='$(100.0*dt)',
-                 dump_fname='equil.lammpstrj',
-                 reset_timestep=True):
-        self._Tfinal = Tfinal
-        self._Pfinal = Pfinal
+                 Teq: float = 300,
+                 Peq: float = 1,
+                 Tmax: float = 600,
+                 Pmax: float = 50000,
+                 Tdamp: str = '$(100.0*dt)',
+                 Pdamp: str = '$(100.0*dt)',
+                 dump_fname: str = 'equil.lammpstrj',
+                 reset_timestep: bool = True):
+        self._Teq = Teq
+        self._Peq = Peq
         self._Tmax = Tmax
         self._Pmax = Pmax
         self._Tdamp = Tdamp
@@ -63,26 +93,26 @@ class Equilibration(Procedure):
         self._eq_totaltime = 0
         self._eq_step = [
             ['nvt', 50000, Tmax],
-            ['nvt', 50000, Tfinal],
-            ['npt', 50000, Tfinal, 0.02 * Pmax],
+            ['nvt', 50000, Teq],
+            ['npt', 50000, Teq, 0.02 * Pmax],
             ['nvt', 50000, Tmax],
-            ['nvt', 100000, Tfinal],
-            ['npt', 50000, Tfinal, 0.6 * Pmax],
+            ['nvt', 100000, Teq],
+            ['npt', 50000, Teq, 0.6 * Pmax],
             ['nvt', 50000, Tmax],
-            ['nvt', 100000, Tfinal],
-            ['npt', 50000, Tfinal, Pmax],
+            ['nvt', 100000, Teq],
+            ['npt', 50000, Teq, Pmax],
             ['nvt', 50000, Tmax],
-            ['nvt', 100000, Tfinal],
-            ['npt', 5000, Tfinal, 0.5 * Pmax],
+            ['nvt', 100000, Teq],
+            ['npt', 5000, Teq, 0.5 * Pmax],
             ['nvt', 5000, Tmax],
-            ['nvt', 10000, Tfinal],
-            ['npt', 5000, Tfinal, 0.1 * Pmax],
+            ['nvt', 10000, Teq],
+            ['npt', 5000, Teq, 0.1 * Pmax],
             ['nvt', 5000, Tmax],
-            ['nvt', 10000, Tfinal],
-            ['npt', 5000, Tfinal, 0.01 * Pmax],
+            ['nvt', 10000, Teq],
+            ['npt', 5000, Teq, 0.01 * Pmax],
             ['nvt', 5000, Tmax],
-            ['nvt', 10000, Tfinal],
-            ['npt', 800000, Tfinal, Pfinal],
+            ['nvt', 10000, Teq],
+            ['npt', 800000, Teq, Peq],
         ]
 
         for i in self._eq_step:

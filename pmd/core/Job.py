@@ -31,7 +31,8 @@ class Job:
         '''Method to make the PBS job scheduler input file
 
         Parameters:
-            output_dir (str): Directory for the PBS job scheduler input file
+            output_dir (str): Directory for the PBS input file
+            pbs_fname (str): Name of the PBS input file 
 
         Returns:
             None
@@ -63,11 +64,12 @@ class Job:
             f.write('mpirun -np {} lmp -in lmp.in\n'.format(
                 int(self.nodes * self.ppn)))
 
-    def write_slurm(self, output_dir: str) -> None:
+    def write_slurm(self, output_dir: str, slurm_fname: str) -> None:
         '''Method to make the Slurm job scheduler input file
 
         Parameters:
-            output_dir (str): Directory for the PBS Slurm scheduler input file
+            output_dir (str): Directory for the Slurm input file
+            slurm_fname (str): Name of the Slurm input file
 
         Returns:
             None

@@ -49,7 +49,7 @@ class Lammps:
         self._thermo = thermo
         self._procedures = []
 
-    def add_procedure(self, procedure: Procedure):
+    def add_procedure(self, procedure: Procedure) -> None:
         '''Method to add simulation procedure
         Parameters:
             procedure (Procedure): One of `minimization`, `equilibration`, or `Tg_measurement`
@@ -60,10 +60,11 @@ class Lammps:
 
         self._procedures.append(procedure)
 
-    def write_input(self, output_dir: str, lmp_input_fname: str):
+    def write_input(self, output_dir: str, lmp_input_fname: str) -> None:
         '''Method to make LAMMPS input files
         Parameters:
-            output_dir (str): Directory for all the generated LAMMPS input files
+            output_dir (str): Directory for all the LAMMPS input and data files
+            lmp_input_fname (str): Name of the LAMMPS input file
 
         Returns:
             None
