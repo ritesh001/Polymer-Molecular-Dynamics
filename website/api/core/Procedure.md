@@ -17,9 +17,13 @@ configuration will hopefully be in local potential energy minimum.
 
 - `min_style` _str_ - Minimization algorithm, see [here](https://docs.lammps.org/min_style.html)
   for all options; default: `cg`
+  
 - `etol` _float_ - Stopping tolerance for energy (unitless); default: `10**(-6)`
+  
 - `ftol` _float_ - Stopping tolerance for force (force units); default: `10**(-8)`
+  
 - `maxiter` _int_ - Max iterations of minimizer; default: `10**5`
+  
 - `maxeval` _int_ - Max number of force/energy evaluations; default: `10**7`
 
 ## Equilibration Objects
@@ -34,12 +38,19 @@ Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 201
 **Attributes**:
 
 - `Teq` _float_ - Target equilibration temperature; default: `300`
+  
 - `Peq` _float_ - Target equilibration pressure; default: `1`
+  
 - `Tmax` _float_ - Maximum temperature during the equilibration; default: `600`
+  
 - `Pmax` _float_ - Maximum pressure during the equilibration; default: `50000`
+  
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+  
 - `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+  
 - `dump_fname` _str_ - Name of the dump file; default: `equil.lammpstrj`
+  
 - `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
   `True`
 
@@ -55,13 +66,21 @@ and barostat).
 **Attributes**:
 
 - `duration` _int_ - Duration of this NPT procedure (timestep unit)
+  
 - `Tinit` _float_ - Initial temperature
+  
 - `Tfinal` _float_ - Final temperature
+  
 - `Pinit` _float_ - Initial pressure
+  
 - `Pfinal` _float_ - Final pressure
+  
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+  
 - `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+  
 - `dump_fname` _str_ - Name of the dump file; default: `npt.lammpstrj`
+  
 - `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
   `False`
 
@@ -76,10 +95,15 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
 **Attributes**:
 
 - `duration` _int_ - Duration of this NVT procedure (timestep unit)
+  
 - `Tinit` _float_ - Initial temperature
+  
 - `Tfinal` _float_ - Final temperature
+  
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+  
 - `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
+  
 - `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
   `False`
 
@@ -95,11 +119,20 @@ by iteratively cooling the system and equilibrate.
 **Attributes**:
 
 - `Tinit` _float_ - Initial temperature of the cooling process
+  
 - `Tfinal` _float_ - Final temperature of the cooling process
+  
 - `Tinterval` _float_ - Temperature interval of the cooling process
+  
 - `step_duration` _int_ - Duration of each temperature step (timestep unit)
+  
 - `pressure` _float_ - Pressure during the cooling process
+  
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+  
 - `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+  
 - `dump_fname` _str_ - Name of the dump file; default: `Tg_measurement.lammpstrj`
+  
 - `result_fname` _str_ - Name of the result file; default: `temp_vs_density.txt`
+

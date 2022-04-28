@@ -18,10 +18,10 @@ function HomepageHeader() {
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
-            gap: "3em",
+            gap: "2em",
           }}
         >
-          <div style={{ textAlign: "left", maxWidth: "40em" }}>
+          <div style={{ textAlign: "left", width: "35em", maxWidth: "95%" }}>
             <h1 className="hero__title">{siteConfig.title}</h1>
             <p className="hero__subtitle">{siteConfig.tagline}</p>
             {/* <div className={styles.buttons}>

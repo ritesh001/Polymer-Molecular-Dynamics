@@ -1,5 +1,6 @@
 {
   "items": [
+    "core/Analysis",
     "core/Job",
     "core/Lammps",
     "core/Procedure"
