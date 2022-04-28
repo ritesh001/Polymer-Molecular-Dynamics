@@ -63,11 +63,11 @@ class Equilibration(Procedure):
         
         Pmax (float): Maximum pressure during the equilibration; default: `50000`
         
-        Tdamp (str): Damping parameter for thermostats; default: `'$(100.0*dt)'`
+        Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
         
-        Pdamp (str): Damping parameter for barostats; default: `'$(100.0*dt)'`
+        Pdamp (str): Damping parameter for barostats; default: `$(100.0*dt)`
         
-        dump_fname (str): Name of the dump file; default: `'equil.lammpstrj'`
+        dump_fname (str): Name of the dump file; default: `equil.lammpstrj`
         
         reset_timestep (bool): Whether to reset timestep after the procedure; 
                                default: `True`
@@ -82,10 +82,6 @@ class Equilibration(Procedure):
                  Pdamp: str = '$(100.0*dt)',
                  dump_fname: str = 'equil.lammpstrj',
                  reset_timestep: bool = True):
-        self._Teq = Teq
-        self._Peq = Peq
-        self._Tmax = Tmax
-        self._Pmax = Pmax
         self._Tdamp = Tdamp
         self._Pdamp = Pdamp
         self._dump_fname = dump_fname
@@ -145,21 +141,156 @@ class Equilibration(Procedure):
         f.write('\n')
 
 
-class TgMeasurement(Procedure):
-    '''Perform glass transition temperature measurement of the system, 
-    by iteratively cooling the system and equilibrate.
+class NPT(Procedure):
+    '''Perform the simulation under NPT ensemble (via Nose-Hoover thermostat
+    and barostat).
+       
+    Attributes:
+        duration (int): Duration of this NPT procedure (timestep unit)
+    
+        Tinit (float): Initial temperature
+        
+        Tfinal (float): Final temperature
+        
+        Pinit (float): Initial pressure
+        
+        Pfinal (float): Final pressure
+        
+        Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
+        
+        Pdamp (str): Damping parameter for barostats; default: `$(100.0*dt)`
+        
+        dump_fname (str): Name of the dump file; default: `npt.lammpstrj`
+        
+        reset_timestep (bool): Whether to reset timestep after the procedure; 
+                               default: `False`
     '''
 
     def __init__(self,
-                 Tinit=500,
-                 Tfinal=100,
-                 Tinterval=20,
-                 step_duration=1000000,
-                 pressure=1,
-                 Tdamp='$(100.0*dt)',
-                 Pdamp='$(100.0*dt)',
-                 dump_fname='Tg_measurement.lammpstrj',
-                 result_fname='temp_vs_density.txt'):
+                 duration: int,
+                 Tinit: float,
+                 Tfinal: float,
+                 Pinit: float,
+                 Pfinal: float,
+                 Tdamp: str = '$(100.0*dt)',
+                 Pdamp: str = '$(100.0*dt)',
+                 dump_fname: str = 'npt.lammpstrj',
+                 reset_timestep: bool = False):
+        self._duration = duration
+        self._Tinit = Tinit
+        self._Tfinal = Tfinal
+        self._Pinit = Pinit
+        self._Pfinal = Pfinal
+        self._Tdamp = Tdamp
+        self._Pdamp = Pdamp
+        self._dump_fname = dump_fname
+        self._reset_timestep = reset_timestep
+
+    def write_input(self, f: TextIOWrapper):
+        f.write('### NPT simulation\n')
+        f.write(
+            '{:<15} dump_npt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
+            .format('dump', self._dump_fname))
+        f.write('{:<15} {} npt.restart\n'.format('restart', self._duration))
+        f.write('\n')
+        f.write('{:<15} fNPT all npt temp {} {} {} iso {} {} {}\n'.format(
+            'fix', self._Tinit, self._Tfinal, self._Tdamp, self._Pinit,
+            self._Pfinal, self._Pdamp))
+        f.write('{:<15} {}\n'.format('run', self._duration))
+        f.write('{:<15} fNPT\n'.format('unfix'))
+        f.write('\n')
+        f.write('{:<15} dump_npt\n'.format('undump'))
+        if self._reset_timestep:
+            f.write('{:<15} 0\n'.format('reset_timestep'))
+        f.write('\n')
+        f.write('\n')
+
+
+class NVT(Procedure):
+    '''Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
+       
+    Attributes:
+        duration (int): Duration of this NVT procedure (timestep unit)
+    
+        Tinit (float): Initial temperature
+        
+        Tfinal (float): Final temperature
+        
+        Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
+        
+        dump_fname (str): Name of the dump file; default: `nvt.lammpstrj`
+        
+        reset_timestep (bool): Whether to reset timestep after the procedure; 
+                               default: `False`
+    '''
+
+    def __init__(self,
+                 duration: int,
+                 Tinit: float,
+                 Tfinal: float,
+                 Tdamp: str = '$(100.0*dt)',
+                 dump_fname: str = 'nvt.lammpstrj',
+                 reset_timestep: bool = False):
+        self._duration = duration
+        self._Tinit = Tinit
+        self._Tfinal = Tfinal
+        self._Tdamp = Tdamp
+        self._dump_fname = dump_fname
+        self._reset_timestep = reset_timestep
+
+    def write_input(self, f: TextIOWrapper):
+        f.write('### NVT simulation\n')
+        f.write(
+            '{:<15} dump_nvt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
+            .format('dump', self._dump_fname))
+        f.write('{:<15} {} nvt.restart\n'.format('restart', self._duration))
+        f.write('\n')
+        f.write('{:<15} fNVT all nvt temp {} {} {}\n'.format(
+            'fix', self._Tinit, self._Tfinal, self._Tdamp))
+        f.write('{:<15} {}\n'.format('run', self._duration))
+        f.write('{:<15} fNVT\n'.format('unfix'))
+        f.write('\n')
+        f.write('{:<15} dump_nvt\n'.format('undump'))
+        if self._reset_timestep:
+            f.write('{:<15} 0\n'.format('reset_timestep'))
+        f.write('\n')
+        f.write('\n')
+
+
+class TgMeasurement(Procedure):
+    '''Perform glass transition temperature measurement of the system, 
+    by iteratively cooling the system and equilibrate.
+       
+    Attributes:    
+        Tinit (float): Initial temperature of the cooling process
+        
+        Tfinal (float): Final temperature of the cooling process
+        
+        Tinterval (float): Temperature interval of the cooling process
+        
+        step_duration (int): Duration of each temperature step (timestep unit)
+        
+        pressure (float): Pressure during the cooling process
+        
+        Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
+        
+        Pdamp (str): Damping parameter for barostats; default: `$(100.0*dt)`
+        
+        dump_fname (str): Name of the dump file; default: `Tg_measurement.lammpstrj`
+        
+        result_fname (str): Name of the result file; default: `temp_vs_density.txt`
+    '''
+
+    def __init__(self,
+                 Tinit: float = 500,
+                 Tfinal: float = 100,
+                 Tinterval: float = 20,
+                 step_duration: int = 1000000,
+                 pressure: float = 1,
+                 Tdamp: str = '$(100.0*dt)',
+                 Pdamp: str = '$(100.0*dt)',
+                 dump_fname: str = 'Tg_measurement.lammpstrj',
+                 result_fname: str = 'temp_vs_density.txt'):
         self._Tinit = Tinit
         self._Tfinal = Tfinal
         self._Tinterval = Tinterval
@@ -200,86 +331,5 @@ class TgMeasurement(Procedure):
         f.write('{:<15} a delete\n'.format('variable'))
         f.write('\n')
         f.write('{:<15} dump_Tg\n'.format('undump'))
-        f.write('\n')
-        f.write('\n')
-
-
-class NPT(Procedure):
-    '''Perform the simulation under NPT ensemble.
-    '''
-
-    def __init__(self,
-                 duration: int,
-                 Tinit: float,
-                 Tfinal: float,
-                 Pinit: float,
-                 Pfinal: float,
-                 Tdamp='$(100.0*dt)',
-                 Pdamp='$(100.0*dt)',
-                 dump_fname='npt.lammpstrj',
-                 reset_timestep=False):
-        self._duration = duration
-        self._Tinit = Tinit
-        self._Tfinal = Tfinal
-        self._Pinit = Pinit
-        self._Pfinal = Pfinal
-        self._Tdamp = Tdamp
-        self._Pdamp = Pdamp
-        self._dump_fname = dump_fname
-        self._reset_timestep = reset_timestep
-
-    def write_input(self, f: TextIOWrapper):
-        f.write('### NPT simulation\n')
-        f.write(
-            '{:<15} dump_npt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
-            .format('dump', self._dump_fname))
-        f.write('{:<15} {} npt.restart\n'.format('restart', self._duration))
-        f.write('\n')
-        f.write('{:<15} fNPT all npt temp {} {} {} iso {} {} {}\n'.format(
-            'fix', self._Tinit, self._Tfinal, self._Tdamp, self._Pinit,
-            self._Pfinal, self._Pdamp))
-        f.write('{:<15} {}\n'.format('run', self._duration))
-        f.write('{:<15} fNPT\n'.format('unfix'))
-        f.write('\n')
-        f.write('{:<15} dump_npt\n'.format('undump'))
-        if self._reset_timestep:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
-        f.write('\n')
-        f.write('\n')
-
-
-class NVT(Procedure):
-    '''Perform the simulation under NVT ensemble.
-    '''
-
-    def __init__(self,
-                 duration: int,
-                 Tinit: float,
-                 Tfinal: float,
-                 Tdamp='$(100.0*dt)',
-                 dump_fname='nvt.lammpstrj',
-                 reset_timestep=False):
-        self._duration = duration
-        self._Tinit = Tinit
-        self._Tfinal = Tfinal
-        self._Tdamp = Tdamp
-        self._dump_fname = dump_fname
-        self._reset_timestep = reset_timestep
-
-    def write_input(self, f: TextIOWrapper):
-        f.write('### NVT simulation\n')
-        f.write(
-            '{:<15} dump_nvt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
-            .format('dump', self._dump_fname))
-        f.write('{:<15} {} nvt.restart\n'.format('restart', self._duration))
-        f.write('\n')
-        f.write('{:<15} fNVT all nvt temp {} {} {}\n'.format(
-            'fix', self._Tinit, self._Tfinal, self._Tdamp))
-        f.write('{:<15} {}\n'.format('run', self._duration))
-        f.write('{:<15} fNVT\n'.format('unfix'))
-        f.write('\n')
-        f.write('{:<15} dump_nvt\n'.format('undump'))
-        if self._reset_timestep:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
         f.write('\n')
         f.write('\n')

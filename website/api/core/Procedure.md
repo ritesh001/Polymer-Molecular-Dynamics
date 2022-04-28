@@ -37,10 +37,51 @@ Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 201
 - `Peq` _float_ - Target equilibration pressure; default: `1`
 - `Tmax` _float_ - Maximum temperature during the equilibration; default: `600`
 - `Pmax` _float_ - Maximum pressure during the equilibration; default: `50000`
-- `Tdamp` _str_ - Damping parameter for thermostats; default: `&#x27;$(100.0*dt)&#x27;`
-- `Pdamp` _str_ - Damping parameter for barostats; default: `&#x27;$(100.0*dt)&#x27;`
-- `dump_fname` _str_ - Name of the dump file; default: `&#x27;equil.lammpstrj&#x27;`
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default: `True`
+- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+- `dump_fname` _str_ - Name of the dump file; default: `equil.lammpstrj`
+- `reset_timestep` _bool_ - Whether to reset timestep after the procedure;
+- `default` - `True`
+
+## NPT Objects
+
+```python
+class NPT(Procedure)
+```
+
+Perform the simulation under NPT ensemble (via Nose-Hoover thermostat
+and barostat).
+
+**Attributes**:
+
+- `duration` _int_ - Duration of this NPT procedure (timestep unit)
+- `Tinit` _float_ - Initial temperature
+- `Tfinal` _float_ - Final temperature
+- `Pinit` _float_ - Initial pressure
+- `Pfinal` _float_ - Final pressure
+- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+- `dump_fname` _str_ - Name of the dump file; default: `npt.lammpstrj`
+- `reset_timestep` _bool_ - Whether to reset timestep after the procedure;
+- `default` - `False`
+
+## NVT Objects
+
+```python
+class NVT(Procedure)
+```
+
+Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
+
+**Attributes**:
+
+- `duration` _int_ - Duration of this NVT procedure (timestep unit)
+- `Tinit` _float_ - Initial temperature
+- `Tfinal` _float_ - Final temperature
+- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
+- `reset_timestep` _bool_ - Whether to reset timestep after the procedure;
+- `default` - `False`
 
 ## TgMeasurement Objects
 
@@ -51,18 +92,14 @@ class TgMeasurement(Procedure)
 Perform glass transition temperature measurement of the system,
 by iteratively cooling the system and equilibrate.
 
-## NPT Objects
+**Attributes**:
 
-```python
-class NPT(Procedure)
-```
-
-Perform the simulation under NPT ensemble.
-
-## NVT Objects
-
-```python
-class NVT(Procedure)
-```
-
-Perform the simulation under NVT ensemble.
+- `Tinit` _float_ - Initial temperature of the cooling process
+- `Tfinal` _float_ - Final temperature of the cooling process
+- `Tinterval` _float_ - Temperature interval of the cooling process
+- `step_duration` _int_ - Duration of each temperature step (timestep unit)
+- `pressure` _float_ - Pressure during the cooling process
+- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+- `dump_fname` _str_ - Name of the dump file; default: `Tg_measurement.lammpstrj`
+- `result_fname` _str_ - Name of the result file; default: `temp_vs_density.txt`
