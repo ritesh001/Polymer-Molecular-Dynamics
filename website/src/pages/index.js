@@ -21,7 +21,7 @@ function HomepageHeader() {
             gap: "2em",
           }}
         >
-          <div style={{ textAlign: "left", width: "35em", maxWidth: "95%" }}>
+          <div style={{ textAlign: "left", width: "35em", maxWidth: "100%" }}>
             <h1 className="hero__title">{siteConfig.title}</h1>
             <p className="hero__subtitle">{siteConfig.tagline}</p>
             {/* <div className={styles.buttons}>
@@ -31,7 +31,7 @@ function HomepageHeader() {
                 </CodeBlock>
               </div>
             </div> */}
-            <div style={{ display: "flex", gap: 30 }}>
+            <div style={{ display: "flex", gap: 20, flexWrap: 'wrap' }}>
               <Link
                 className="button button--secondary button--lg"
                 to="/docs/intro"
@@ -53,7 +53,7 @@ function HomepageHeader() {
               </Link>
             </div>
           </div>
-          <div style={{ textAlign: "left" }}>
+          <div style={{ textAlign: "left", maxWidth: "100%" }}>
             <CodeBlock className="language-js" title="example-mkinput.py">
               {"import pmd\n" +
                 "\n" +

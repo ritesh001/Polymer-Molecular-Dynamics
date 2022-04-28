@@ -27,6 +27,8 @@ const config = {
           routeBasePath: "docs",
           sidebarPath: require.resolve("./sidebars.js"),
           sidebarCollapsed: false,
+          showLastUpdateAuthor: true,
+          showLastUpdateTime: true,
           editUrl:
             "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/website",
         },
@@ -64,7 +66,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/metImg.png',
+      image: 'img/metaImg.png',
       navbar: {
         title: "High Throughput Polymer MD Simulations",
         logo: {
