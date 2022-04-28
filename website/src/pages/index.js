@@ -84,7 +84,7 @@ export default function Home() {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />"
+      description="Python toolkit for molecular dynamics prediction of polymer properties"
     >
       <HomepageHeader />
       <main>

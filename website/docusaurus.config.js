@@ -64,6 +64,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      image: 'img/metImg.png',
       navbar: {
         title: "High Throughput Polymer MD Simulations",
         logo: {
