@@ -52,7 +52,7 @@ class System:
         self._natoms_total = natoms_total
         self._density = density
 
-        # These will be accessed by Lammps objects
+        # These can be accessed by Lammps objects
         self.data_fname = data_fname
         self.force_field = force_field
 

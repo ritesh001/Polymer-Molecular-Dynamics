@@ -1,9 +1,9 @@
 ---
 sidebar_label: Analysis
-title: core.Analysis
+title: postprocess.Analysis
 ---
 
-### calculate\_Tg
+#### calculate\_Tg
 
 ```python
 def calculate_Tg(result_fname: str, make_plot: bool = True) -> int

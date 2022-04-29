@@ -31,7 +31,7 @@ function HomepageHeader() {
                 </CodeBlock>
               </div>
             </div> */}
-            <div style={{ display: "flex", gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
               <Link
                 className="button button--secondary button--lg"
                 to="/docs/intro"
@@ -54,21 +54,24 @@ function HomepageHeader() {
             </div>
           </div>
           <div style={{ textAlign: "left", maxWidth: "100%" }}>
-            <CodeBlock className="language-js" title="example-mkinput.py">
+            <CodeBlock className="language-python" title="example-mkinput.py">
               {"import pmd\n" +
                 "\n" +
                 "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
+                "    # Define system specs and make the data file\n" +
                 "    s = pmd.System(smiles=smiles, force_field='opls',\n" +
                 "                   density=0.8, natoms_total=5000\n" +
                 "                   natoms_per_chain=150)\n" +
                 "    s.write_data(output_dir=smiles)\n" +
                 "\n" +
+                "    # Customize LAMMPS simulation and make the input file\n" +
                 "    lmp = pmd.Lammps(s)\n" +
                 "    lmp.add_procedure(pmd.Minimization())\n" +
                 "    lmp.add_procedure(pmd.Equilibration())\n" +
                 "    lmp.add_procedure(pmd.TgMeasurement())\n" +
                 "    lmp.write_input(output_dir=smiles)\n" +
                 "\n" +
+                "    # Create job scheduler file\n" +
                 "    job = pmd.Job(jobname=smiles, project='Your-pid',\n" +
                 "                  nodes=2, ppn=24, walltime='48:00:00')\n" +
                 "    job.write_pbs(output_dir=smiles)"}

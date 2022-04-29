@@ -6,15 +6,16 @@ title: Introduction
 Let's understand **High Throughput Polymer MD simulations in less than 5 minutes**.
 
 ## Overview
+
 This site includes the [Polymer Molecular Dynamics (PMD) package](/api/overview) and guides for performaing high-throughput MD simulations for various properties including:
 
-- Glass transition temperature (Tg)
+- Glass transition temperature (T<sub>g</sub>)
 - Gas diffusivity
 - Solvent diffusivity
 - Thermal conductivity - upcoming
 - Mechanical properties - upcoming
 - Viscosity - upcoming
-- Melting temperature (Tm) - upcoming
+- Melting temperature (T<sub>m</sub>) - upcoming
 
 ## Getting Started
 

@@ -10,6 +10,7 @@ def calculate_Tg(result_fname: str, make_plot: bool = True) -> int:
     Returns:
         Tg (int): Glass transition temperature of the system
     '''
+
     from scipy import optimize
     import matplotlib.pyplot as plt
     import numpy as np
