@@ -1,9 +1,9 @@
 {
   "items": [
-    "core/System",
+    "core/Job",
     "core/Lammps",
     "core/Procedure",
-    "core/Job"
+    "core/System"
   ],
   "label": "core",
   "type": "category"

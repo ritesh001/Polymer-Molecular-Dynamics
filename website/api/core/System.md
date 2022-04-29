@@ -39,7 +39,9 @@ Template object to contain System initialization settings
 ### write\_data
 
 ```python
-def write_data(output_dir: str, data_fname: str = 'amor_data.lmps') -> None
+def write_data(output_dir: str,
+               data_fname: str = 'amor_data.lmps',
+               cleanup: bool = True) -> None
 ```
 
 Method to make LAMMPS data file (which contains coordinates and force
@@ -51,6 +53,9 @@ field parameters)
   
 - `data_fname` _str_ - File name of the data file, which will be read in by LAMMPS
   [read_data](https://docs.lammps.org/read_data.html) command
+  
+- `cleanup` _bool_ - Whether to clean up files other than the LAMMPS data file PSP
+  generated
   
 
 **Returns**:

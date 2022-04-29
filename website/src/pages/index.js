@@ -60,7 +60,7 @@ function HomepageHeader() {
                 "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
                 "    # Define system specs and make the data file\n" +
                 "    s = pmd.System(smiles=smiles, force_field='opls',\n" +
-                "                   density=0.8, natoms_total=5000\n" +
+                "                   density=0.8, natoms_total=5000,\n" +
                 "                   natoms_per_chain=150)\n" +
                 "    s.write_data(output_dir=smiles)\n" +
                 "\n" +
