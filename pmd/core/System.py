@@ -58,7 +58,8 @@ class System:
 
     def write_data(self,
                    output_dir: str,
-                   data_fname: str = 'amor_data.lmps') -> None:
+                   data_fname: str = 'amor_data.lmps',
+                   cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
         field parameters)
 
@@ -67,6 +68,9 @@ class System:
 
         data_fname (str): File name of the data file, which will be read in by LAMMPS 
                           [read_data](https://docs.lammps.org/read_data.html) command
+
+        cleanup (bool): Whether to clean up files other than the LAMMPS data file PSP
+                        generated
         
         Returns:
             None
@@ -84,6 +88,7 @@ class System:
         except:
             raise Exception('System\'s write_data function requires PSP to '
                             'function properly, please install PSP')
+        import os
 
         mol = Chem.MolFromSmiles(self._smiles)
         natoms_per_RU = mol.GetNumAtoms(onlyExplicit=0) - 2
@@ -100,18 +105,15 @@ class System:
         print('length:', length)
         print('Nchains:', nchains)
 
-        psp_csv_fname = 'input.csv'
-        with open(psp_csv_fname, 'w') as f:
+        psp_csv_fname = 'psp_input.csv'
+        psp_csv_fpath = os.path.join(output_dir, psp_csv_fname)
+        with open(psp_csv_fpath, 'w') as f:
             f.write('ID,smiles,Len,Num,NumConf,Loop,LeftCap,RightCap\n')
             f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(
                 self._smiles, length, nchains))
 
-        input_df = pd.read_csv(psp_csv_fname, low_memory=False)
-        amor = ab.Builder(input_df,
-                          density=self._density,
-                          BondInfo=False,
-                          OutDir=output_dir,
-                          packmol=ab.packmol_param(tolerance=1.5))
+        input_df = pd.read_csv(psp_csv_fpath, low_memory=False)
+        amor = ab.Builder(input_df, density=self._density, OutDir=output_dir)
         amor.Build()
 
         if self.force_field == 'opls':
@@ -125,4 +127,24 @@ class System:
                                'nv': 'nh'
                            })
 
-        # TODO: clean up irrelevant files produced from PSP
+        if cleanup:
+            import shutil
+            dnames = ['molecules', 'packmol', 'pysimm']
+            for dir in dnames:
+                try:
+                    shutil.rmtree(os.path.join(output_dir, dir))
+                except BaseException:
+                    print('problem removing {} folder during cleanup'.format(
+                        dir))
+
+            fnames = ['amor_model.data', 'amor_model.vasp']
+            for file in fnames:
+                try:
+                    os.remove(os.path.join(output_dir, file))
+                except BaseException:
+                    print(
+                        'problem removing {} file during cleanup'.format(file))
+            try:
+                os.remove("output_MB.csv")
+            except BaseException:
+                print('problem removing output_MB.csv during cleanup')

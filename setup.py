@@ -1,13 +1,12 @@
 import os
 from setuptools import setup, find_packages
-from subprocess import call
 
 # Read the contents of your README file
 PACKAGE_DIR = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(PACKAGE_DIR, 'README.md'), encoding='utf-8') as f:
     LONG_DESCRIPTION = f.read()
 
-setup(name='PMD',
+setup(name='pmd',
       version='0.1.0',
       author='Kuan-Hsuan Shen',
       author_email='kshen64@gatech.edu',

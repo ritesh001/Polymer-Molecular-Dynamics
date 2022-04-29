@@ -28,7 +28,7 @@ if __name__ == '__main__':
     lmp = pmd.Lammps(system)
     lmp.add_procedure(pmd.Minimization())
     lmp.add_procedure(
-        pmd.Equilibration(Tfinal=600, Pfinal=1, Tmax=1000, Pmax=49346.163))
+        pmd.Equilibration(Teq=600, Peq=1, Tmax=1000, Pmax=49346.163))
     lmp.add_procedure(
         pmd.TgMeasurement(Tinit=600,
                           Tfinal=100,
