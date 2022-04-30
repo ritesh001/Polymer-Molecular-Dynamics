@@ -20,5 +20,5 @@ def cleanup(cleanup_route: str):
 
 
 if __name__ == '__main__':
-    cleanup_route = './api/core'
-    cleanup(cleanup_route)
+    cleanup('./api/core')
+    cleanup('./api/postprocessing')
