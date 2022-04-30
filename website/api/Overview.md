@@ -22,5 +22,6 @@ title: Overview
 
 ## Postprocess module
 
-- [**Analysis**](/api/postprocess/Analysis): A suite of methods for calculating system properties
-  - [calculate_Tg](/api/postprocess/Analysis#calculate_tg): Method to calculate glass transition temperature based on the result from the TgMeasurement Procedure
+- [**Analysis**](/api/postprocessing/Analysis): A suite of methods for calculating system properties
+  - [calculate_Tg](/api/postprocessing/Analysis#calculate_tg): Method to calculate glass transition temperature based on the result from the TgMeasurement Procedure
+- [**TrajectoryReader**](/api/postprocessing/TrajectoryReader): Methods to read in a lammps trajectory file
