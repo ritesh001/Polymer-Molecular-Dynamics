@@ -47,3 +47,69 @@ def calculate_Tg(result_fname: str, make_plot: bool = True) -> int:
     print('Glass transition temperature of the system is', Tg)
 
     return Tg
+
+
+def calculate_MSD(r, ir, box_bounds, id2type=[]):
+    '''Method to calculate mean squared displacement for each type as given in
+    `id2type`; NOTE: does NOT do any sort of block averaging; assumes mass = 1
+    for all beads; does not account for changes in box size
+
+    Parameters:
+        r: unscaled (but wrapped) coordinates (format as read in from 
+           `read_lammpstrj`)
+
+        ir: image flags (format as read in from `read_lammpstrj`)
+
+        box_bounds: boundaries of the box (format as read in from
+                    `read_lammpstrj`)
+
+        id2type: array that maps atom id to type (format as read in from
+                 `read_lammpstrj`)
+        
+    Returns:
+        msd_dict: dict of the calculated MSDs for each type
+    '''
+
+    import numpy as np
+
+    # set up some constants
+    frames = len(r)
+    box_size = np.array([
+        box_bounds[0][0][1] - box_bounds[0][0][0],
+        box_bounds[0][1][1] - box_bounds[0][1][0],
+        box_bounds[0][2][1] - box_bounds[0][2][0]
+    ])
+
+    # allocate an array for the box center of mass which needs to be
+    # subtracted off
+    box_com = np.zeros([frames, 3], np.float)
+
+    # preallocate msd vectors
+    msd_dict = {}
+    for type_id in set(id2type):
+        msd_dict[type_id] = np.zeros(frames, np.float)
+
+    # loop over frames
+    for t in range(frames):
+        # calculate the center of mass of the entire box
+        for atom in range(1, len(r[0])):
+            box_com[t] += r[t][atom] + ir[t][atom] * box_size
+        box_com[t] = box_com[t] / (len(r[0]) - 1)
+
+        # loop over atoms
+        for atom in range(1, len(id2type)):
+            # calculate how much the bead has moved reletive to the center of
+            # mass (note that this is a vector equation)
+            diff = (r[t][atom] + ir[t][atom] * box_size - box_com[t]) - (
+                r[0][atom] + ir[0][atom] * box_size - box_com[0])
+            # mean squared displacement is this difference dotted with itself
+            msd_dict[id2type[atom]][t] += diff.dot(diff)
+
+    # scale MSD by the number of beads of each type, to get the average MSD
+    for type_id in set(id2type):
+        msd_dict[type_id] = msd_dict[type_id] / sum(id2type == type_id)
+    # this is needed since id2type has a dummy entry of 0 at index 0 so that
+    # it is indexed by LAMMPS atom_id
+    del msd_dict[0]
+
+    return msd_dict
