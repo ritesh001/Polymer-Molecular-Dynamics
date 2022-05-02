@@ -3,16 +3,16 @@
 Python toolkit and guides for molecular dynamics prediction of polymer properties.
 
 - Documentation - You can find it [on the website](https://high-throughput-pmd.netlify.app/api/overview).
-- Getting started - Check out the [Getting Started](https://high-throughput-pmd.netlify.app/docs/getting-started/installation) page for a quick overview.
+- Quick overview - Check out the [Getting Started page](https://high-throughput-pmd.netlify.app/docs/getting-started/installation)
 
-## Polymer Property Calculation
+## Guides and scripts
 
-This package can calculate polymer properties including:
+You can calculate various polymer properties from MD simulations with this package, including:
 
 - Glass transition temperature (Tg) -
   [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/glass-transition-temperature)]
   [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Tg)]
-- Gas diffusivity] -
+- Gas diffusivity -
   [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/gas-diffusivity)]
   [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Gas_diffusivity)]
 - Solvent diffusivity -
@@ -23,19 +23,6 @@ This package can calculate polymer properties including:
 - Solubility - Planned
 - Viscosity - Planned
 - Melting temperature (Tm) - Planned
-
-## Installation
-
-```bash
-pip install pmd
-```
-
-### Prerequisites
-
-- [PSP](https://github.com/Ramprasad-Group/PSP) - for generating polymer topology
-- [RDKit](https://www.rdkit.org/) - for getting molecule info such as molecular weight
-
-Note that, [PSP](https://github.com/Ramprasad-Group/PSP) and [RDKit](https://www.rdkit.org/) are required to be installed manually.
 
 ## Example
 
@@ -62,3 +49,16 @@ for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:
                   nodes=2, ppn=24, walltime='48:00:00')
     job.write_pbs(output_dir=smiles)
 ```
+
+## Installation
+
+```bash
+pip install pmd
+```
+
+### Prerequisites
+
+- [PSP](https://github.com/Ramprasad-Group/PSP) - for generating polymer topology
+- [RDKit](https://www.rdkit.org/) - for getting molecule info such as molecular weight
+
+PSP and RDKit are required to be installed for the package to fully function.
