@@ -2,39 +2,42 @@
 
 Python toolkit and guides for molecular dynamics prediction of polymer properties.
 
-You can find the documentation [on the website](https://high-throughput-pmd.netlify.app/api/overview).
+- Documentation - You can find it [on the website](https://high-throughput-pmd.netlify.app/api/overview).
+- Getting started - Check out the [Getting Started](https://high-throughput-pmd.netlify.app/docs/getting-started/installation) page for a quick overview.
 
-Check out the [Getting Started](https://high-throughput-pmd.netlify.app/docs/getting-started/installation) page for a quick overview.
-
-## Getting Started
-
-### Property Calculation
+## Polymer Property Calculation
 
 This package can calculate polymer properties including:
 
-- Glass transition temperature (Tg) - [[Guide]](http://high-throughput-pmd.netlify.app/docs/guides/glass-transition-temperature)[[Scripts]](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Tg)
-- Gas diffusivity] - [[Guide]](http://high-throughput-pmd.netlify.app/docs/guides/gas-diffusivity)[[Scripts]](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Gas_diffusivity)
-- Solvent diffusivity - [[Guide]](http://high-throughput-pmd.netlify.app/docs/guides/solvent-diffusivity)[[Scripts]](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Solvent_diffusivity)
+- Glass transition temperature (Tg) -
+  [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/glass-transition-temperature)]
+  [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Tg)]
+- Gas diffusivity] -
+  [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/gas-diffusivity)]
+  [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Gas_diffusivity)]
+- Solvent diffusivity -
+  [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/solvent-diffusivity)]
+  [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Solvent_diffusivity)]
 - Thermal conductivity - In-progress
 - Mechanical properties - In-progress
 - Solubility - Planned
 - Viscosity - Planned
 - Melting temperature (Tm) - Planned
 
-### Installation
+## Installation
 
 ```bash
 pip install pmd
 ```
 
-#### Prerequisites
+### Prerequisites
 
 - [PSP](https://github.com/Ramprasad-Group/PSP) - for generating polymer topology
 - [RDKit](https://www.rdkit.org/) - for getting molecule info such as molecular weight
 
 Note that, [PSP](https://github.com/Ramprasad-Group/PSP) and [RDKit](https://www.rdkit.org/) are required to be installed manually.
 
-### Example
+## Example
 
 Below is an example python script where we use PMD to generate LAMMPS data and input files for Tg measurement with a list of SMILES strings.
 
