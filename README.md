@@ -2,8 +2,8 @@
 
 Python toolkit and guides for molecular dynamics prediction of polymer properties.
 
+- Quick overview - Check out the [Introduction page](https://high-throughput-pmd.netlify.app/docs/intro)
 - Documentation - You can find it [on the website](https://high-throughput-pmd.netlify.app/api/overview).
-- Quick overview - Check out the [Getting Started page](https://high-throughput-pmd.netlify.app/docs/getting-started/installation)
 
 ## Guides and scripts
 
