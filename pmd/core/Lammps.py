@@ -35,13 +35,13 @@ class Lammps:
 
         neighbor_skin (float): LAMMPS 
                             [neighbor](https://docs.lammps.org/neighbor.html)
-                            skin size to use during simulation; default: `2.0
-                            Angstrom`
+                            skin size to use during the simulation; default: 
+                            `2.0 Angstrom`
                             
         neighbor_every (int): LAMMPS 
                             [neighbor](https://docs.lammps.org/neighbor.html) 
-                            list checking frequency to use during simulation;
-                            default: `1 fs`
+                            list checking frequency to use during the
+                            simulation; default: `1 fs`
 
         thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) 
                       to use during simulation; default: `1000 timestep`

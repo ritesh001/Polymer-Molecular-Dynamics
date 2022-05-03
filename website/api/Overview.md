@@ -17,8 +17,8 @@ title: Overview
   - [NVT](/api/core/Procedure#nvt-objects): Procedure object that enables performing a simulation under NVT ensemble
   - [TgMeasurement](/api/core/Procedure#tgmeasurement-objects): Procedure object that enables performing a cooling simulation for Tg measurement
 - [**Job**](/api/core/Job): Objects related to creating job scheduler-relevant files for submitting jobs on supercomputers
-  - [write_pbs](/api/core/Job#write_pbs): Method to make the PBS job scheduler input file
-  - [write_slurm](/api/core/Job#write_slurm): Method to make the Slurm job scheduler input file
+  - [Torque](/api/core/Job#torque-objects): Objects to make the Torque job scheduler input file
+  - [Slurm](/api/core/Job#slurm-objects): Objects to make the Slurm job scheduler input file
 
 ## Postprocess module
 
