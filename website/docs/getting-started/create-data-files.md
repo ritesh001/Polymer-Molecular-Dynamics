@@ -19,9 +19,9 @@ s = pmd.System(smiles=smiles,
                natoms_per_chain=150)
 ```
 
-### Polymer Chain Options
+### Polymer Chain Length Options
 
-You can define `natoms_per_chain` (number of atoms in a polymer chain) or alternatively, `mw_per_chain` (molecular weight of the polymer), for example:
+You can define the polymer chain length by `natoms_per_chain` (number of atoms in a polymer chain) as shown above. Alternatively, `mw_per_chain` (molecular weight of the polymer) or `ru_per_chain` (number of repeating units in a polymer chain) can be used, for example:
 
 ```python
 s = pmd.System(smiles=smiles,
@@ -32,9 +32,18 @@ s = pmd.System(smiles=smiles,
                mw_per_chain=1000)
 ```
 
+```python
+s = pmd.System(smiles=smiles,
+               force_field='gaff2',
+               density=0.8,
+               natoms_total=5000,
+               #highlight-next-line
+               ru_per_chain=25)
+```
+
 ### Force field Options
 
-For the force field, we can also use the `opls` option, for example:
+For the force field, other than the `gaff2` option shown above, we can also use the `opls` option, for example:
 
 ```python
 s = pmd.System(smiles=smiles,

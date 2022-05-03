@@ -45,7 +45,7 @@ class Torque(Job):
         '''Method to make the Torque job scheduler input file
 
         Parameters:
-            output_dir (str): Directory for the Torque input file; default: '.'
+            output_dir (str): Directory for the Torque input file; default: `.`
 
         Returns:
             None
@@ -114,11 +114,11 @@ class Slurm(Job):
         self.gpus = gpus
         self._job_fname = job_fname
 
-    def write_job(self, output_dir: str) -> None:
+    def write_job(self, output_dir: str = '.') -> None:
         '''Method to make the Slurm job scheduler input file
 
         Parameters:
-            output_dir (str): Directory for the Slurm input file
+            output_dir (str): Directory for the Slurm input file; default: `.`
 
         Returns:
             None

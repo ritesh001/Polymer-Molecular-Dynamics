@@ -24,14 +24,14 @@ Template Torque object to contain Torque job initialization settings
 ### write\_job
 
 ```python
-def write_job(output_dir: str) -> None
+def write_job(output_dir: str = '.') -> None
 ```
 
 Method to make the Torque job scheduler input file
 
 **Arguments**:
 
-- `output_dir` _str_ - Directory for the Torque input file
+- `output_dir` _str_ - Directory for the Torque input file; default: `.`
   
 
 **Returns**:
@@ -59,14 +59,14 @@ Template Slurm object to contain Slurm job initialization settings
 ### write\_job
 
 ```python
-def write_job(output_dir: str) -> None
+def write_job(output_dir: str = '.') -> None
 ```
 
 Method to make the Slurm job scheduler input file
 
 **Arguments**:
 
-- `output_dir` _str_ - Directory for the Slurm input file
+- `output_dir` _str_ - Directory for the Slurm input file; default: `.`
   
 
 **Returns**:

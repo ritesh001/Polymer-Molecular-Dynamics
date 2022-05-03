@@ -16,15 +16,21 @@ class System:
 
         natoms_total (int): Total number of atoms of the system
 
-        natoms_per_chain (int): Number of atoms of the polymer, one of this 
-                                attribute and `mw_per_chain` has to be
-                                provided but not both (providing both will
-                                result in an error); default: `None`
+        natoms_per_chain (int): Number of atoms per polymer chain, one of this
+                                attribute, `mw_per_chain`, and `ru_per_chain`
+                                has to be provided but not both (providing both
+                                will result in an error); default: `None`
 
         mw_per_chain (int): Molecular weight of the polymer, one of this 
-                            attribute and `natoms_per_chain` has to be
-                            provided but not both (providing both will
-                            result in an error); default: `None`
+                            attribute, `natoms_per_chain`, and `ru_per_chain`
+                            has to be provided but not both (providing both 
+                            will result in an error); default: `None`
+
+        ru_per_chain (int): Number of repeating unit per polymer chain, one of
+                            this attribute, `natoms_per_chain`, and 
+                            `mw_per_chain` has to be provided but not both
+                            (providing both will result in an error); default:
+                            `None`
 
         data_fname (str): File name of the output data file, which will be read in by 
                           LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
@@ -38,25 +44,29 @@ class System:
                  natoms_total: int,
                  natoms_per_chain: int = None,
                  mw_per_chain: int = None,
+                 ru_per_chain: int = None,
                  data_fname: str = 'data.lmps'):
 
         if (force_field != 'opls' and force_field != 'gaff2'):
             raise Exception('Force field options are opls and gaff2')
 
-        if natoms_per_chain and mw_per_chain:
-            raise Exception(
-                'Only one of natoms_per_chain and mw_per_chain can be provided'
-            )
-        elif not natoms_per_chain and not mw_per_chain:
-            raise Exception(
-                'One of natoms_per_chain or mw_per_chain has to be provided')
+        chain_length_options = [natoms_per_chain, mw_per_chain, ru_per_chain]
+        num_given_options = sum(option is not None
+                                for option in chain_length_options)
+        if num_given_options == 0:
+            raise Exception('One of natoms_per_chain, mw_per_chain, and '
+                            'ru_per_chain has to be provided')
+        elif num_given_options > 1:
+            raise Exception('Only one of natoms_per_chain, mw_per_chain, and '
+                            'ru_per_chain can be provided')
 
         self._smiles = smiles
         self._density = density
         self._force_field = force_field
+        self._natoms_total = natoms_total
         self._mw_per_chain = mw_per_chain
         self._natoms_per_chain = natoms_per_chain
-        self._natoms_total = natoms_total
+        self._ru_per_chain = ru_per_chain
         self._data_fname = data_fname
 
     def get_data_fname(self) -> str:
@@ -107,7 +117,7 @@ class System:
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
-                          ; default: '.'
+                          ; default: `.`
 
         cleanup (bool): Whether to clean up files other than the LAMMPS data 
                         file PSP generated
@@ -136,6 +146,8 @@ class System:
         elif self._mw_per_chain:
             mw_per_RU = Chem.Descriptors.ExactMolWt(mol)
             length = round(self._mw_per_chain / mw_per_RU)
+        else:
+            length = self._ru_per_chain
         nchains = round(self._natoms_total / (natoms_per_RU * length + 2))
 
         print('--------System Stats--------')

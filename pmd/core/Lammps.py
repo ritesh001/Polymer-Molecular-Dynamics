@@ -100,7 +100,7 @@ class Lammps:
         '''Method to make LAMMPS input files
         Parameters:
             output_dir (str): Directory for the generated LAMMPS input file
-                              ; default: '.'
+                              ; default: `.`
 
         Returns:
             None

@@ -38,13 +38,13 @@ Template object to contain LAMMPS initialization settings
   
 - `neighbor_skin` _float_ - LAMMPS
   [neighbor](https://docs.lammps.org/neighbor.html)
-  skin size to use during simulation; default: `2.0
-  Angstrom`
+  skin size to use during the simulation; default:
+  `2.0 Angstrom`
   
 - `neighbor_every` _int_ - LAMMPS
   [neighbor](https://docs.lammps.org/neighbor.html)
-  list checking frequency to use during simulation;
-- `default` - `1 fs`
+  list checking frequency to use during the
+  simulation; default: `1 fs`
   
 - `thermo` _int_ - LAMMPS [thermo](https://docs.lammps.org/thermo.html)
   to use during simulation; default: `1000 timestep`
@@ -72,14 +72,15 @@ Method to add simulation procedure
 ### write\_lammps
 
 ```python
-def write_lammps(output_dir: str) -> None
+def write_lammps(output_dir: str = '.') -> None
 ```
 
 Method to make LAMMPS input files
 
 **Arguments**:
 
-- `output_dir` _str_ - Directory for all the LAMMPS input and data files
+- `output_dir` _str_ - Directory for the generated LAMMPS input file
+  ; default: `.`
   
 
 **Returns**:

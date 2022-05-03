@@ -21,19 +21,25 @@ Template object to contain System initialization settings
   
 - `natoms_total` _int_ - Total number of atoms of the system
   
-- `natoms_per_chain` _int_ - Number of atoms of the polymer, one of this
-  attribute and `mw_per_chain` has to be
-  provided but not both (providing both will
-  result in an error); default: `None`
+- `natoms_per_chain` _int_ - Number of atoms per polymer chain, one of this
+  attribute, `mw_per_chain`, and `ru_per_chain`
+  has to be provided but not both (providing both
+  will result in an error); default: `None`
   
 - `mw_per_chain` _int_ - Molecular weight of the polymer, one of this
-  attribute and `natoms_per_chain` has to be
-  provided but not both (providing both will
-  result in an error); default: `None`
+  attribute, `natoms_per_chain`, and `ru_per_chain`
+  has to be provided but not both (providing both
+  will result in an error); default: `None`
+  
+- `ru_per_chain` _int_ - Number of repeating unit per polymer chain, one of
+  this attribute, `natoms_per_chain`, and
+  `mw_per_chain` has to be provided but not both
+  (providing both will result in an error); default:
+  `None`
   
 - `data_fname` _str_ - File name of the output data file, which will be read in by
   LAMMPS [read_data](https://docs.lammps.org/read_data.html)
-  command
+  command; default: `data.lmps`
 
 ### update\_smiles
 
@@ -89,7 +95,7 @@ Method to update force field of the system
 ### write\_data
 
 ```python
-def write_data(output_dir: str, cleanup: bool = True) -> None
+def write_data(output_dir: str = '.', cleanup: bool = True) -> None
 ```
 
 Method to make LAMMPS data file (which contains coordinates and force
@@ -98,9 +104,10 @@ field parameters)
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the generated LAMMPS data file
+  ; default: `.`
   
-- `cleanup` _bool_ - Whether to clean up files other than the LAMMPS data file PSP
-  generated
+- `cleanup` _bool_ - Whether to clean up files other than the LAMMPS data
+  file PSP generated
   
 
 **Returns**:
