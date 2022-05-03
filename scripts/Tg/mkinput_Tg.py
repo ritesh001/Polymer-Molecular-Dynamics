@@ -25,7 +25,7 @@ if __name__ == '__main__':
                         natoms_per_chain=150)
     system.write_data(output_dir=system_id)
 
-    lmp = pmd.Lammps(system)
+    lmp = pmd.Lammps(read_data_from=system)
     lmp.add_procedure(pmd.Minimization())
     lmp.add_procedure(
         pmd.Equilibration(Teq=600, Peq=1, Tmax=1000, Pmax=49346.163))
@@ -34,11 +34,12 @@ if __name__ == '__main__':
                           Tfinal=100,
                           Tinterval=20,
                           step_duration=1000000))
-    lmp.write_input(output_dir=system_id, lmp_input_fname='lmp.in')
+    lmp.write_lammps(output_dir=system_id)
 
-    job = pmd.Job(jobname=system_id,
-                  project='GT-rramprasad3-CODA20',
-                  nodes=2,
-                  ppn=24,
-                  walltime='72:00:00')
-    job.write_pbs(output_dir=system_id, pbs_fname='job.pbs')
+    job = pmd.Torque(run_lammps=lmp,
+                     jobname=system_id,
+                     project='GT-rramprasad3-CODA20',
+                     nodes=2,
+                     ppn=24,
+                     walltime='72:00:00')
+    job.write_job(output_dir=system_id, pbs_fname='job.pbs')

@@ -38,16 +38,16 @@ for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:
     s.write_data(output_dir=smiles)
 
     # Customize LAMMPS simulation and make the input file
-    lmp = pmd.Lammps(s)
+    lmp = pmd.Lammps(read_data_from=s)
     lmp.add_procedure(pmd.Minimization())
     lmp.add_procedure(pmd.Equilibration())
     lmp.add_procedure(pmd.TgMeasurement())
-    lmp.write_input(output_dir=smiles)
+    lmp.write_lammps(output_dir=smiles)
 
     # Create job scheduler file
-    job = pmd.Job(jobname=smiles, project='Your-project-id',
-                  nodes=2, ppn=24, walltime='48:00:00')
-    job.write_pbs(output_dir=smiles)
+    job = pmd.Torque(run_lammps=lmp, jobname=smiles, project='Your-project-id',
+                     nodes=2, ppn=24, walltime='48:00:00')
+    job.write_job(output_dir=smiles)
 ```
 
 ## Installation

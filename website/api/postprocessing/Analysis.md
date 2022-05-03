@@ -23,3 +23,31 @@ result file obtained from TgMeasurement Procedure
 
 - `Tg` _int_ - Glass transition temperature of the system
 
+### calculate\_MSD
+
+```python
+def calculate_MSD(r, ir, box_bounds, id2type=[])
+```
+
+Method to calculate mean squared displacement for each type as given in
+`id2type`; NOTE: does NOT do any sort of block averaging; assumes mass = 1
+for all beads; does not account for changes in box size
+
+**Arguments**:
+
+- `r` - unscaled (but wrapped) coordinates (format as read in from
+  `read_lammpstrj`)
+  
+- `ir` - image flags (format as read in from `read_lammpstrj`)
+  
+- `box_bounds` - boundaries of the box (format as read in from
+  `read_lammpstrj`)
+  
+- `id2type` - array that maps atom id to type (format as read in from
+  `read_lammpstrj`)
+  
+
+**Returns**:
+
+- `msd_dict` - dict of the calculated MSDs for each type
+

@@ -1,3 +1,9 @@
+from ast import Str
+from typing import TypeVar
+
+System = TypeVar("System", bound="System")
+
+
 class System:
     '''Template object to contain System initialization settings
 
@@ -20,20 +26,19 @@ class System:
                             provided but not both (providing both will
                             result in an error); default: `None`
 
-        data_fname(str): File name of the data file, which will be read in by LAMMPS 
-                         [read_data](https://docs.lammps.org/read_data.html) command,
-                         only enter it at instantialization if you will not use the
-                         `write_data` function
+        data_fname (str): File name of the output data file, which will be read in by 
+                         LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
+                         command
     '''
 
     def __init__(self,
                  smiles: str,
-                 density: float,
                  force_field: str,
+                 density: float,
                  natoms_total: int,
                  natoms_per_chain: int = None,
                  mw_per_chain: int = None,
-                 data_fname: str = ''):
+                 data_fname: str = 'amor_data.lmps'):
 
         if (force_field != 'opls' and force_field != 'gaff2'):
             raise Exception('Force field options are opls and gaff2')
@@ -47,27 +52,61 @@ class System:
                 'One of natoms_per_chain or mw_per_chain has to be provided')
 
         self._smiles = smiles
+        self._density = density
+        self._force_field = force_field
         self._mw_per_chain = mw_per_chain
         self._natoms_per_chain = natoms_per_chain
         self._natoms_total = natoms_total
-        self._density = density
+        self._data_fname = data_fname
 
-        # These can be accessed by Lammps objects
-        self.data_fname = data_fname
-        self.force_field = force_field
+    def get_data_fname(self) -> str:
+        return self._data_fname
 
-    def write_data(self,
-                   output_dir: str,
-                   data_fname: str = 'amor_data.lmps',
-                   cleanup: bool = True) -> None:
+    def get_force_field(self) -> str:
+        return self._force_field
+
+    def update_smiles(self, smiles: str) -> System:
+        '''Method to update the SMILES of this system
+
+        Parameters:
+            smiles (str): Updated SMILES string
+        
+        Returns:
+            system (System): System instance itself (builder design pattern)
+        '''
+        self._smiles = smiles
+        return self
+
+    def update_natoms_total(self, natoms_total: int) -> System:
+        '''Method to update total number of atoms of the system
+
+        Parameters:
+            natoms_total (int): Updated total number of atoms
+        
+        Returns:
+            system (System): System instance itself (builder design pattern)
+        '''
+        self._natoms_total = natoms_total
+        return self
+
+    def update_force_field(self, force_field: Str) -> System:
+        '''Method to update force field of the system
+
+        Parameters:
+            force_field (str): Updated force field
+        
+        Returns:
+            system (System): System instance itself (builder design pattern)
+        '''
+        self._force_field = force_field
+        return self
+
+    def write_data(self, output_dir: str, cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
         field parameters)
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
-
-        data_fname (str): File name of the data file, which will be read in by LAMMPS 
-                          [read_data](https://docs.lammps.org/read_data.html) command
 
         cleanup (bool): Whether to clean up files other than the LAMMPS data file PSP
                         generated
@@ -76,7 +115,6 @@ class System:
             None
         '''
 
-        self.data_fname = data_fname
         try:
             from rdkit import Chem
         except:
@@ -117,9 +155,9 @@ class System:
         amor.Build()
 
         if self.force_field == 'opls':
-            amor.get_opls(output_fname=data_fname)
+            amor.get_opls(output_fname=self._data_fname)
         elif self.force_field == 'gaff2':
-            amor.get_gaff2(output_fname=data_fname,
+            amor.get_gaff2(output_fname=self._data_fname,
                            atom_typing='antechamber',
                            swap_dict={
                                'ns': 'n',

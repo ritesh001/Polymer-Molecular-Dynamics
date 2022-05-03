@@ -5,7 +5,7 @@ from io import TextIOWrapper
 class Procedure(ABC):
 
     @abstractmethod
-    def write_input(self):
+    def write_lammps(self):
         pass
 
 
@@ -39,7 +39,7 @@ class Minimization(Procedure):
         self._maxiter = maxiter
         self._maxeval = maxeval
 
-    def write_input(self, f: TextIOWrapper):
+    def write_lammps(self, f: TextIOWrapper):
         f.write('### Minimization\n')
         f.write('{:<15} {}\n'.format('min_style', self._min_style))
         f.write('{:<15} {} {} {} {}\n'.format('minimize', self._etol,
@@ -114,7 +114,7 @@ class Equilibration(Procedure):
         for i in self._eq_step:
             self._eq_totaltime += i[1]
 
-    def write_input(self, f: TextIOWrapper):
+    def write_lammps(self, f: TextIOWrapper):
         f.write('### Equilibration\n')
         f.write(
             '{:<15} dump_eq all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
@@ -186,7 +186,7 @@ class NPT(Procedure):
         self._dump_fname = dump_fname
         self._reset_timestep = reset_timestep
 
-    def write_input(self, f: TextIOWrapper):
+    def write_lammps(self, f: TextIOWrapper):
         f.write('### NPT simulation\n')
         f.write(
             '{:<15} dump_npt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
@@ -238,7 +238,7 @@ class NVT(Procedure):
         self._dump_fname = dump_fname
         self._reset_timestep = reset_timestep
 
-    def write_input(self, f: TextIOWrapper):
+    def write_lammps(self, f: TextIOWrapper):
         f.write('### NVT simulation\n')
         f.write(
             '{:<15} dump_nvt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
@@ -302,7 +302,7 @@ class TgMeasurement(Procedure):
         self._dump_fname = dump_fname
         self._result_fname = result_fname
 
-    def write_input(self, f: TextIOWrapper):
+    def write_lammps(self, f: TextIOWrapper):
         f.write('### Production - Tg measurement\n')
         f.write(
             '{:<15} dump_Tg all custom 10000 {} id mol type q xs ys zs ix iy iz\n'

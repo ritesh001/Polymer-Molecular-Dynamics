@@ -65,16 +65,17 @@ function HomepageHeader() {
                 "    s.write_data(output_dir=smiles)\n" +
                 "\n" +
                 "    # Customize LAMMPS simulation and make the input file\n" +
-                "    lmp = pmd.Lammps(s)\n" +
+                "    lmp = pmd.Lammps(read_data_from=s)\n" +
                 "    lmp.add_procedure(pmd.Minimization())\n" +
                 "    lmp.add_procedure(pmd.Equilibration())\n" +
                 "    lmp.add_procedure(pmd.TgMeasurement())\n" +
-                "    lmp.write_input(output_dir=smiles)\n" +
+                "    lmp.write_lammps(output_dir=smiles)\n" +
                 "\n" +
                 "    # Create job scheduler file\n" +
-                "    job = pmd.Job(jobname=smiles, project='Your-pid',\n" +
-                "                  nodes=2, ppn=24, walltime='48:00:00')\n" +
-                "    job.write_pbs(output_dir=smiles)"}
+                "    job = pmd.Torque(run_lammps=lmp, jobname=smiles,\n" +
+                "                     project='Your-pid', nodes=2, ppn=24,\n" +
+                "                     walltime='48:00:00')\n" +
+                "    job.write_job(output_dir=smiles)"}
             </CodeBlock>
           </div>
         </div>

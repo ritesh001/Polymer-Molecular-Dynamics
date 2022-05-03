@@ -3,13 +3,13 @@ sidebar_label: Job
 title: core.Job
 ---
 
-## Job Objects
+## Torque Objects
 
 ```python
-class Job()
+class Torque(Job)
 ```
 
-Template object to contain job initialization settings
+Template Torque object to contain Torque job initialization settings
 
 **Attributes**:
 
@@ -19,29 +19,47 @@ Template object to contain job initialization settings
 - `ppn` _int_ - Number of processors (CPU)
 - `walltime` _str_ - Job walltime
 - `gpus` _int_ - Number of processors (GPU)
+- `job_fname` _str_ - Name of the PBS input file; default: `job.pbs`
 
-### write\_pbs
+### write\_job
 
 ```python
-def write_pbs(output_dir: str, pbs_fname: str) -> None
+def write_job(output_dir: str) -> None
 ```
 
-Method to make the PBS job scheduler input file
+Method to make the Torque job scheduler input file
 
 **Arguments**:
 
-- `output_dir` _str_ - Directory for the PBS input file
-- `pbs_fname` _str_ - Name of the PBS input file
+- `output_dir` _str_ - Directory for the Torque input file
   
 
 **Returns**:
 
   None
 
-### write\_slurm
+## Slurm Objects
 
 ```python
-def write_slurm(output_dir: str, slurm_fname: str) -> None
+class Slurm(Job)
+```
+
+Template Slurm object to contain Slurm job initialization settings
+
+**Attributes**:
+
+- `jobname` _str_ - Job name
+- `project` _str_ - Project name
+- `nodes` _int_ - Number of nodes
+- `ppn` _int_ - Number of processors (CPU)
+- `walltime` _str_ - Job walltime
+- `gpus` _int_ - Number of processors (GPU)
+- `job_fname` _str_ - Name of the PBS input file; default: `job.pbs`
+
+### write\_job
+
+```python
+def write_job(output_dir: str) -> None
 ```
 
 Method to make the Slurm job scheduler input file
@@ -49,7 +67,6 @@ Method to make the Slurm job scheduler input file
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the Slurm input file
-- `slurm_fname` _str_ - Name of the Slurm input file
   
 
 **Returns**:
