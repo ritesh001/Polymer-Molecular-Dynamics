@@ -96,10 +96,11 @@ class Lammps:
         self._procedures.append(procedure)
         return self
 
-    def write_lammps(self, output_dir: str) -> None:
+    def write_lammps(self, output_dir: str = '.') -> None:
         '''Method to make LAMMPS input files
         Parameters:
-            output_dir (str): Directory for all the LAMMPS input and data files
+            output_dir (str): Directory for the generated LAMMPS input file
+                              ; default: '.'
 
         Returns:
             None

@@ -42,4 +42,4 @@ if __name__ == '__main__':
                      nodes=2,
                      ppn=24,
                      walltime='72:00:00')
-    job.write_job(output_dir=system_id, pbs_fname='job.pbs')
+    job.write_job(output_dir=system_id)

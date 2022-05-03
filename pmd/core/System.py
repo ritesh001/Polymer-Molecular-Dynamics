@@ -27,8 +27,8 @@ class System:
                             result in an error); default: `None`
 
         data_fname (str): File name of the output data file, which will be read in by 
-                         LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
-                         command
+                          LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
+                          command; default: `data.lmps`
     '''
 
     def __init__(self,
@@ -38,7 +38,7 @@ class System:
                  natoms_total: int,
                  natoms_per_chain: int = None,
                  mw_per_chain: int = None,
-                 data_fname: str = 'amor_data.lmps'):
+                 data_fname: str = 'data.lmps'):
 
         if (force_field != 'opls' and force_field != 'gaff2'):
             raise Exception('Force field options are opls and gaff2')
@@ -101,15 +101,16 @@ class System:
         self._force_field = force_field
         return self
 
-    def write_data(self, output_dir: str, cleanup: bool = True) -> None:
+    def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
         field parameters)
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
+                          ; default: '.'
 
-        cleanup (bool): Whether to clean up files other than the LAMMPS data file PSP
-                        generated
+        cleanup (bool): Whether to clean up files other than the LAMMPS data 
+                        file PSP generated
         
         Returns:
             None

@@ -1,4 +1,4 @@
 ---
 sidebar_position: 2
-title: Calculate gas diffusivity
+title: Gas diffusivity calculation
 ---
