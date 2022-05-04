@@ -2,6 +2,30 @@ import numpy as np
 import sys
 
 
+def _read_header(f):
+    f.readline()  # ITEM: TIMESTEP
+    timestep = int(f.readline())
+
+    f.readline()  # ITEM: NUMBER OF ATOMS
+    num_atoms = int(f.readline())
+
+    f.readline()  # ITEM: BOX BOUNDS xx yy zz
+    line = f.readline()
+    line = line.split()
+    xlo = float(line[0])
+    xhi = float(line[1])
+    line = f.readline()
+    line = line.split()
+    ylo = float(line[0])
+    yhi = float(line[1])
+    line = f.readline()
+    line = line.split()
+    zlo = float(line[0])
+    zhi = float(line[1])
+
+    return timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi
+
+
 def read_lammpstrj(fname,
                    num_frames=float('inf'),
                    skip_beginning=0,
@@ -44,30 +68,6 @@ def read_lammpstrj(fname,
                  molecules (if available, may be None)
     '''
 
-    # helper function to read in the header and return the timestep, number of atoms, and box boundaries
-    def read_header(f):
-        f.readline()  # ITEM: TIMESTEP
-        timestep = int(f.readline())
-
-        f.readline()  # ITEM: NUMBER OF ATOMS
-        num_atoms = int(f.readline())
-
-        f.readline()  # ITEM: BOX BOUNDS xx yy zz
-        line = f.readline()
-        line = line.split()
-        xlo = float(line[0])
-        xhi = float(line[1])
-        line = f.readline()
-        line = line.split()
-        ylo = float(line[0])
-        yhi = float(line[1])
-        line = f.readline()
-        line = line.split()
-        zlo = float(line[0])
-        zhi = float(line[1])
-
-        return timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi
-
     #allow reading from standard input
     if not fname or fname == 'stdin':
         f = sys.stdin
@@ -76,7 +76,7 @@ def read_lammpstrj(fname,
 
     # read in the initial header
     frame = 0
-    init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = read_header(f)
+    init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = _read_header(f)
 
     # skip the beginning frames, if requested
     for skippedframe in range(skip_beginning):
@@ -84,7 +84,8 @@ def read_lammpstrj(fname,
         # loop over the atoms lines
         for atom in range(num_atoms):
             f.readline()
-        init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = read_header(f)
+        init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = _read_header(
+            f)
 
     # preallocate arrays, if possible
     if num_frames < float('inf'):
@@ -222,7 +223,7 @@ def read_lammpstrj(fname,
 
         # try to read in a new header
         try:
-            my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo, my_zhi = read_header(
+            my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo, my_zhi = _read_header(
                 f)
         except:
             print("WARNING: hit end of file when reading in {} at frame {}".
@@ -336,31 +337,6 @@ def read_lammpstrj_by_type(fname,
                   (if available, may be None)
     '''
 
-    # helper function to read in the header and return the timestep, number of
-    # atoms, and box boundaries
-    def read_header(f):
-        f.readline()  # ITEM: TIMESTEP
-        timestep = int(f.readline())
-
-        f.readline()  # ITEM: NUMBER OF ATOMS
-        num_atoms = int(f.readline())
-
-        f.readline()  # ITEM: BOX BOUNDS xx yy zz
-        line = f.readline()
-        line = line.split()
-        xlo = float(line[0])
-        xhi = float(line[1])
-        line = f.readline()
-        line = line.split()
-        ylo = float(line[0])
-        yhi = float(line[1])
-        line = f.readline()
-        line = line.split()
-        zlo = float(line[0])
-        zhi = float(line[1])
-
-        return timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi
-
     #allow reading from standard input
     if not fname or fname == 'stdin':
         f = sys.stdin
@@ -369,7 +345,7 @@ def read_lammpstrj_by_type(fname,
 
     # read in the initial header
     frame = 0
-    init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = read_header(f)
+    init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = _read_header(f)
 
     # skip the beginning frames, if requested
     for skippedframe in range(skip_beginning):
@@ -378,7 +354,8 @@ def read_lammpstrj_by_type(fname,
         # loop over the atoms lines
         for atom in range(num_atoms):
             f.readline()
-        init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = read_header(f)
+        init_timestep, num_atoms, xlo, xhi, ylo, yhi, zlo, zhi = _read_header(
+            f)
 
     # preallocate arrays, if possible
     if num_frames < float('inf'):
@@ -539,7 +516,7 @@ def read_lammpstrj_by_type(fname,
 
         # try to read in a new header
         try:
-            my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo, my_zhi = read_header(
+            my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo, my_zhi = _read_header(
                 f)
         except:
             print("WARNING: hit end of file when reading in {} at frame {}".

@@ -1,6 +1,8 @@
 from ast import Str
 from typing import TypeVar
 
+from pmd.util.Util import HiddenPrints
+
 System = TypeVar("System", bound="System")
 
 
@@ -151,11 +153,12 @@ class System:
             length = self._ru_per_chain
         nchains = round(self._natoms_total / (natoms_per_RU * length + 2))
 
-        print('--------System Stats--------')
+        print('-----------------------System Stats-----------------------')
         print('SMILES:', self._smiles)
         print('Natom_per_RU:', natoms_per_RU)
         print('length:', length)
         print('Nchains:', nchains)
+        print('--------Creating the system, this may take a while--------')
 
         psp_input_data = {
             'ID': 'Poly',
@@ -167,21 +170,24 @@ class System:
             'LeftCap': '[*][H]',
             'RightCap': '[*][H]'
         }
-        amor = ab.Builder(pd.DataFrame(data=psp_input_data),
-                          density=self._density,
-                          OutDir=output_dir)
-        amor.Build()
 
-        if self.force_field == 'opls':
-            amor.get_opls(output_fname=self._data_fname)
-        elif self.force_field == 'gaff2':
-            amor.get_gaff2(output_fname=self._data_fname,
-                           atom_typing='antechamber',
-                           swap_dict={
-                               'ns': 'n',
-                               'nt': 'n',
-                               'nv': 'nh'
-                           })
+        with HiddenPrints():
+            amor = ab.Builder(pd.DataFrame(data=psp_input_data, index=[0]),
+                              density=self._density,
+                              OutDir=output_dir)
+            amor.Build()
+
+            if self._force_field == 'opls':
+                amor.get_opls(output_fname=self._data_fname)
+            elif self._force_field == 'gaff2':
+                amor.get_gaff2(output_fname=self._data_fname,
+                               atom_typing='antechamber',
+                               swap_dict={
+                                   'ns': 'n',
+                                   'nt': 'n',
+                                   'nv': 'nh'
+                               })
+        print('--------------- System successfully created---------------')
 
         if cleanup:
             import shutil

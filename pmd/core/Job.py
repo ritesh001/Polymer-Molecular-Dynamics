@@ -30,7 +30,7 @@ class Torque(Job):
                  nodes: int,
                  ppn: int,
                  walltime: str,
-                 gpus: int = 0,
+                 gpus: int = None,
                  job_fname: str = 'job.pbs'):
         self._run_lammps = run_lammps
         self._jobname = jobname
@@ -53,33 +53,33 @@ class Torque(Job):
 
         Util.build_dir(output_dir)
         with open(output_dir + '/' + self._job_fname, 'w') as f:
-            f.write('#PBS -A {}\n'.format(self.project))
+            f.write('#PBS -A {}\n'.format(self._project))
             f.write('#PBS -q inferno\n')
-            f.write('#PBS -N {}\n'.format(self.jobname))
-            if self._gpus == 0:
-                f.write('#PBS -l nodes={}:ppn={}\n'.format(
-                    self._nodes, self._ppn))
-            else:
+            f.write('#PBS -N {}\n'.format(self._jobname))
+            if self._gpus:
                 f.write(
                     '#PBS -l nodes={}:ppn={}:gpus={}:RTX6000:default\n'.format(
                         self._nodes, self._ppn, self._gpus))
+            else:
+                f.write('#PBS -l nodes={}:ppn={}\n'.format(
+                    self._nodes, self._ppn))
             f.write('#PBS -l walltime={}\n'.format(self._walltime))
             f.write('#PBS -j oe\n')
             f.write('#PBS -o out.$PBS_JOBID\n')
             f.write('\n')
             f.write('cd $PBS_O_WORKDIR\n')
-            if self._gpus == 0:
-                f.write(
-                    'module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
-                f.write('mpirun -np {} lmp -in {}\n'.format(
-                    self._nodes * self._ppn,
-                    self._run_lammps.get_lmp_input_fname()))
-            else:
+            if self._gpus:
                 f.write(
                     'module load gcc/8.3.0 mvapich2/2.3.2 lammps-gpu/29Oct20\n'
                 )
                 f.write('mpirun -np {} lmp -sf gpu -pk gpu {} -in {}\n'.format(
                     self._nodes * self._ppn, self._gpus,
+                    self._run_lammps.get_lmp_input_fname()))
+            else:
+                f.write(
+                    'module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
+                f.write('mpirun -np {} lmp -in {}\n'.format(
+                    self._nodes * self._ppn,
                     self._run_lammps.get_lmp_input_fname()))
 
 
