@@ -61,11 +61,11 @@ class Lammps:
                  lmp_input_fname: str = 'lmp.in'):
 
         if not read_data_from and not read_restart_from:
-            raise Exception(
+            raise ValueError(
                 'One of read_data_from and read_restart_from has to be defined'
             )
         elif read_data_from and read_restart_from:
-            raise Exception(
+            raise ValueError(
                 'Only one of read_data_from and read_restart_from can be defined'
             )
 

@@ -48,17 +48,17 @@ class System:
                  data_fname: str = 'data.lmps'):
 
         if (force_field != 'opls' and force_field != 'gaff2'):
-            raise Exception('Force field options are opls and gaff2')
+            raise ValueError('Force field options are opls and gaff2')
 
         chain_length_options = [natoms_per_chain, mw_per_chain, ru_per_chain]
         num_given_options = sum(option is not None
                                 for option in chain_length_options)
         if num_given_options == 0:
-            raise Exception('One of natoms_per_chain, mw_per_chain, and '
-                            'ru_per_chain has to be provided')
+            raise ValueError('One of natoms_per_chain, mw_per_chain, and '
+                             'ru_per_chain has to be provided')
         elif num_given_options > 1:
-            raise Exception('Only one of natoms_per_chain, mw_per_chain, and '
-                            'ru_per_chain can be provided')
+            raise ValueError('Only one of natoms_per_chain, mw_per_chain, and '
+                             'ru_per_chain can be provided')
 
         self._smiles = smiles
         self._density = density
@@ -128,15 +128,16 @@ class System:
 
         try:
             from rdkit import Chem
-        except:
-            raise Exception('System\'s write_data function requires RDKit to '
-                            'function properly, please install RDKit')
+        except ImportError:
+            raise ImportError(
+                'System\'s write_data function requires RDKit to '
+                'function properly, please install RDKit')
         try:
             import psp.AmorphousBuilder as ab
             import pandas as pd
-        except:
-            raise Exception('System\'s write_data function requires PSP to '
-                            'function properly, please install PSP')
+        except ImportError:
+            raise ImportError('System\'s write_data function requires PSP to '
+                              'function properly, please install PSP')
         import os
 
         mol = Chem.MolFromSmiles(self._smiles)
@@ -156,15 +157,19 @@ class System:
         print('length:', length)
         print('Nchains:', nchains)
 
-        psp_csv_fname = 'psp_input.csv'
-        psp_csv_fpath = os.path.join(output_dir, psp_csv_fname)
-        with open(psp_csv_fpath, 'w') as f:
-            f.write('ID,smiles,Len,Num,NumConf,Loop,LeftCap,RightCap\n')
-            f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(
-                self._smiles, length, nchains))
-
-        input_df = pd.read_csv(psp_csv_fpath, low_memory=False)
-        amor = ab.Builder(input_df, density=self._density, OutDir=output_dir)
+        psp_input_data = {
+            'ID': 'Poly',
+            'smiles': self._smiles,
+            'Len': length,
+            'Num': nchains,
+            'NumConf': 1,
+            'Loop': False,
+            'LeftCap': '[*][H]',
+            'RightCap': '[*][H]'
+        }
+        amor = ab.Builder(pd.DataFrame(data=psp_input_data),
+                          density=self._density,
+                          OutDir=output_dir)
         amor.Build()
 
         if self.force_field == 'opls':
