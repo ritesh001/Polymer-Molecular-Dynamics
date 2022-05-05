@@ -1,4 +1,5 @@
 from pmd.core.Lammps import Lammps
+from pmd.core.Pmd import Pmd
 from pmd.core.Job import Torque, Slurm
 from pmd.core.System import System, SolventSystem
 from pmd.core.Procedure import Minimization, Equilibration, TgMeasurement, NVT, NPT

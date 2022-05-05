@@ -9,18 +9,22 @@ title: core.Procedure
 class Minimization(Procedure)
 ```
 
-Perform an energy minimization of the system, by iteratively adjusting atom coordinates.
-Iterations are terminated when one of the stopping criteria is satisfied. At that point the
-configuration will hopefully be in local potential energy minimum.
+Perform an energy minimization of the system, by iteratively adjusting
+atom coordinates. Iterations are terminated when one of the stopping
+criteria is satisfied. At that point the configuration will hopefully be in
+local potential energy minimum.
 
 **Attributes**:
 
-- `min_style` _str_ - Minimization algorithm, see [here](https://docs.lammps.org/min_style.html)
-  for all options; default: `cg`
+- `min_style` _str_ - Minimization algorithm, see
+  [here](https://docs.lammps.org/min_style.html) for all
+  options; default: `cg`
   
-- `etol` _float_ - Stopping tolerance for energy (unitless); default: `10**(-6)`
+- `etol` _float_ - Stopping tolerance for energy (unitless); default:
+  `10**(-6)`
   
-- `ftol` _float_ - Stopping tolerance for force (force units); default: `10**(-8)`
+- `ftol` _float_ - Stopping tolerance for force (force units); default:
+  `10**(-8)`
   
 - `maxiter` _int_ - Max iterations of minimizer; default: `10**5`
   
@@ -32,8 +36,8 @@ configuration will hopefully be in local potential energy minimum.
 class Equilibration(Procedure)
 ```
 
-Perform a 21-step amorphous polymer equilibration process.
-Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
+Perform a 21-step amorphous polymer equilibration process. Ref: Abbott,
+Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
 
 **Attributes**:
 
@@ -41,9 +45,11 @@ Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 201
   
 - `Peq` _float_ - Target equilibration pressure; default: `1`
   
-- `Tmax` _float_ - Maximum temperature during the equilibration; default: `600`
+- `Tmax` _float_ - Maximum temperature during the equilibration; default:
+  `600`
   
-- `Pmax` _float_ - Maximum pressure during the equilibration; default: `50000`
+- `Pmax` _float_ - Maximum pressure during the equilibration; default:
+  `50000`
   
 - `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
   
@@ -51,8 +57,8 @@ Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 201
   
 - `dump_fname` _str_ - Name of the dump file; default: `equil.lammpstrj`
   
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
-  `True`
+- `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
+  procedure; default: `True`
 
 ## NPT Objects
 
@@ -81,8 +87,8 @@ and barostat).
   
 - `dump_fname` _str_ - Name of the dump file; default: `npt.lammpstrj`
   
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
-  `False`
+- `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
+  procedure; default: `False`
 
 ## NVT Objects
 
@@ -104,8 +110,8 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
   
 - `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
   
-- `reset_timestep` _bool_ - Whether to reset timestep after the procedure; default:
-  `False`
+- `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
+  procedure; default: `False`
 
 ## TgMeasurement Objects
 
@@ -118,14 +124,17 @@ by iteratively cooling the system and equilibrate.
 
 **Attributes**:
 
-- `Tinit` _float_ - Initial temperature of the cooling process; default: `500`
+- `Tinit` _float_ - Initial temperature of the cooling process; default:
+  `500`
   
-- `Tfinal` _float_ - Final temperature of the cooling process; default: `100`
+- `Tfinal` _float_ - Final temperature of the cooling process; default:
+  `100`
   
-- `Tinterval` _float_ - Temperature interval of the cooling process; default: `20`
+- `Tinterval` _float_ - Temperature interval of the cooling process
+  ; default: `20`
   
-- `step_duration` _int_ - Duration of each temperature step (timestep unit); default:
-  `1000000`
+- `step_duration` _int_ - Duration of each temperature step
+  (timestep unit); default: `1000000`
   
 - `pressure` _float_ - Pressure during the cooling process; default: `1`
   
@@ -133,7 +142,9 @@ by iteratively cooling the system and equilibrate.
   
 - `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
   
-- `dump_fname` _str_ - Name of the dump file; default: `Tg_measurement.lammpstrj`
+- `dump_fname` _str_ - Name of the dump file; default:
+  `Tg_measurement.lammpstrj`
   
-- `result_fname` _str_ - Name of the result file; default: `temp_vs_density.txt`
+- `result_fname` _str_ - Name of the result file; default:
+  `temp_vs_density.txt`
 

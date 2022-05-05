@@ -2,6 +2,7 @@
   "items": [
     "core/Job",
     "core/Lammps",
+    "core/Pmd",
     "core/Procedure",
     "core/System"
   ],

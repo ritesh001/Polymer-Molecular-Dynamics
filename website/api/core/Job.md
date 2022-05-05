@@ -49,12 +49,11 @@ Template Slurm object to contain Slurm job initialization settings
 **Attributes**:
 
 - `jobname` _str_ - Job name
-- `project` _str_ - Project name
 - `nodes` _int_ - Number of nodes
-- `ppn` _int_ - Number of processors (CPU)
-- `walltime` _str_ - Job walltime
+- `ntasks_per_node` _int_ - Number of processors (CPU)
+- `time` _str_ - Job time
 - `gpus` _int_ - Number of processors (GPU)
-- `job_fname` _str_ - Name of the PBS input file; default: `job.pbs`
+- `job_fname` _str_ - Name of the Slurm input file; default: `job.sh`
 
 ### write\_job
 
