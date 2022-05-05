@@ -74,6 +74,14 @@ class System:
     def smiles(self) -> str:
         return self._smiles
 
+    @property
+    def data_fname(self) -> str:
+        return self._data_fname
+
+    @property
+    def force_field(self) -> str:
+        return self._force_field
+
     @smiles.setter
     def smiles(self, smiles: str):
         self._smiles = smiles
@@ -99,13 +107,6 @@ class System:
             raise ImportError(
                 'System\'s write_data function requires RDKit to '
                 'function properly, please install RDKit')
-        try:
-            import psp.AmorphousBuilder as ab
-            import pandas as pd
-        except ImportError:
-            raise ImportError('System\'s write_data function requires PSP to '
-                              'function properly, please install PSP')
-        import os
 
         mol = Chem.MolFromSmiles(self._smiles)
         natoms_per_RU = mol.GetNumAtoms(onlyExplicit=0) - 2
@@ -190,9 +191,14 @@ class SolventSystem(System):
                  mw_per_chain: int = None,
                  ru_per_chain: int = None,
                  data_fname: str = 'data.lmps'):
-        super().__init__(smiles, force_field, density, natoms_total,
-                         natoms_per_chain, mw_per_chain, ru_per_chain,
-                         data_fname)
+        super().__init__(smiles,
+                         force_field,
+                         density,
+                         natoms_total,
+                         natoms_per_chain=natoms_per_chain,
+                         mw_per_chain=mw_per_chain,
+                         ru_per_chain=ru_per_chain,
+                         data_fname=data_fname)
 
         self._solvent_smiles = solvent_smiles
         self._ru_nsolvent_ratio = ru_nsolvent_ratio
@@ -216,9 +222,17 @@ class SolventSystem(System):
             from rdkit import Chem
         except ImportError:
             raise ImportError(
-                'System\'s write_data function requires RDKit to '
+                'SolventSystem\'s write_data function requires RDKit to '
                 'function properly, please install RDKit')
 
+        try:
+            import numpy as np
+        except ImportError:
+            raise ImportError(
+                'SolventSystem\'s write_data function requires numpy to '
+                'function properly, please install numpy')
+
+        # Get the number of atoms of a repeating unit and determine the polymer chain length
         mol = Chem.MolFromSmiles(self._smiles)
         natoms_per_ru = mol.GetNumAtoms(onlyExplicit=0) - 2
         if self._natoms_per_chain:
@@ -238,13 +252,6 @@ class SolventSystem(System):
             length * natoms_per_ru + 2)
         nchains = round(self._natoms_total / natoms_total_singlechain)
         nsolvents = round(self._ru_nsolvent_ratio * length * nchains)
-        nchains = round(self._natoms_total / (natoms_per_ru * length + 2))
-
-        print('--------System Stats--------')
-        print('SMILES:', self._smiles)
-        print('Natom_per_RU:', natoms_per_ru)
-        print('length:', length)
-        print('Nchains:', nchains)
 
         print('--------Polymer Stats--------')
         print('Polymer SMILES:', self._smiles)
@@ -270,8 +277,8 @@ class SolventSystem(System):
             'Num': [nsolvents, nchains],
             'NumConf': [1, 1],
             'Loop': [False, False],
-            'LeftCap': [None, '[*][H]'],
-            'RightCap': [None, '[*][H]']
+            'LeftCap': [np.nan, '[*][H]'],
+            'RightCap': [np.nan, '[*][H]']
         }
 
         _run_psp(psp_input_data, self._density, self._force_field,
@@ -308,20 +315,25 @@ def _run_psp(input_data: dict, density: float, force_field: str,
 
     if cleanup:
         import os, shutil
-        dnames = ['molecules', 'packmol', 'pysimm']
+        force_field_dname = ['ligpargen'
+                             ] if force_field == 'opls' else ['pysimm']
+        dnames = ['molecules', 'packmol'] + force_field_dname
         for dir in dnames:
             try:
                 shutil.rmtree(os.path.join(output_dir, dir))
-            except BaseException:
-                print('problem removing {} folder during cleanup'.format(dir))
+            except FileNotFoundError:
+                pass
 
         fnames = ['amor_model.data', 'amor_model.vasp']
         for file in fnames:
             try:
                 os.remove(os.path.join(output_dir, file))
-            except BaseException:
-                print('problem removing {} file during cleanup'.format(file))
-        try:
-            os.remove("output_MB.csv")
-        except BaseException:
-            print('problem removing output_MB.csv during cleanup')
+            except FileNotFoundError:
+                pass
+
+        fnames = ['output_MB.csv', 'molecules.csv']
+        for file in fnames:
+            try:
+                os.remove(file)
+            except FileNotFoundError:
+                pass

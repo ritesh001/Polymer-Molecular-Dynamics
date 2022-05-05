@@ -118,11 +118,11 @@ class Lammps:
             f.write('{:<15} full\n'.format('atom_style'))
             f.write('{:<15} {}\n'.format('units', self._units))
             if self._read_data_from:
-                f.write('{:<15} {}\n'.format(
-                    'read_data', self._read_data_from.get_data_fname()))
+                f.write('{:<15} {}\n'.format('read_data',
+                                             self._read_data_from.data_fname))
                 f.write('\n')
                 # TODO: move to ForceField Object?
-                force_field = self._read_data_from.get_force_field()
+                force_field = self._read_data_from.force_field
                 if (force_field == 'gaff2'):
                     f.write('{:<15} lj/cut/coul/long 12.0 12.0\n'.format(
                         'pair_style'))
