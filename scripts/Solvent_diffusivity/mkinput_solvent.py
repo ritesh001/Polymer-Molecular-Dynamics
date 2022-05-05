@@ -36,7 +36,6 @@ if __name__ == '__main__':
                                density=0.8,
                                natoms_total=5000,
                                natoms_per_chain=150)
-    system.write_data(output_dir=system_id)
 
     lmp = pmd.Lammps(read_data_from=system)
     lmp.add_procedure(pmd.Minimization())
@@ -54,7 +53,6 @@ if __name__ == '__main__':
                 Tfinal=300,
                 duration=200000000,
                 reset_timestep_before_run=True))
-    lmp.write_lammps(output_dir=system_id)
 
     job = pmd.Torque(run_lammps=lmp,
                      jobname=system_id,
@@ -62,4 +60,6 @@ if __name__ == '__main__':
                      nodes=3,
                      ppn=24,
                      walltime='72:00:00')
-    job.write_job(output_dir=system_id)
+
+    run = pmd.Pmd(system, lmp, job)
+    run.create(system_id, metadata=True)
