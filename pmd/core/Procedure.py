@@ -10,17 +10,21 @@ class Procedure(ABC):
 
 
 class Minimization(Procedure):
-    '''Perform an energy minimization of the system, by iteratively adjusting atom coordinates. 
-    Iterations are terminated when one of the stopping criteria is satisfied. At that point the 
-    configuration will hopefully be in local potential energy minimum.
+    '''Perform an energy minimization of the system, by iteratively adjusting
+    atom coordinates. Iterations are terminated when one of the stopping 
+    criteria is satisfied. At that point the configuration will hopefully be in
+    local potential energy minimum.
 
     Attributes:
-        min_style (str): Minimization algorithm, see [here](https://docs.lammps.org/min_style.html)
-                         for all options; default: `cg`   
+        min_style (str): Minimization algorithm, see 
+                         [here](https://docs.lammps.org/min_style.html) for all
+                         options; default: `cg`   
                          
-        etol (float): Stopping tolerance for energy (unitless); default: `10**(-6)`
+        etol (float): Stopping tolerance for energy (unitless); default: 
+                      `10**(-6)`
         
-        ftol (float): Stopping tolerance for force (force units); default: `10**(-8)`
+        ftol (float): Stopping tolerance for force (force units); default: 
+                      `10**(-8)`
         
         maxiter (int): Max iterations of minimizer; default: `10**5`
         
@@ -45,23 +49,24 @@ class Minimization(Procedure):
         f.write('{:<15} {} {} {} {}\n'.format('minimize', self._etol,
                                               self._ftol, self._maxiter,
                                               self._maxeval))
-        f.write('{:<15} 0\n'.format('reset_timestep'))
         f.write('\n')
         f.write('\n')
 
 
 class Equilibration(Procedure):
-    '''Perform a 21-step amorphous polymer equilibration process. 
-    Ref: Abbott, Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
+    '''Perform a 21-step amorphous polymer equilibration process. Ref: Abbott, 
+    Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
        
     Attributes:
         Teq (float): Target equilibration temperature; default: `300`
         
         Peq (float): Target equilibration pressure; default: `1`
         
-        Tmax (float): Maximum temperature during the equilibration; default: `600`
+        Tmax (float): Maximum temperature during the equilibration; default: 
+                      `600`
         
-        Pmax (float): Maximum pressure during the equilibration; default: `50000`
+        Pmax (float): Maximum pressure during the equilibration; default: 
+                      `50000`
         
         Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
         
@@ -69,8 +74,8 @@ class Equilibration(Procedure):
         
         dump_fname (str): Name of the dump file; default: `equil.lammpstrj`
         
-        reset_timestep (bool): Whether to reset timestep after the procedure; default:
-                               `True`
+        reset_timestep_before_run (bool): Whether to reset timestep after the 
+                                          procedure; default: `True`
     '''
 
     def __init__(self,
@@ -81,11 +86,11 @@ class Equilibration(Procedure):
                  Tdamp: str = '$(100.0*dt)',
                  Pdamp: str = '$(100.0*dt)',
                  dump_fname: str = 'equil.lammpstrj',
-                 reset_timestep: bool = True):
+                 reset_timestep_before_run: bool = True):
         self._Tdamp = Tdamp
         self._Pdamp = Pdamp
         self._dump_fname = dump_fname
-        self._reset_timestep = reset_timestep
+        self._reset_timestep_before_run = reset_timestep_before_run
         self._eq_totaltime = 0
         self._eq_step = [
             ['nvt', 50000, Tmax],
@@ -116,6 +121,9 @@ class Equilibration(Procedure):
 
     def write_lammps(self, f: TextIOWrapper):
         f.write('### Equilibration\n')
+        if self._reset_timestep_before_run:
+            f.write('{:<15} 0\n'.format('reset_timestep'))
+        f.write('\n')
         f.write(
             '{:<15} dump_eq all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
             .format('dump', self._dump_fname))
@@ -135,8 +143,6 @@ class Equilibration(Procedure):
             f.write('{:<15} step{}\n'.format('unfix', n + 1))
             f.write('\n')
         f.write('{:<15} dump_eq\n'.format('undump'))
-        if self._reset_timestep:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
         f.write('\n')
         f.write('\n')
 
@@ -162,8 +168,8 @@ class NPT(Procedure):
         
         dump_fname (str): Name of the dump file; default: `npt.lammpstrj`
         
-        reset_timestep (bool): Whether to reset timestep after the procedure; default:
-                               `False`
+        reset_timestep_before_run (bool): Whether to reset timestep after the 
+                                          procedure; default: `False`
     '''
 
     def __init__(self,
@@ -175,7 +181,7 @@ class NPT(Procedure):
                  Tdamp: str = '$(100.0*dt)',
                  Pdamp: str = '$(100.0*dt)',
                  dump_fname: str = 'npt.lammpstrj',
-                 reset_timestep: bool = False):
+                 reset_timestep_before_run: bool = False):
         self._duration = duration
         self._Tinit = Tinit
         self._Tfinal = Tfinal
@@ -184,10 +190,13 @@ class NPT(Procedure):
         self._Tdamp = Tdamp
         self._Pdamp = Pdamp
         self._dump_fname = dump_fname
-        self._reset_timestep = reset_timestep
+        self._reset_timestep_before_run = reset_timestep_before_run
 
     def write_lammps(self, f: TextIOWrapper):
         f.write('### NPT simulation\n')
+        if self._reset_timestep_before_run:
+            f.write('{:<15} 0\n'.format('reset_timestep'))
+        f.write('\n')
         f.write(
             '{:<15} dump_npt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
             .format('dump', self._dump_fname))
@@ -200,8 +209,6 @@ class NPT(Procedure):
         f.write('{:<15} fNPT\n'.format('unfix'))
         f.write('\n')
         f.write('{:<15} dump_npt\n'.format('undump'))
-        if self._reset_timestep:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
         f.write('\n')
         f.write('\n')
 
@@ -220,8 +227,8 @@ class NVT(Procedure):
         
         dump_fname (str): Name of the dump file; default: `nvt.lammpstrj`
         
-        reset_timestep (bool): Whether to reset timestep after the procedure; default:
-                               `False`
+        reset_timestep_before_run (bool): Whether to reset timestep after the 
+                                          procedure; default: `False`
     '''
 
     def __init__(self,
@@ -230,19 +237,25 @@ class NVT(Procedure):
                  Tfinal: float,
                  Tdamp: str = '$(100.0*dt)',
                  dump_fname: str = 'nvt.lammpstrj',
-                 reset_timestep: bool = False):
+                 reset_timestep_before_run: bool = False):
         self._duration = duration
         self._Tinit = Tinit
         self._Tfinal = Tfinal
         self._Tdamp = Tdamp
         self._dump_fname = dump_fname
-        self._reset_timestep = reset_timestep
+        self._reset_timestep_before_run = reset_timestep_before_run
 
     def write_lammps(self, f: TextIOWrapper):
         f.write('### NVT simulation\n')
+        if self._reset_timestep_before_run:
+            f.write('{:<15} 0\n'.format('reset_timestep'))
+        f.write('\n')
         f.write(
             '{:<15} dump_nvt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
             .format('dump', self._dump_fname))
+        f.write(
+            '{:<15} dump_image all image {} image.*.jpg type type\n'.format(
+                'dump', self._duration))
         f.write('{:<15} {} nvt.restart\n'.format('restart', self._duration))
         f.write('\n')
         f.write('{:<15} fNVT all nvt temp {} {} {}\n'.format(
@@ -251,8 +264,7 @@ class NVT(Procedure):
         f.write('{:<15} fNVT\n'.format('unfix'))
         f.write('\n')
         f.write('{:<15} dump_nvt\n'.format('undump'))
-        if self._reset_timestep:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
+        f.write('{:<15} dump_image\n'.format('undump'))
         f.write('\n')
         f.write('\n')
 
@@ -262,14 +274,17 @@ class TgMeasurement(Procedure):
     by iteratively cooling the system and equilibrate.
        
     Attributes:    
-        Tinit (float): Initial temperature of the cooling process; default: `500`
+        Tinit (float): Initial temperature of the cooling process; default: 
+                       `500`
         
-        Tfinal (float): Final temperature of the cooling process; default: `100`
+        Tfinal (float): Final temperature of the cooling process; default: 
+                        `100`
         
-        Tinterval (float): Temperature interval of the cooling process; default: `20`
+        Tinterval (float): Temperature interval of the cooling process
+                           ; default: `20`
         
-        step_duration (int): Duration of each temperature step (timestep unit); default: 
-                             `1000000`
+        step_duration (int): Duration of each temperature step 
+                             (timestep unit); default: `1000000`
         
         pressure (float): Pressure during the cooling process; default: `1`
         
@@ -277,9 +292,11 @@ class TgMeasurement(Procedure):
         
         Pdamp (str): Damping parameter for barostats; default: `$(100.0*dt)`
         
-        dump_fname (str): Name of the dump file; default: `Tg_measurement.lammpstrj`
+        dump_fname (str): Name of the dump file; default: 
+                          `Tg_measurement.lammpstrj`
         
-        result_fname (str): Name of the result file; default: `temp_vs_density.txt`
+        result_fname (str): Name of the result file; default: 
+                            `temp_vs_density.txt`
     '''
 
     def __init__(self,

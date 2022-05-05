@@ -80,7 +80,8 @@ class Lammps:
         self._lmp_input_fname = lmp_input_fname
         self._procedures = []
 
-    def get_lmp_input_fname(self) -> str:
+    @property
+    def lmp_input_fname(self) -> str:
         return self._lmp_input_fname
 
     def add_procedure(self, procedure: Procedure) -> Lammps:

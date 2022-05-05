@@ -74,13 +74,13 @@ class Torque(Job):
                 )
                 f.write('mpirun -np {} lmp -sf gpu -pk gpu {} -in {}\n'.format(
                     self._nodes * self._ppn, self._gpus,
-                    self._run_lammps.get_lmp_input_fname()))
+                    self._run_lammps.lmp_input_fname))
             else:
                 f.write(
                     'module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
                 f.write('mpirun -np {} lmp -in {}\n'.format(
                     self._nodes * self._ppn,
-                    self._run_lammps.get_lmp_input_fname()))
+                    self._run_lammps.lmp_input_fname))
 
 
 class Slurm(Job):

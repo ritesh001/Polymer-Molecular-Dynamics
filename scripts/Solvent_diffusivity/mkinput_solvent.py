@@ -33,7 +33,7 @@ if __name__ == '__main__':
                                solvent_smiles=solvent,
                                ru_nsolvent_ratio=ratio,
                                force_field='gaff2',
-                               density=0.3,
+                               density=0.8,
                                natoms_total=5000,
                                natoms_per_chain=150)
     system.write_data(output_dir=system_id)
@@ -48,12 +48,12 @@ if __name__ == '__main__':
                 Pinit=1,
                 Pfinal=1,
                 duration=10000000,
-                reset_timestep=True))
+                reset_timestep_before_run=True))
     lmp.add_procedure(
         pmd.NVT(Tinit=300,
                 Tfinal=300,
                 duration=200000000,
-                reset_timestep=False))
+                reset_timestep_before_run=True))
     lmp.write_lammps(output_dir=system_id)
 
     job = pmd.Torque(run_lammps=lmp,

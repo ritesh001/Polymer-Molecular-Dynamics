@@ -1,7 +1,4 @@
-from typing import TypeVar
 from pmd.util.Util import HiddenPrints
-
-System = TypeVar("System", bound="System")
 
 
 class System:
@@ -232,7 +229,8 @@ class SolventSystem(System):
                 'SolventSystem\'s write_data function requires numpy to '
                 'function properly, please install numpy')
 
-        # Get the number of atoms of a repeating unit and determine the polymer chain length
+        # Get the number of atoms of a repeating unit and determine the polymer
+        # chain length
         mol = Chem.MolFromSmiles(self._smiles)
         natoms_per_ru = mol.GetNumAtoms(onlyExplicit=0) - 2
         if self._natoms_per_chain:
@@ -247,10 +245,11 @@ class SolventSystem(System):
         mol_solvent = Chem.MolFromSmiles(self._solvent_smiles)
         natoms_solvent = mol_solvent.GetNumAtoms(onlyExplicit=0)
 
-        # Calculate number of polymer chains and solvents based on target total number of atoms
-        natoms_total_singlechain = self._ru_nsolvent_ratio * length * natoms_solvent + (
-            length * natoms_per_ru + 2)
-        nchains = round(self._natoms_total / natoms_total_singlechain)
+        # Calculate number of polymer chains and solvents based on target total
+        # number of atoms
+        natoms_total_onechain = (self._ru_nsolvent_ratio * length *
+                                 natoms_solvent) + (length * natoms_per_ru + 2)
+        nchains = round(self._natoms_total / natoms_total_onechain)
         nsolvents = round(self._ru_nsolvent_ratio * length * nchains)
 
         print('--------Polymer Stats--------')
