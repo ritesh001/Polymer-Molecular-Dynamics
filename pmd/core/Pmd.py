@@ -1,4 +1,5 @@
-import os, json
+import os
+import json
 from typing import List, Union
 
 from pmd.core.Job import Job
@@ -12,9 +13,9 @@ class Pmd:
 
         Attributes:
             system (System): a System object
-            
+
             lammps (Lammps or list[Lammps]): one or a list of Lammps objects
-            
+
             job (Job or list[Job]): one or a list of Job objects
     '''
 
@@ -24,9 +25,9 @@ class Pmd:
         lammps: Union[Lammps, List[Lammps]] = None,
         job: Union[Job, List[Job]] = None,
     ):
-        if lammps and not isinstance(lammps, List[Lammps]):
+        if lammps and not isinstance(lammps, list):
             lammps = [lammps]
-        if job and not isinstance(job, List[Job]):
+        if job and not isinstance(job, list):
             job = [job]
 
         self._system = system
