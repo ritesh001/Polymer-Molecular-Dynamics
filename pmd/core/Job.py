@@ -1,3 +1,5 @@
+import os
+
 from pmd.core.Lammps import Lammps
 from pmd.util import Util
 from abc import ABC, abstractmethod
@@ -52,18 +54,16 @@ class Torque(Job):
         '''
 
         Util.build_dir(output_dir)
-        with open(output_dir + '/' + self._job_fname, 'w') as f:
-            f.write('#PBS -A {}\n'.format(self._project))
+        with open(os.path.join(output_dir, self._job_fname), 'w') as f:
+            f.write(f'#PBS -A {self._project}\n')
             f.write('#PBS -q inferno\n')
-            f.write('#PBS -N {}\n'.format(self._jobname))
+            f.write(f'#PBS -N {self._jobname}\n')
             if self._gpus:
-                f.write(
-                    '#PBS -l nodes={}:ppn={}:gpus={}:RTX6000:default\n'.format(
-                        self._nodes, self._ppn, self._gpus))
+                f.write(f'#PBS -l nodes={self._nodes}:ppn={self._ppn}:'
+                        f'gpus={self._gpus}:RTX6000:default\n')
             else:
-                f.write('#PBS -l nodes={}:ppn={}\n'.format(
-                    self._nodes, self._ppn))
-            f.write('#PBS -l walltime={}\n'.format(self._walltime))
+                f.write(f'#PBS -l nodes={self._nodes}:ppn={self._ppn}\n')
+            f.write(f'#PBS -l walltime={self._walltime}\n')
             f.write('#PBS -j oe\n')
             f.write('#PBS -o out.$PBS_JOBID\n')
             f.write('\n')
@@ -72,14 +72,14 @@ class Torque(Job):
                 f.write(
                     'module load gcc/8.3.0 mvapich2/2.3.2 lammps-gpu/29Oct20\n'
                 )
-                f.write('mpirun -np {} lmp -sf gpu -pk gpu {} -in {}\n'.format(
-                    self._nodes * self._ppn, self._gpus,
-                    self._run_lammps.lmp_input_fname))
+                f.write(f'mpirun -np {self._nodes * self._ppn} '
+                        f'lmp -sf gpu -pk gpu {self._gpus} -in '
+                        f'{self._run_lammps.lmp_input_fname}\n')
             else:
                 f.write(
                     'module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
-                f.write('mpirun -np {} lmp -in {}\n'.format(
-                    self._nodes * self._ppn, self._run_lammps.lmp_input_fname))
+                f.write(f'mpirun -np { self._nodes * self._ppn} '
+                        f'lmp -in {self._run_lammps.lmp_input_fname}')
 
 
 class Slurm(Job):
@@ -120,22 +120,21 @@ class Slurm(Job):
             None
         '''
         Util.build_dir(output_dir)
-        with open(output_dir + '/' + self._job_fname, 'w') as f:
+        with open(os.path.join(output_dir, self._job_fname), 'w') as f:
             f.write('#!/bin/bash')
-            f.write('#SBATCH --job-name={}\n'.format(self._jobname))
+            f.write(f'#SBATCH --job-name={self._jobname}\n')
             f.write('#SBATCH -o out.o%j \n')
             f.write('#SBATCH -e err.e%j \n')
-            f.write('#SBATCH --nodes={}\n'.format(self._nodes))
+            f.write(f'#SBATCH --nodes={self._nodes}\n')
             if self._gpus:
-                f.write('#SBATCH --gpus={}\n'.format(self._gpus))
+                f.write(f'#SBATCH --gpus={self._gpus}\n')
             else:
-                f.write('#SBATCH --ntasks-per-node={}\n'.format(
-                    self._ntasks_per_node))
-            f.write('#SBATCH --time={}\n'.format(self._time))
+                f.write(
+                    f'#SBATCH --ntasks-per-node={ self._ntasks_per_node}\n')
+            f.write(f'#SBATCH --time={self._time}\n')
             if self._gpus:
                 # TODO
                 print('Have not implemented GPU Slurm yet')
             else:
                 f.write('module load intel/18.0.2 impi/18.0.2 lammps/9Jan20\n')
-                f.write('ibrun lmp -in {}\n'.format(
-                    self._run_lammps.lmp_input_fname))
+                f.write(f'ibrun lmp -in {self._run_lammps.lmp_input_fname}\n')
