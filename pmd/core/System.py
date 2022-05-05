@@ -1,6 +1,4 @@
-from ast import Str
 from typing import TypeVar
-
 from pmd.util.Util import HiddenPrints
 
 System = TypeVar("System", bound="System")
@@ -44,6 +42,7 @@ class System:
                  force_field: str,
                  density: float,
                  natoms_total: int,
+                 *,
                  natoms_per_chain: int = None,
                  mw_per_chain: int = None,
                  ru_per_chain: int = None,
@@ -71,47 +70,13 @@ class System:
         self._ru_per_chain = ru_per_chain
         self._data_fname = data_fname
 
-    def get_data_fname(self) -> str:
-        return self._data_fname
+    @property
+    def smiles(self) -> str:
+        return self._smiles
 
-    def get_force_field(self) -> str:
-        return self._force_field
-
-    def update_smiles(self, smiles: str) -> System:
-        '''Method to update the SMILES of this system
-
-        Parameters:
-            smiles (str): Updated SMILES string
-        
-        Returns:
-            system (System): System instance itself (builder design pattern)
-        '''
+    @smiles.setter
+    def smiles(self, smiles: str):
         self._smiles = smiles
-        return self
-
-    def update_natoms_total(self, natoms_total: int) -> System:
-        '''Method to update total number of atoms of the system
-
-        Parameters:
-            natoms_total (int): Updated total number of atoms
-        
-        Returns:
-            system (System): System instance itself (builder design pattern)
-        '''
-        self._natoms_total = natoms_total
-        return self
-
-    def update_force_field(self, force_field: Str) -> System:
-        '''Method to update force field of the system
-
-        Parameters:
-            force_field (str): Updated force field
-        
-        Returns:
-            system (System): System instance itself (builder design pattern)
-        '''
-        self._force_field = force_field
-        return self
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
@@ -158,55 +123,205 @@ class System:
         print('Natom_per_RU:', natoms_per_RU)
         print('length:', length)
         print('Nchains:', nchains)
-        print('--------Creating the system, this may take a while--------')
 
         psp_input_data = {
-            'ID': 'Poly',
-            'smiles': self._smiles,
-            'Len': length,
-            'Num': nchains,
-            'NumConf': 1,
-            'Loop': False,
-            'LeftCap': '[*][H]',
-            'RightCap': '[*][H]'
+            'ID': ['Poly'],
+            'smiles': [self._smiles],
+            'Len': [length],
+            'Num': [nchains],
+            'NumConf': [1],
+            'Loop': [False],
+            'LeftCap': ['[*][H]'],
+            'RightCap': ['[*][H]']
         }
 
-        with HiddenPrints():
-            amor = ab.Builder(pd.DataFrame(data=psp_input_data, index=[0]),
-                              density=self._density,
-                              OutDir=output_dir)
-            amor.Build()
+        _run_psp(psp_input_data, self._density, self._force_field,
+                 self._data_fname, output_dir, cleanup)
 
-            if self._force_field == 'opls':
-                amor.get_opls(output_fname=self._data_fname)
-            elif self._force_field == 'gaff2':
-                amor.get_gaff2(output_fname=self._data_fname,
-                               atom_typing='antechamber',
-                               swap_dict={
-                                   'ns': 'n',
-                                   'nt': 'n',
-                                   'nv': 'nh'
-                               })
-        print('--------------- System successfully created---------------')
 
-        if cleanup:
-            import shutil
-            dnames = ['molecules', 'packmol', 'pysimm']
-            for dir in dnames:
-                try:
-                    shutil.rmtree(os.path.join(output_dir, dir))
-                except BaseException:
-                    print('problem removing {} folder during cleanup'.format(
-                        dir))
+class SolventSystem(System):
+    '''Template object to contain System with solvents initialization settings
 
-            fnames = ['amor_model.data', 'amor_model.vasp']
-            for file in fnames:
-                try:
-                    os.remove(os.path.join(output_dir, file))
-                except BaseException:
-                    print(
-                        'problem removing {} file during cleanup'.format(file))
+    Attributes:
+        smiles (str): SMILES string of the polymer (use * as connecting point)
+
+        solvent_smiles (str): SMILES string of the solvent
+        
+        ru_nsolvent_ratio (float): The ratio of total number of repeating units
+                                   in the system and total number of solvent
+                                   molecules
+
+        density (float): Density of the system
+
+        force_field (str): Force field (One of `gaff2` and `opls`)
+
+        natoms_total (int): Total number of atoms of the system
+
+        natoms_per_chain (int): Number of atoms per polymer chain, one of this
+                                attribute, `mw_per_chain`, and `ru_per_chain`
+                                has to be provided but not both (providing both
+                                will result in an error); default: `None`
+
+        mw_per_chain (int): Molecular weight of the polymer, one of this 
+                            attribute, `natoms_per_chain`, and `ru_per_chain`
+                            has to be provided but not both (providing both 
+                            will result in an error); default: `None`
+
+        ru_per_chain (int): Number of repeating unit per polymer chain, one of
+                            this attribute, `natoms_per_chain`, and 
+                            `mw_per_chain` has to be provided but not both
+                            (providing both will result in an error); default:
+                            `None`
+
+        data_fname (str): File name of the output data file, which will be read in by 
+                          LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
+                          command; default: `data.lmps`
+    '''
+
+    def __init__(self,
+                 smiles: str,
+                 solvent_smiles: str,
+                 ru_nsolvent_ratio: float,
+                 force_field: str,
+                 density: float,
+                 natoms_total: int,
+                 *,
+                 natoms_per_chain: int = None,
+                 mw_per_chain: int = None,
+                 ru_per_chain: int = None,
+                 data_fname: str = 'data.lmps'):
+        super().__init__(smiles, force_field, density, natoms_total,
+                         natoms_per_chain, mw_per_chain, ru_per_chain,
+                         data_fname)
+
+        self._solvent_smiles = solvent_smiles
+        self._ru_nsolvent_ratio = ru_nsolvent_ratio
+
+    def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
+        '''Method to make LAMMPS data file (which contains coordinates and force 
+        field parameters)
+
+        Parameters:
+        output_dir (str): Directory for the generated LAMMPS data file
+                          ; default: `.`
+
+        cleanup (bool): Whether to clean up files other than the LAMMPS data 
+                        file PSP generated
+        
+        Returns:
+            None
+        '''
+
+        try:
+            from rdkit import Chem
+        except ImportError:
+            raise ImportError(
+                'System\'s write_data function requires RDKit to '
+                'function properly, please install RDKit')
+
+        mol = Chem.MolFromSmiles(self._smiles)
+        natoms_per_ru = mol.GetNumAtoms(onlyExplicit=0) - 2
+        if self._natoms_per_chain:
+            length = round(self._natoms_per_chain / natoms_per_ru)
+        elif self._mw_per_chain:
+            mw_per_ru = Chem.Descriptors.ExactMolWt(mol)
+            length = round(self._mw_per_chain / mw_per_ru)
+        else:
+            length = self._ru_per_chain
+
+        # Get the number of atoms of a solvent molecule
+        mol_solvent = Chem.MolFromSmiles(self._solvent_smiles)
+        natoms_solvent = mol_solvent.GetNumAtoms(onlyExplicit=0)
+
+        # Calculate number of polymer chains and solvents based on target total number of atoms
+        natoms_total_singlechain = self._ru_nsolvent_ratio * length * natoms_solvent + (
+            length * natoms_per_ru + 2)
+        nchains = round(self._natoms_total / natoms_total_singlechain)
+        nsolvents = round(self._ru_nsolvent_ratio * length * nchains)
+        nchains = round(self._natoms_total / (natoms_per_ru * length + 2))
+
+        print('--------System Stats--------')
+        print('SMILES:', self._smiles)
+        print('Natom_per_RU:', natoms_per_ru)
+        print('length:', length)
+        print('Nchains:', nchains)
+
+        print('--------Polymer Stats--------')
+        print('Polymer SMILES:', self._smiles)
+        print('Polymer length:', length)
+        print('Polymer number:', nchains)
+        print('')
+        print('--------Solvent Stats--------')
+        print('Solvent SMILES:', self._solvent_smiles)
+        print('Solvent number:', nsolvents)
+        print('')
+        print('--------System Stats--------')
+        print('Target Nsolvents/Nrepeatunits', self._ru_nsolvent_ratio)
+        print('Final Nsolvents/Nrepeatunits', nsolvents / (length * nchains))
+        print(
+            'Total number of atoms:', nsolvents * natoms_solvent +
+            (length * natoms_per_ru + 2) * nchains)
+        print('')
+
+        psp_input_data = {
+            'ID': ['Sol', 'Poly'],
+            'smiles': [self._solvent_smiles, self._smiles],
+            'Len': [1, length],
+            'Num': [nsolvents, nchains],
+            'NumConf': [1, 1],
+            'Loop': [False, False],
+            'LeftCap': [None, '[*][H]'],
+            'RightCap': [None, '[*][H]']
+        }
+
+        _run_psp(psp_input_data, self._density, self._force_field,
+                 self._data_fname, output_dir, cleanup)
+
+
+def _run_psp(input_data: dict, density: float, force_field: str,
+             data_fname: str, output_dir: str, cleanup: bool) -> None:
+    try:
+        import psp.AmorphousBuilder as ab
+        import pandas as pd
+    except ImportError:
+        raise ImportError('System\'s write_data function requires PSP to '
+                          'function properly, please install PSP')
+
+    print('--------Creating the system, this may take a while--------')
+    with HiddenPrints():
+        amor = ab.Builder(pd.DataFrame(data=input_data),
+                          density=density,
+                          OutDir=output_dir)
+        amor.Build()
+
+        if force_field == 'opls':
+            amor.get_opls(output_fname=data_fname)
+        elif force_field == 'gaff2':
+            amor.get_gaff2(output_fname=data_fname,
+                           atom_typing='antechamber',
+                           swap_dict={
+                               'ns': 'n',
+                               'nt': 'n',
+                               'nv': 'nh'
+                           })
+    print('--------------- System successfully created---------------')
+
+    if cleanup:
+        import os, shutil
+        dnames = ['molecules', 'packmol', 'pysimm']
+        for dir in dnames:
             try:
-                os.remove("output_MB.csv")
+                shutil.rmtree(os.path.join(output_dir, dir))
             except BaseException:
-                print('problem removing output_MB.csv during cleanup')
+                print('problem removing {} folder during cleanup'.format(dir))
+
+        fnames = ['amor_model.data', 'amor_model.vasp']
+        for file in fnames:
+            try:
+                os.remove(os.path.join(output_dir, file))
+            except BaseException:
+                print('problem removing {} file during cleanup'.format(file))
+        try:
+            os.remove("output_MB.csv")
+        except BaseException:
+            print('problem removing output_MB.csv during cleanup')
