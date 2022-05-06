@@ -45,10 +45,9 @@ class Minimization(Procedure):
 
     def write_lammps(self, f: TextIOWrapper):
         f.write('### Minimization\n')
-        f.write('{:<15} {}\n'.format('min_style', self._min_style))
-        f.write('{:<15} {} {} {} {}\n'.format('minimize', self._etol,
-                                              self._ftol, self._maxiter,
-                                              self._maxeval))
+        f.write(f'{"min_style":<15} {self._min_style}\n')
+        f.write(f'{"minimize":<15} {self._etol} {self._ftol} '
+                f'{self._maxiter} {self._maxeval}\n')
         f.write('\n')
         f.write('\n')
 
@@ -122,27 +121,24 @@ class Equilibration(Procedure):
     def write_lammps(self, f: TextIOWrapper):
         f.write('### Equilibration\n')
         if self._reset_timestep_before_run:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
+            f.write(f'{"reset_timestep":<15} 0\n')
         f.write('\n')
-        f.write(
-            '{:<15} dump_eq all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
-            .format('dump', self._dump_fname))
-        f.write('{:<15} {} equilibrated.restart\n'.format(
-            'restart', self._eq_totaltime))
+        f.write(f'{"dump":<15} dump_eq all custom 10000 {self._dump_fname} '
+                f'id mol type q xs ys zs ix iy iz\n')
+        f.write(f'{"restart":<15} {self._eq_totaltime} equilibrated.restart\n')
         f.write('\n')
 
         for n, i in enumerate(self._eq_step):
             if i[0] == 'nvt':
-                f.write('{:<15} step{} all nvt temp {} {} {}\n'.format(
-                    'fix', n + 1, i[2], i[2], self._Tdamp))
+                f.write(f'{"fix":<15} step{n + 1} all nvt temp '
+                        f'{i[2]} {i[2]} {self._Tdamp}\n')
             elif i[0] == 'npt':
-                f.write('{:<15} step{} all npt temp {} {} {} iso {} {} {}\n'.
-                        format('fix', n + 1, i[2], i[2], self._Tdamp, i[3],
-                               i[3], self._Pdamp))
-            f.write('{:<15} {}\n'.format('run', i[1]))
-            f.write('{:<15} step{}\n'.format('unfix', n + 1))
+                f.write(f'{"fix":<15} step{n + 1} all npt temp {i[2]} {i[2]} '
+                        f'{self._Tdamp} iso {i[3]} {i[3]} {self._Pdamp}\n')
+            f.write(f'{"run":<15} {i[1]}\n')
+            f.write(f'{"unfix":<15} step{n + 1}\n')
             f.write('\n')
-        f.write('{:<15} dump_eq\n'.format('undump'))
+        f.write(f'{"undump":<15} dump_eq\n')
         f.write('\n')
         f.write('\n')
 
@@ -195,20 +191,19 @@ class NPT(Procedure):
     def write_lammps(self, f: TextIOWrapper):
         f.write('### NPT simulation\n')
         if self._reset_timestep_before_run:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
+            f.write(f'{"reset_timestep":<15} 0\n')
+        f.write('\n')
+        f.write(f'{"dump":<15} dump_npt all custom 10000 {self._dump_fname} '
+                f'id mol type q xs ys zs ix iy iz\n')
+        f.write(f'{"restart":<15} {self._duration} npt.restart\n')
         f.write('\n')
         f.write(
-            '{:<15} dump_npt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
-            .format('dump', self._dump_fname))
-        f.write('{:<15} {} npt.restart\n'.format('restart', self._duration))
+            f'{"fix":<15} fNPT all npt temp {self._Tinit} {self._Tfinal} '
+            f'{self._Tdamp} iso {self._Pinit} {self._Pfinal} {self._Pdamp}\n')
+        f.write(f'{"run":<15} {self._duration}\n')
+        f.write(f'{"unfix":<15} fNPT\n')
         f.write('\n')
-        f.write('{:<15} fNPT all npt temp {} {} {} iso {} {} {}\n'.format(
-            'fix', self._Tinit, self._Tfinal, self._Tdamp, self._Pinit,
-            self._Pfinal, self._Pdamp))
-        f.write('{:<15} {}\n'.format('run', self._duration))
-        f.write('{:<15} fNPT\n'.format('unfix'))
-        f.write('\n')
-        f.write('{:<15} dump_npt\n'.format('undump'))
+        f.write(f'{"undump":<15} dump_npt\n')
         f.write('\n')
         f.write('\n')
 
@@ -248,23 +243,21 @@ class NVT(Procedure):
     def write_lammps(self, f: TextIOWrapper):
         f.write('### NVT simulation\n')
         if self._reset_timestep_before_run:
-            f.write('{:<15} 0\n'.format('reset_timestep'))
+            f.write(f'{"reset_timestep":<15} 0\n')
         f.write('\n')
-        f.write(
-            '{:<15} dump_nvt all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
-            .format('dump', self._dump_fname))
-        f.write(
-            '{:<15} dump_image all image {} image.*.jpg type type\n'.format(
-                'dump', self._duration))
-        f.write('{:<15} {} nvt.restart\n'.format('restart', self._duration))
+        f.write(f'{"dump":<15} dump_nvt all custom 10000 {self._dump_fname} '
+                f'id mol type q xs ys zs ix iy iz\n')
+        f.write(f'{"dump":<15} dump_image all image {self._duration} '
+                f'image.*.jpg type type\n')
+        f.write(f'{"restart":<15} {self._duration} nvt.restart\n')
         f.write('\n')
-        f.write('{:<15} fNVT all nvt temp {} {} {}\n'.format(
-            'fix', self._Tinit, self._Tfinal, self._Tdamp))
-        f.write('{:<15} {}\n'.format('run', self._duration))
-        f.write('{:<15} fNVT\n'.format('unfix'))
+        f.write(f'{"fix":<15} fNVT all nvt temp {self._Tinit} '
+                f'{self._Tfinal} {self._Tdamp}\n')
+        f.write(f'{"run":<15} {self._duration}\n')
+        f.write(f'{"unfix":<15} fNVT\n')
         f.write('\n')
-        f.write('{:<15} dump_nvt\n'.format('undump'))
-        f.write('{:<15} dump_image\n'.format('undump'))
+        f.write(f'{"undump":<15} dump_nvt\n')
+        f.write(f'{"undump":<15} dump_image\n')
         f.write('\n')
         f.write('\n')
 
@@ -321,33 +314,30 @@ class TgMeasurement(Procedure):
 
     def write_lammps(self, f: TextIOWrapper):
         f.write('### Production - Tg measurement\n')
+        f.write(f'{"dump":<15} dump_Tg all custom 10000 {self._dump_fname} '
+                f'id mol type q xs ys zs ix iy iz\n')
+        f.write(f'{"restart":<15} {self._step_duration} production.restart\n')
+        f.write(f'{"variable":<15} Rho equal density\n')
+        f.write(f'{"variable":<15} Temp equal temp\n')
         f.write(
-            '{:<15} dump_Tg all custom 10000 {} id mol type q xs ys zs ix iy iz\n'
-            .format('dump', self._dump_fname))
-        f.write('{:<15} {} production.restart\n'.format(
-            'restart', self._step_duration))
-        f.write('{:<15} Rho equal density\n'.format('variable'))
-        f.write('{:<15} Temp equal temp\n'.format('variable'))
-        f.write(
-            '{:<15} fDENS all ave/time {} {} {} v_Temp v_Rho file {}\n'.format(
-                'fix', int(self._step_duration / 100 / 4), 100,
-                self._step_duration, self._result_fname))
+            f'{"fix":<15} fDENS all ave/time '
+            f'{int(self._step_duration / 100 / 4)} {100} '
+            f'{self._step_duration} v_Temp v_Rho file {self._result_fname}\n')
         f.write('\n')
 
-        f.write('{:<15} loop\n'.format('label'))
-        f.write('{:<15} a loop {}\n'.format(
-            'variable',
-            int((self._Tinit - self._Tfinal) / self._Tinterval + 1)))
-        f.write('{:<15} b equal {}-{}*($a-1)\n'.format('variable', self._Tinit,
-                                                       self._Tinterval))
-        f.write('{:<15} fNPT all npt temp $b $b {} iso {} {} {}\n'.format(
-            'fix', self._Tdamp, self._pressure, self._pressure, self._Pdamp))
-        f.write('{:<15} {}\n'.format('run', self._step_duration))
-        f.write('{:<15} fNPT\n'.format('unfix'))
-        f.write('{:<15} a\n'.format('next'))
-        f.write('{:<15} SELF loop\n'.format('jump'))
-        f.write('{:<15} a delete\n'.format('variable'))
+        f.write(f'{"label":<15} loop\n')
+        f.write(f'{"variable":<15} a loop '
+                f'{int((self._Tinit - self._Tfinal) / self._Tinterval + 1)}\n')
+        f.write(f'{"variable":<15} b equal '
+                f'{self._Tinit}-{self._Tinterval}*($a-1)\n')
+        f.write(f'{"fix":<15} fNPT all npt temp $b $b {self._Tdamp} iso '
+                f'{self._pressure} {self._pressure} {self._Pdamp}\n')
+        f.write(f'{"run":<15} {self._step_duration}\n')
+        f.write(f'{"unfix":<15} fNPT\n')
+        f.write(f'{"next":<15} a\n')
+        f.write(f'{"jump":<15} SELF loop\n')
+        f.write(f'{"variable":<15} a delete\n')
         f.write('\n')
-        f.write('{:<15} dump_Tg\n'.format('undump'))
+        f.write(f'{"undump":<15} dump_Tg\n')
         f.write('\n')
         f.write('\n')
