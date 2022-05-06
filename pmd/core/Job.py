@@ -43,6 +43,7 @@ class Torque(Job):
         self._gpus = gpus
         self._job_fname = job_fname
 
+    @Util.build_dir
     def write_job(self, output_dir: str = '.') -> None:
         '''Method to make the Torque job scheduler input file
 
@@ -53,7 +54,6 @@ class Torque(Job):
             None
         '''
 
-        Util.build_dir(output_dir)
         with open(os.path.join(output_dir, self._job_fname), 'w') as f:
             f.write(f'#PBS -A {self._project}\n')
             f.write('#PBS -q inferno\n')
@@ -110,6 +110,7 @@ class Slurm(Job):
         self._gpus = gpus
         self._job_fname = job_fname
 
+    @Util.build_dir
     def write_job(self, output_dir: str = '.') -> None:
         '''Method to make the Slurm job scheduler input file
 
@@ -119,7 +120,6 @@ class Slurm(Job):
         Returns:
             None
         '''
-        Util.build_dir(output_dir)
         with open(os.path.join(output_dir, self._job_fname), 'w') as f:
             f.write('#!/bin/bash')
             f.write(f'#SBATCH --job-name={self._jobname}\n')

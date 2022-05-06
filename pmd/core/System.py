@@ -1,4 +1,4 @@
-from pmd.util.Util import HiddenPrints
+from pmd.util import Util
 
 
 class System:
@@ -294,7 +294,7 @@ def _run_psp(input_data: dict, density: float, force_field: str,
                           'function properly, please install PSP')
 
     print('--------Creating the system, this may take a while--------')
-    with HiddenPrints():
+    with Util.HiddenPrints():
         amor = ab.Builder(pd.DataFrame(data=input_data),
                           density=density,
                           OutDir=output_dir)

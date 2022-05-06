@@ -1,11 +1,17 @@
 import os, sys
+from typing import Callable
 
 
-def build_dir(output_dir: str) -> None:
-    try:
-        os.mkdir(output_dir)
-    except OSError:
-        pass
+def build_dir(func: Callable) -> Callable:
+
+    def wrapper_build_dir(*args, **kwargs):
+        output_dir_key = 'output_dir'
+        output_dir = (kwargs[output_dir_key]
+                      if output_dir_key in kwargs.keys() else args[1])
+        os.makedirs(output_dir, exist_ok=True)
+        return func(*args, **kwargs)
+
+    return wrapper_build_dir
 
 
 class HiddenPrints:

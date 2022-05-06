@@ -62,4 +62,4 @@ if __name__ == '__main__':
                      walltime='72:00:00')
 
     run = pmd.Pmd(system, lmp, job)
-    run.create(system_id, metadata=True)
+    run.create(system_id, save_metadata=True)

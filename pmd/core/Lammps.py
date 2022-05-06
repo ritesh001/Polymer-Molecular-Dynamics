@@ -103,6 +103,7 @@ class Lammps:
             self._procedures.append(p)
         return self
 
+    @Util.build_dir
     def write_lammps(self, output_dir: str = '.') -> None:
         '''Method to make LAMMPS input files
         Parameters:
@@ -112,8 +113,6 @@ class Lammps:
         Returns:
             None
         '''
-
-        Util.build_dir(output_dir)
 
         # Write LAMMPS input file
         with open(os.path.join(output_dir, self._lmp_input_fname), 'w') as f:

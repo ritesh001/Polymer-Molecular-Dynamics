@@ -1,10 +1,11 @@
 import os
-import json
+import yaml
 from typing import List, Union
 
 from pmd.core.Job import Job
 from pmd.core.Lammps import Lammps
 from pmd.core.System import System
+from pmd.util import Util
 
 
 class Pmd:
@@ -34,7 +35,8 @@ class Pmd:
         self._lammps = lammps
         self._job = job
 
-    def create(self, output_dir: str, metadata: bool = False) -> None:
+    @Util.build_dir
+    def create(self, output_dir: str, save_metadata: bool = False) -> None:
         if self._system:
             self._system.write_data(output_dir)
         if self._lammps:
@@ -44,20 +46,27 @@ class Pmd:
             for job in self._job:
                 job.write_job(output_dir)
 
-        if metadata:
-            self.create_metadata(output_dir)
+        if save_metadata:
+            self.save_metadata(output_dir)
 
-    def create_metadata(self, output_dir: str, metadata_fname='metadata.json'):
-        with open(os.path.join(output_dir, metadata_fname), 'w') as json_file:
+    @Util.build_dir
+    def save_metadata(self,
+                      output_dir: str,
+                      metadata_fname: str = 'metadata.yaml'):
+
+        with open(os.path.join(output_dir, metadata_fname), 'w') as yaml_file:
             metadata = {
-                'system': str(self._system),
-                'lammps': str(self._lammps),
-                'job': str(self._job),
+                # 'job': self._job[0],
+                # 'lammps': self._lammps[0],
+                'system': self._system,
             }
-            json.dump(metadata, json_file)
+            yaml.dump(metadata,
+                      yaml_file,
+                      sort_keys=False,
+                      default_flow_style=False)
 
     def load_metadata(self, metadata_fname: str):
-        with open(metadata_fname) as json_file:
-            data_dict = json.loads(json_file)
+        with open(metadata_fname) as yaml_file:
+            data_dict = yaml.load(yaml_file)
             print(data_dict)
             # TODO: create system, lammps, job objects with this dict
