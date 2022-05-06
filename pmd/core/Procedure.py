@@ -341,3 +341,33 @@ class TgMeasurement(Procedure):
         f.write(f'{"undump":<15} dump_Tg\n')
         f.write('\n')
         f.write('\n')
+
+
+class Deformation(Procedure):
+
+    def __init__(self, erate):
+        self._erate = erate
+
+    def write_lammps(self):
+        # fix		1 all nvt/sllod temp 300.0 300.0 $(100.0*dt)
+        # fix		2 all deform 1 x erate 0.01 remap v
+
+        # variable tmp equal "lx"
+        # variable L0 equal ${tmp}
+        #  print "Initial Length, L0: ${L0}"
+
+        # Output strain and stress info to file for units metal,
+        # pressure is in [bars] = 100 [kPa] = 1/10000 [GPa]
+        # and p2, p3, p4 are in GPa
+
+        # variable strain equal "(lx - v_L0)/v_L0"
+        # variable p1 equal "v_strain"
+        # variable p2 equal "-pxx/10000"
+        # variable p3 equal "-pyy/10000"
+        # variable p4 equal "-pzz/10000"
+        # fix def1 all print 100 "${p1} ${p2} ${p3} ${p4}" file
+        # Al_comp_100.def1.txt screen no
+        # thermo  1000
+        # thermo_style custom step v_strain temp v_p2 v_p3 v_p4 ke pe press
+
+        print('#Not yet implemented')
