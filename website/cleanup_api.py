@@ -2,7 +2,7 @@ import glob
 
 
 def cleanup(cleanup_route: str):
-    for file in glob.glob('{}/*.md'.format(cleanup_route)):
+    for file in glob.glob(f'{cleanup_route}/*.md'):
         #read input file
         fin = open(file, 'rt')
         #read file contents to string

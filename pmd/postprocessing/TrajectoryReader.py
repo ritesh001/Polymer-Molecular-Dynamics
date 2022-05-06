@@ -349,7 +349,7 @@ def read_lammpstrj_by_type(fname,
 
     # skip the beginning frames, if requested
     for skippedframe in range(skip_beginning):
-        print("Skipping {}".format(skippedframe))
+        print(f"Skipping {skippedframe}")
         f.readline()  # ITEM: ATOMS
         # loop over the atoms lines
         for atom in range(num_atoms):
@@ -586,7 +586,7 @@ def read_lammpstrj_by_type(fname,
                 ir[frame][my_id][1] = int(line[iy_index])
                 ir[frame][my_id][2] = int(line[iz_index])
 
-        print("Reading frame {}".format(frame))
+        print(f"Reading frame {frame}")
         frame += 1
 
     print('===============Summary===============')
