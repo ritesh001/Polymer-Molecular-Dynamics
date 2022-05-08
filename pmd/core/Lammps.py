@@ -124,9 +124,6 @@ class Lammps:
             f.write(f'{"atom_style":<15} full\n')
             f.write(f'{"units":<15} {self._units}\n')
             if self._read_data_from:
-                f.write(
-                    f'{"read_data":<15} {self._read_data_from.data_fname}\n')
-                f.write('\n')
                 # TODO: move to ForceField Object?
                 force_field = self._read_data_from.force_field
                 if (force_field == 'gaff2'):
@@ -147,6 +144,9 @@ class Lammps:
                     f.write(f'{"dihedral_style":<15} opls\n')
                     f.write(f'{"improper_style":<15} cvff\n')
                     f.write(f'{"special_bonds":<15} lj/coul 0.0 0.0 0.5\n')
+                f.write('\n')
+                f.write(
+                    f'{"read_data":<15} {self._read_data_from.data_fname}\n')
 
             # TODO: add last_restart_fname
             # elif self._read_restart_from:
