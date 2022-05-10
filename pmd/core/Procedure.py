@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from io import TextIOWrapper
+from typing import List, Union
 
 
 class Procedure(ABC):
@@ -260,6 +261,94 @@ class NVT(Procedure):
         f.write(f'{"undump":<15} dump_image\n')
         f.write('\n')
         f.write('\n')
+
+
+class MSDMeasurement(Procedure):
+    '''Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
+       
+    Attributes:
+        duration (int): Duration of this NVT procedure (timestep unit)
+    
+        Tinit (float): Initial temperature
+        
+        Tfinal (float): Final temperature
+        
+        Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
+        
+        dump_fname (str): Name of the dump file; default: `nvt.lammpstrj`
+        
+        reset_timestep_before_run (bool): Whether to reset timestep after the 
+                                          procedure; default: `False`
+    '''
+
+    def __init__(self,
+                 duration: int,
+                 Tinit: float,
+                 Tfinal: float,
+                 group: str,
+                 create_block_every: int = None,
+                 result_folder_name: str = 'result',
+                 Tdamp: str = '$(100.0*dt)',
+                 dump_fname: str = 'nvt.lammpstrj',
+                 reset_timestep_before_run: bool = False):
+
+        self._duration = duration
+        self._Tinit = Tinit
+        self._Tfinal = Tfinal
+        self._group = group
+        self._create_block_every = create_block_every
+        self._Tdamp = Tdamp
+        self._dump_fname = dump_fname
+        self._result_folder_name = result_folder_name
+        self._reset_timestep_before_run = reset_timestep_before_run
+
+    def write_lammps(self, f: TextIOWrapper):
+        f.write('### MSDMeasurement simulation\n')
+        if self._reset_timestep_before_run:
+            f.write(f'{"reset_timestep":<15} 0\n')
+        f.write('\n')
+        f.write(f'{"dump":<15} dump_nvt all custom 10000 {self._dump_fname} '
+                f'id mol type q xs ys zs ix iy iz\n')
+        f.write(f'{"dump":<15} dump_image all image {self._duration} '
+                f'image.*.jpg type type\n')
+        f.write(f'{"restart":<15} {self._duration} nvt.restart\n')
+        f.write('\n')
+        f.write(f'{"fix":<15} fNVT all nvt temp {self._Tinit} '
+                f'{self._Tfinal} {self._Tdamp}\n')
+
+        msd_group_id = 'msdgroup'
+        mol_chunk_id = 'molchunk'
+        msd_chunk_id = 'msdchunk'
+        f.write('#### MSDMeasurement compute section\n')
+        f.write(f'shell mkdir {self._result_folder_name}\n')
+        f.write(f'{"group":<15} {msd_group_id} {self._group}\n')
+        f.write(f'{"compute":<15} {mol_chunk_id} {msd_group_id} '
+                f'chunk/atom molecule\n')
+        f.write(f'{"compute":<15} {msd_chunk_id} {msd_group_id} '
+                f'msd/chunk {mol_chunk_id}\n')
+        f.write(f'{"variable":<15} ave{msd_chunk_id} equal '
+                f'ave(c_{msd_chunk_id}[4])\n')
+        f.write(f'{"fix":<15} fMSD {msd_group_id} ave/time 1 1 10000 '
+                f'v_ave{msd_chunk_id} file {self._result_folder_name}/msd.txt')
+
+        f.write(f'{"run":<15} {self._duration}\n')
+        f.write(f'{"unfix":<15} fNVT\n')
+        f.write('\n')
+        f.write(f'{"undump":<15} dump_nvt\n')
+        f.write(f'{"undump":<15} dump_image\n')
+        f.write('\n')
+        f.write('\n')
+
+        # shell mkdir result
+        # compute msd type 1 msd
+        # f.write(f'{"variable":<15} Timestep equal step\n')
+        # fix 1 all ave/time 1 1 10000 v_Timestep c_msd[4] file result/temp.profile.txt
+
+        # group           solventgroup molecule <= 22
+        # compute         solventchunk solventgroup chunk/atom molecule
+        # compute         msdchunk solventgroup msd/chunk solventchunk
+        # variable        avemsdchunk equal ave(c_msdchunk[4])
+        # fix             fAVETIME solventgroup ave/time 1 1 100 v_avemsdchunk file result/avetime_result.txt
 
 
 class TgMeasurement(Procedure):
