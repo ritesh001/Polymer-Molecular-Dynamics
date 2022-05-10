@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from io import TextIOWrapper
-from typing import List, Union
 
 
 class Procedure(ABC):
@@ -87,37 +86,47 @@ class Equilibration(Procedure):
                  Pdamp: str = '$(100.0*dt)',
                  dump_fname: str = 'equil.lammpstrj',
                  reset_timestep_before_run: bool = True):
+        self._Teq = Teq
+        self._Peq = Peq
+        self._Tmax = Tmax
+        self._Pmax = Pmax
         self._Tdamp = Tdamp
         self._Pdamp = Pdamp
         self._dump_fname = dump_fname
         self._reset_timestep_before_run = reset_timestep_before_run
-        self._eq_totaltime = 0
-        self._eq_step = [
-            ['nvt', 50000, Tmax],
-            ['nvt', 50000, Teq],
-            ['npt', 50000, Teq, 0.02 * Pmax],
-            ['nvt', 50000, Tmax],
-            ['nvt', 100000, Teq],
-            ['npt', 50000, Teq, 0.6 * Pmax],
-            ['nvt', 50000, Tmax],
-            ['nvt', 100000, Teq],
-            ['npt', 50000, Teq, Pmax],
-            ['nvt', 50000, Tmax],
-            ['nvt', 100000, Teq],
-            ['npt', 5000, Teq, 0.5 * Pmax],
-            ['nvt', 5000, Tmax],
-            ['nvt', 10000, Teq],
-            ['npt', 5000, Teq, 0.1 * Pmax],
-            ['nvt', 5000, Tmax],
-            ['nvt', 10000, Teq],
-            ['npt', 5000, Teq, 0.01 * Pmax],
-            ['nvt', 5000, Tmax],
-            ['nvt', 10000, Teq],
-            ['npt', 800000, Teq, Peq],
+
+    @property
+    def _eq_steps(self):
+        return [
+            ['nvt', 50000, self._Tmax],
+            ['nvt', 50000, self._Teq],
+            ['npt', 50000, self._Teq, 0.02 * self._Pmax],
+            ['nvt', 50000, self._Tmax],
+            ['nvt', 100000, self._Teq],
+            ['npt', 50000, self._Teq, 0.6 * self._Pmax],
+            ['nvt', 50000, self._Tmax],
+            ['nvt', 100000, self._Teq],
+            ['npt', 50000, self._Teq, self._Pmax],
+            ['nvt', 50000, self._Tmax],
+            ['nvt', 100000, self._Teq],
+            ['npt', 5000, self._Teq, 0.5 * self._Pmax],
+            ['nvt', 5000, self._Tmax],
+            ['nvt', 10000, self._Teq],
+            ['npt', 5000, self._Teq, 0.1 * self._Pmax],
+            ['nvt', 5000, self._Tmax],
+            ['nvt', 10000, self._Teq],
+            ['npt', 5000, self._Teq, 0.01 * self._Pmax],
+            ['nvt', 5000, self._Tmax],
+            ['nvt', 10000, self._Teq],
+            ['npt', 800000, self._Teq, self._Peq],
         ]
 
-        for i in self._eq_step:
-            self._eq_totaltime += i[1]
+    @property
+    def _eq_totaltime(self):
+        total_time = 0
+        for i in self._eq_steps:
+            total_time += i[1]
+        return total_time
 
     def write_lammps(self, f: TextIOWrapper):
         f.write('### Equilibration\n')
@@ -129,7 +138,7 @@ class Equilibration(Procedure):
         f.write(f'{"restart":<15} {self._eq_totaltime} equilibrated.restart\n')
         f.write('\n')
 
-        for n, i in enumerate(self._eq_step):
+        for n, i in enumerate(self._eq_steps):
             if i[0] == 'nvt':
                 f.write(f'{"fix":<15} step{n + 1} all nvt temp '
                         f'{i[2]} {i[2]} {self._Tdamp}\n')
@@ -319,21 +328,21 @@ class MSDMeasurement(Procedure):
         f.write('\n')
         f.write(f'{"fix":<15} fNVT all nvt temp {self._Tinit} '
                 f'{self._Tfinal} {self._Tdamp}\n')
+        f.write('\n')
 
         msd_group_id = 'msdgroup'
         mol_chunk_id = 'molchunk'
         msd_chunk_id = 'msdchunk'
-        f.write('#### MSDMeasurement compute section\n')
-        f.write(f'shell mkdir {self._result_folder_name}\n')
+        f.write(f'{"shell":<15} mkdir {self._result_folder_name}\n')
         f.write(f'{"group":<15} {msd_group_id} {self._group}\n')
         f.write('\n')
 
         if self._create_block_every:
-            nblock = self._duration / self._create_block_every
+            nblock = int(self._duration / self._create_block_every)
         else:
             nblock = 1
         for block in range(nblock):
-            start = block * nblock
+            start = block * self._create_block_every
             f.write(f'##### MSDMeasurement block {block}\n')
             f.write(f'{"compute":<15} {mol_chunk_id}{block} {msd_group_id} '
                     f'chunk/atom molecule\n')
@@ -344,10 +353,11 @@ class MSDMeasurement(Procedure):
             f.write(
                 f'{"fix":<15} fMSD{block} {msd_group_id} ave/time '
                 f'1 1 10000 v_ave{msd_chunk_id}{block} start {start} file'
-                f'{self._result_folder_name}/msd_{start}_{self._duration}.txt')
+                f'{self._result_folder_name}/msd_{start}_{self._duration}.txt\n')
             f.write('\n')
 
         f.write(f'{"run":<15} {self._duration}\n')
+        f.write('\n')
         f.write(f'{"unfix":<15} fNVT\n')
         for block in range(nblock):
             f.write(f'{"unfix":<15} fMSD{block}\n')

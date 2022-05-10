@@ -80,7 +80,7 @@ class Lammps:
         self._neighbor_every = neighbor_every
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
-        self._procedures = []
+        self._procedures: List[Procedure] = []
 
     @property
     def lmp_input_fname(self) -> str:
@@ -126,24 +126,7 @@ class Lammps:
             if self._read_data_from:
                 # TODO: move to ForceField Object?
                 force_field = self._read_data_from.force_field
-                if (force_field == 'gaff2'):
-                    f.write(f'{"pair_style":<15} lj/cut/coul/long 12.0 12.0\n')
-                    f.write(f'{"pair_modify":<15} mix arithmetic\n')
-                    f.write(f'{"kspace_style":<15} pppm 1e-4\n')
-                    f.write(f'{"bond_style":<15} harmonic\n')
-                    f.write(f'{"angle_style":<15} harmonic\n')
-                    f.write(f'{"dihedral_style":<15} fourier\n')
-                    f.write(f'{"improper_style":<15} cvff\n')
-                    f.write(f'{"special_bonds":<15} amber\n')
-                elif (force_field == 'opls'):
-                    f.write(f'{"pair_style":<15} lj/cut/coul/long 9.0\n')
-                    f.write(f'{"pair_modify":<15} mix geometric tail yes\n')
-                    f.write(f'{"kspace_style":<15} pppm 1e-4\n')
-                    f.write(f'{"bond_style":<15} harmonic\n')
-                    f.write(f'{"angle_style":<15} harmonic\n')
-                    f.write(f'{"dihedral_style":<15} opls\n')
-                    f.write(f'{"improper_style":<15} cvff\n')
-                    f.write(f'{"special_bonds":<15} lj/coul 0.0 0.0 0.5\n')
+                force_field.write_settings(f)
                 f.write('\n')
                 f.write(
                     f'{"read_data":<15} {self._read_data_from.data_fname}\n')

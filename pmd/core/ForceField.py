@@ -1,27 +1,32 @@
-from abc import ABC, abstractmethod
 from io import TextIOWrapper
 
+OPLS_CHARGE_METHOD_OPTIONS = ['cm1a-lbcc', 'cm1a']
+GAFF2_CHARGE_METHOD_OPTIONS = ['gasteiger', 'am1bcc']
 
-class ForceField(ABC):
+class ForceField():
 
-    @abstractmethod
-    def write_settings(self, f: TextIOWrapper):
-        pass
-
-    @property
-    @abstractmethod
-    def charge_method(self):
-        pass
-
-
-class OPLS(ForceField):
-
-    def __init__(self, charge_method: str = 'lbcc') -> None:
+    def __init__(self, charge_method: str) -> None:
         self._charge_method = charge_method
 
     @property
     def charge_method(self):
         return self._charge_method
+
+
+class OPLS(ForceField):
+    '''Template OPLS object to contain OPLS force field settings
+
+    Attributes:
+        charge_method (str): Charge method; has to be one of `cm1a-lbcc` or 
+                             `cm1a`; default: `cm1a-lbcc`
+    '''
+
+    def __init__(self, charge_method: str = 'cm1a-lbcc') -> None:
+        if charge_method not in OPLS_CHARGE_METHOD_OPTIONS:
+            raise ValueError(f'Invalid OPLS charge method, valid options are '
+                             f'{", ".join(OPLS_CHARGE_METHOD_OPTIONS)}')
+
+        super().__init__(charge_method)
 
     def write_settings(self, f: TextIOWrapper):
         f.write(f'{"pair_style":<15} lj/cut/coul/long 9.0\n')
@@ -35,13 +40,19 @@ class OPLS(ForceField):
 
 
 class GAFF2(ForceField):
+    '''Template GAFF2 object to contain GAFF2 force field settings
 
-    def __init__(self, charge_method: str = 'am1bcc') -> None:
-        self._charge_method = charge_method
+    Attributes:
+        charge_method (str): Charge method; has to be one of `gasteiger` or 
+                             `am1bcc`; default: `gasteiger`
+    '''
 
-    @property
-    def charge_method(self):
-        return self._charge_method
+    def __init__(self, charge_method: str = 'gasteiger') -> None:
+        if charge_method not in GAFF2_CHARGE_METHOD_OPTIONS:
+            raise ValueError(f'Invalid OPLS charge method, valid options are '
+                             f'{", ".join(GAFF2_CHARGE_METHOD_OPTIONS)}')
+
+        super().__init__(charge_method)
 
     def write_settings(self, f: TextIOWrapper):
         f.write(f'{"pair_style":<15} lj/cut/coul/long 12.0 12.0\n')

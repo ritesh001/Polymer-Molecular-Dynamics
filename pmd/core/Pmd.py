@@ -56,14 +56,13 @@ class Pmd:
 
         with open(os.path.join(output_dir, metadata_fname), 'w') as yaml_file:
             metadata = {
-                # 'job': self._job[0],
-                # 'lammps': self._lammps[0],
+                'job': self._job[0],
+                'lammps': self._lammps[0],
                 'system': self._system,
             }
             yaml.dump(metadata,
                       yaml_file,
-                      sort_keys=False,
-                      default_flow_style=False)
+                      sort_keys=False)
 
     def load_metadata(self, metadata_fname: str):
         with open(metadata_fname) as yaml_file:

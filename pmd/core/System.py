@@ -1,5 +1,7 @@
+from typing import Union
 from rdkit import Chem
 
+from pmd.core.ForceField import GAFF2, OPLS, ForceField
 from pmd.util import Util
 
 
@@ -11,7 +13,7 @@ class System:
 
         density (float): Density of the system
 
-        force_field (str): Force field (One of `gaff2` and `opls`)
+        force_field (ForceField): Force field (One of `GAFF2` and `OPLS`)
 
         natoms_total (int): Total number of atoms of the system
 
@@ -38,7 +40,7 @@ class System:
 
     def __init__(self,
                  smiles: str,
-                 force_field: str,
+                 force_field: ForceField,
                  density: float,
                  natoms_total: int,
                  *,
@@ -46,9 +48,6 @@ class System:
                  mw_per_chain: int = None,
                  ru_per_chain: int = None,
                  data_fname: str = 'data.lmps'):
-
-        if (force_field != 'opls' and force_field != 'gaff2'):
-            raise ValueError('Force field options are opls and gaff2')
 
         chain_length_options = [natoms_per_chain, mw_per_chain, ru_per_chain]
         num_given_options = sum(option is not None
@@ -80,7 +79,7 @@ class System:
         return self._data_fname
 
     @property
-    def force_field(self) -> str:
+    def force_field(self) -> Union[OPLS, GAFF2]:
         return self._force_field
 
     @smiles.setter
@@ -151,7 +150,7 @@ class SolventSystem(System):
 
         density (float): Density of the system
 
-        force_field (str): Force field (One of `gaff2` and `opls`)
+        force_field (Force Field): Force field (One of `GAFF2` and `OPLS`)
 
         natoms_total (int): Total number of atoms of the system
 
@@ -180,7 +179,7 @@ class SolventSystem(System):
                  smiles: str,
                  solvent_smiles: str,
                  ru_nsolvent_ratio: float,
-                 force_field: str,
+                 force_field: ForceField,
                  density: float,
                  natoms_total: int,
                  *,
@@ -286,7 +285,7 @@ class SolventSystem(System):
                  self._data_fname, output_dir, cleanup)
 
 
-def _run_psp(input_data: dict, density: float, force_field: str,
+def _run_psp(input_data: dict, density: float, force_field: ForceField,
              data_fname: str, output_dir: str, cleanup: bool) -> None:
     try:
         import psp.AmorphousBuilder as ab
@@ -303,11 +302,12 @@ def _run_psp(input_data: dict, density: float, force_field: str,
                               OutDir=output_dir)
             amor.Build()
 
-            if force_field == 'opls':
-                amor.get_opls(output_fname=data_fname)
-            elif force_field == 'gaff2':
+            if isinstance(force_field, OPLS):
+                amor.get_opls(output_fname=data_fname, lbcc_charges=force_field.charge_method=='cm1a-lbcc')
+            elif isinstance(force_field, GAFF2):
                 amor.get_gaff2(output_fname=data_fname,
                                atom_typing='antechamber',
+                               am1bcc_charges=force_field.charge_method=='am1bcc',
                                swap_dict={
                                    'ns': 'n',
                                    'nt': 'n',
@@ -318,7 +318,7 @@ def _run_psp(input_data: dict, density: float, force_field: str,
         if cleanup:
             import os, shutil
             force_field_dname = ['ligpargen'
-                                 ] if force_field == 'opls' else ['pysimm']
+                                 ] if isinstance(force_field, OPLS) else ['pysimm']
             dnames = ['molecules', 'packmol'] + force_field_dname
             for dir in dnames:
                 try:

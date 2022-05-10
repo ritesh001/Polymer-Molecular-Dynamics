@@ -32,9 +32,9 @@ if __name__ == '__main__':
     system = pmd.SolventSystem(smiles=smiles,
                                solvent_smiles=solvent,
                                ru_nsolvent_ratio=ratio,
-                               force_field='gaff2',
+                               force_field=pmd.GAFF2(),
                                density=0.8,
-                               natoms_total=5000,
+                               natoms_total=10000,
                                natoms_per_chain=150)
 
     lmp = pmd.Lammps(read_data_from=system)
@@ -49,10 +49,12 @@ if __name__ == '__main__':
                 duration=10000000,
                 reset_timestep_before_run=True))
     lmp.add_procedure(
-        pmd.NVT(Tinit=300,
-                Tfinal=300,
-                duration=200000000,
-                reset_timestep_before_run=True))
+        pmd.MSDMeasurement(Tinit=300,
+                           Tfinal=300,
+                           duration=200000000,
+                           group=f'molecule <={system.nsolvents}',
+                           create_block_every=10000000,
+                           reset_timestep_before_run=True))
 
     job = pmd.Torque(run_lammps=lmp,
                      jobname=system_id,
@@ -61,6 +63,5 @@ if __name__ == '__main__':
                      ppn=24,
                      walltime='72:00:00')
 
-    system.smiles = '*CC(*)CCC'
     run = pmd.Pmd(system, lmp, job)
     run.create(system_id, save_metadata=True)
