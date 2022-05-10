@@ -17,7 +17,7 @@ Template object to contain System initialization settings
   
 - `density` _float_ - Density of the system
   
-- `force_field` _str_ - Force field (One of `gaff2` and `opls`)
+- `force_field` _ForceField_ - Force field (One of `GAFF2` and `OPLS`)
   
 - `natoms_total` _int_ - Total number of atoms of the system
   
@@ -83,7 +83,7 @@ Template object to contain System with solvents initialization settings
   
 - `density` _float_ - Density of the system
   
-- `force_field` _str_ - Force field (One of `gaff2` and `opls`)
+- `force_field` _Force Field_ - Force field (One of `GAFF2` and `OPLS`)
   
 - `natoms_total` _int_ - Total number of atoms of the system
   

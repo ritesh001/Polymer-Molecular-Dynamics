@@ -60,9 +60,7 @@ class Pmd:
                 'lammps': self._lammps[0],
                 'system': self._system,
             }
-            yaml.dump(metadata,
-                      yaml_file,
-                      sort_keys=False)
+            yaml.dump(metadata, yaml_file, sort_keys=False)
 
     def load_metadata(self, metadata_fname: str):
         with open(metadata_fname) as yaml_file:

@@ -3,6 +3,7 @@ from io import TextIOWrapper
 OPLS_CHARGE_METHOD_OPTIONS = ['cm1a-lbcc', 'cm1a']
 GAFF2_CHARGE_METHOD_OPTIONS = ['gasteiger', 'am1bcc']
 
+
 class ForceField():
 
     def __init__(self, charge_method: str) -> None:

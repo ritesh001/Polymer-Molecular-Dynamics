@@ -16,8 +16,8 @@ Template object to contain LAMMPS initialization settings
 - `read_data_from` _System_ - System object that the data file will be read
   from; one of this attribute and
   `read_restart_from` has to be provided but not
-  both (providing both will result in an error);
-- `default` - `None`
+  both (providing both will result in an error)
+  ; default: `None`
   
 - `read_restart_from` _Lammps_ - Lammps object that the last restart file
   created will be read from; one of this
@@ -54,7 +54,7 @@ Template object to contain LAMMPS initialization settings
 ### add\_procedure
 
 ```python
-def add_procedure(procedure: Procedure) -> Lammps
+def add_procedure(procedure: Union[Procedure, List[Procedure]]) -> Lammps
 ```
 
 Method to add simulation procedure
@@ -72,6 +72,7 @@ Method to add simulation procedure
 ### write\_lammps
 
 ```python
+@Util.build_dir
 def write_lammps(output_dir: str = '.') -> None
 ```
 

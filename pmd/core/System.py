@@ -190,7 +190,7 @@ class SolventSystem(System):
 
         self._solvent_smiles = solvent_smiles
         self._ru_nsolvent_ratio = ru_nsolvent_ratio
-        
+
         super().__init__(smiles,
                          force_field,
                          density,
@@ -303,22 +303,25 @@ def _run_psp(input_data: dict, density: float, force_field: ForceField,
             amor.Build()
 
             if isinstance(force_field, OPLS):
-                amor.get_opls(output_fname=data_fname, lbcc_charges=force_field.charge_method=='cm1a-lbcc')
+                amor.get_opls(
+                    output_fname=data_fname,
+                    lbcc_charges=force_field.charge_method == 'cm1a-lbcc')
             elif isinstance(force_field, GAFF2):
-                amor.get_gaff2(output_fname=data_fname,
-                               atom_typing='antechamber',
-                               am1bcc_charges=force_field.charge_method=='am1bcc',
-                               swap_dict={
-                                   'ns': 'n',
-                                   'nt': 'n',
-                                   'nv': 'nh'
-                               })
+                amor.get_gaff2(
+                    output_fname=data_fname,
+                    atom_typing='antechamber',
+                    am1bcc_charges=force_field.charge_method == 'am1bcc',
+                    swap_dict={
+                        'ns': 'n',
+                        'nt': 'n',
+                        'nv': 'nh'
+                    })
         print('--------------- System successfully created---------------')
     finally:
         if cleanup:
             import os, shutil
-            force_field_dname = ['ligpargen'
-                                 ] if isinstance(force_field, OPLS) else ['pysimm']
+            force_field_dname = ['ligpargen'] if isinstance(
+                force_field, OPLS) else ['pysimm']
             dnames = ['molecules', 'packmol'] + force_field_dname
             for dir in dnames:
                 try:

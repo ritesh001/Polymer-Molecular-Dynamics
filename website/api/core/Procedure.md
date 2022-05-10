@@ -113,6 +113,45 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
 - `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
   procedure; default: `False`
 
+## MSDMeasurement Objects
+
+```python
+class MSDMeasurement(Procedure)
+```
+
+Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
+
+**Attributes**:
+
+- `duration` _int_ - Duration of this NVT procedure (timestep unit)
+  
+- `Tinit` _float_ - Initial temperature
+  
+- `Tfinal` _float_ - Final temperature
+  
+- `group` _str_ - The group of atoms that will be considered for MSD
+  calculation. This has to be a string that matches the
+  syntax of LAMMPS&#x27;
+  [group](https://docs.lammps.org/group.html) command (e.g.
+  `molecule &lt;=50`, `type 1 2`, etc)
+  
+- `create_block_every` _int_ - The time interval that new MSD calculation
+  starting point will be created (e.g. for a
+  1000 fs run, a `create_block_every` value of
+  100fs would result in 10 blocks with 10
+  different MSD starting point and length)
+  ; default: `None`
+  
+- `result_folder_name` _str_ - The name of the folder that PMD creates and
+  put result files in; default: `result`
+  
+- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+  
+- `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
+  
+- `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
+  procedure; default: `False`
+
 ## TgMeasurement Objects
 
 ```python

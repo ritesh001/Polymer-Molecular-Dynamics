@@ -281,6 +281,22 @@ class MSDMeasurement(Procedure):
         Tinit (float): Initial temperature
         
         Tfinal (float): Final temperature
+
+        group (str): The group of atoms that will be considered for MSD
+                     calculation. This has to be a string that matches the
+                     syntax of LAMMPS' 
+                     [group](https://docs.lammps.org/group.html) command (e.g.
+                     `molecule <=50`, `type 1 2`, etc)
+
+        create_block_every (int): The time interval that new MSD calculation
+                                  starting point will be created (e.g. for a
+                                  1000 fs run, a `create_block_every` value of
+                                  100fs would result in 10 blocks with 10
+                                  different MSD starting point and length)
+                                  ; default: `None`
+
+        result_folder_name (str): The name of the folder that PMD creates and
+                                  put result files in; default: `result`
         
         Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
         
@@ -353,7 +369,8 @@ class MSDMeasurement(Procedure):
             f.write(
                 f'{"fix":<15} fMSD{block} {msd_group_id} ave/time '
                 f'1 1 10000 v_ave{msd_chunk_id}{block} start {start} file'
-                f'{self._result_folder_name}/msd_{start}_{self._duration}.txt\n')
+                f'{self._result_folder_name}/msd_{start}_{self._duration}.txt'
+                f'\n')
             f.write('\n')
 
         f.write(f'{"run":<15} {self._duration}\n')

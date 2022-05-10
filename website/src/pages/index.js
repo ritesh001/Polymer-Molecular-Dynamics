@@ -57,25 +57,27 @@ function HomepageHeader() {
             <CodeBlock className="language-python" title="example-mkinput.py">
               {"import pmd\n" +
                 "\n" +
+                "# Define polymer and system specs\n" +
+                "syst = pmd.System(smiles='tmp', force_field=pmd.OPLS(),\n" +
+                "               density=0.8, natoms_total=10000,\n" +
+                "               natoms_per_chain=150)\n" +
+                "\n" +
+                "# Customize LAMMPS simulation\n" +
+                "lmp = pmd.Lammps(read_data_from=syst)\n" +
+                "lmp.add_procedure(pmd.Minimization())\n" +
+                "lmp.add_procedure(pmd.Equilibration())\n" +
+                "lmp.add_procedure(pmd.TgMeasurement())\n" +
+                "\n" +
+                "# Create job scheduler settings\n" +
+                "job = pmd.Torque(run_lammps=lmp, jobname='tmp',\n" +
+                "                 project='Your-pid', nodes=2, ppn=24,\n" +
+                "                 walltime='48:00:00')\n" +
+                "\n" +
+                "run = pmd.Pmd(system=syst, lammps=lmp, job=job)\n" +
                 "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
-                "    # Define system specs and make the data file\n" +
-                "    s = pmd.System(smiles=smiles, force_field='opls',\n" +
-                "                   density=0.8, natoms_total=5000,\n" +
-                "                   natoms_per_chain=150)\n" +
-                "    s.write_data(output_dir=smiles)\n" +
-                "\n" +
-                "    # Customize LAMMPS simulation and make the input file\n" +
-                "    lmp = pmd.Lammps(read_data_from=s)\n" +
-                "    lmp.add_procedure(pmd.Minimization())\n" +
-                "    lmp.add_procedure(pmd.Equilibration())\n" +
-                "    lmp.add_procedure(pmd.TgMeasurement())\n" +
-                "    lmp.write_lammps(output_dir=smiles)\n" +
-                "\n" +
-                "    # Create job scheduler file\n" +
-                "    job = pmd.Torque(run_lammps=lmp, jobname=smiles,\n" +
-                "                     project='Your-pid', nodes=2, ppn=24,\n" +
-                "                     walltime='48:00:00')\n" +
-                "    job.write_job(output_dir=smiles)"}
+                "    syst.smiles = smiles\n" +
+                "    job.jobname = smiles\n" +
+                "    run.create(output_dir=smiles, save_metadata=True)"}
             </CodeBlock>
           </div>
         </div>

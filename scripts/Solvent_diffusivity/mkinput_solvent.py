@@ -51,9 +51,9 @@ if __name__ == '__main__':
     lmp.add_procedure(
         pmd.MSDMeasurement(Tinit=300,
                            Tfinal=300,
-                           duration=200000000,
                            group=f'molecule <={system.nsolvents}',
                            create_block_every=10000000,
+                           duration=200000000,
                            reset_timestep_before_run=True))
 
     job = pmd.Torque(run_lammps=lmp,

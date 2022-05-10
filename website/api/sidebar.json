@@ -1,5 +1,6 @@
 {
   "items": [
+    "core/ForceField",
     "core/Job",
     "core/Lammps",
     "core/Pmd",

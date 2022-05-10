@@ -10,7 +10,7 @@ The following script sets up the **TgMeasurement procedure** for polyethylene Tg
 ```python
 import pmd
 
-system = pmd.System(smiles='*CC*', density=0.8, force_field='gaff2',
+system = pmd.System(smiles='*CC*', density=0.8, force_field=pmd.GAFF2(),
                     natoms_total=5000, natoms_per_chain=150)
 system.write_data()
 
