@@ -292,6 +292,10 @@ class MSDMeasurement(Procedure):
                  dump_fname: str = 'nvt.lammpstrj',
                  reset_timestep_before_run: bool = False):
 
+        if duration % create_block_every != 0:
+            raise ValueError('The duration has to be divisible by the '
+                             'create_block_every')
+
         self._duration = duration
         self._Tinit = Tinit
         self._Tfinal = Tfinal
@@ -322,33 +326,36 @@ class MSDMeasurement(Procedure):
         f.write('#### MSDMeasurement compute section\n')
         f.write(f'shell mkdir {self._result_folder_name}\n')
         f.write(f'{"group":<15} {msd_group_id} {self._group}\n')
-        f.write(f'{"compute":<15} {mol_chunk_id} {msd_group_id} '
-                f'chunk/atom molecule\n')
-        f.write(f'{"compute":<15} {msd_chunk_id} {msd_group_id} '
-                f'msd/chunk {mol_chunk_id}\n')
-        f.write(f'{"variable":<15} ave{msd_chunk_id} equal '
-                f'ave(c_{msd_chunk_id}[4])\n')
-        f.write(f'{"fix":<15} fMSD {msd_group_id} ave/time 1 1 10000 '
-                f'v_ave{msd_chunk_id} file {self._result_folder_name}/msd.txt')
+        f.write('\n')
+
+        if self._create_block_every:
+            nblock = self._duration / self._create_block_every
+        else:
+            nblock = 1
+        for block in range(nblock):
+            start = block * nblock
+            f.write(f'##### MSDMeasurement block {block}\n')
+            f.write(f'{"compute":<15} {mol_chunk_id}{block} {msd_group_id} '
+                    f'chunk/atom molecule\n')
+            f.write(f'{"compute":<15} {msd_chunk_id}{block} {msd_group_id} '
+                    f'msd/chunk {mol_chunk_id}{block}\n')
+            f.write(f'{"variable":<15} ave{msd_chunk_id}{block} equal '
+                    f'ave(c_{msd_chunk_id}{block}[4])\n')
+            f.write(
+                f'{"fix":<15} fMSD{block} {msd_group_id} ave/time '
+                f'1 1 10000 v_ave{msd_chunk_id}{block} start {start} file'
+                f'{self._result_folder_name}/msd_{start}_{self._duration}.txt')
+            f.write('\n')
 
         f.write(f'{"run":<15} {self._duration}\n')
         f.write(f'{"unfix":<15} fNVT\n')
+        for block in range(nblock):
+            f.write(f'{"unfix":<15} fMSD{block}\n')
         f.write('\n')
         f.write(f'{"undump":<15} dump_nvt\n')
         f.write(f'{"undump":<15} dump_image\n')
         f.write('\n')
         f.write('\n')
-
-        # shell mkdir result
-        # compute msd type 1 msd
-        # f.write(f'{"variable":<15} Timestep equal step\n')
-        # fix 1 all ave/time 1 1 10000 v_Timestep c_msd[4] file result/temp.profile.txt
-
-        # group           solventgroup molecule <= 22
-        # compute         solventchunk solventgroup chunk/atom molecule
-        # compute         msdchunk solventgroup msd/chunk solventchunk
-        # variable        avemsdchunk equal ave(c_msdchunk[4])
-        # fix             fAVETIME solventgroup ave/time 1 1 100 v_avemsdchunk file result/avetime_result.txt
 
 
 class TgMeasurement(Procedure):

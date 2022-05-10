@@ -1,3 +1,5 @@
+from rdkit import Chem
+
 from pmd.util import Util
 
 
@@ -67,6 +69,8 @@ class System:
         self._ru_per_chain = ru_per_chain
         self._data_fname = data_fname
 
+        self._calculate_system_spec()
+
     @property
     def smiles(self) -> str:
         return self._smiles
@@ -82,6 +86,26 @@ class System:
     @smiles.setter
     def smiles(self, smiles: str):
         self._smiles = smiles
+        self._calculate_system_spec()
+
+    def _calculate_system_spec(self):
+        mol = Chem.MolFromSmiles(self._smiles)
+        natoms_per_RU = mol.GetNumAtoms(onlyExplicit=0) - 2
+        if self._natoms_per_chain:
+            self._length = round(self._natoms_per_chain / natoms_per_RU)
+        elif self._mw_per_chain:
+            mw_per_RU = Chem.Descriptors.ExactMolWt(mol)
+            self._length = round(self._mw_per_chain / mw_per_RU)
+        else:
+            self._length = self._ru_per_chain
+        self._nchains = round(self._natoms_total /
+                              (natoms_per_RU * self._length + 2))
+
+        print('-----------------------System Stats-----------------------')
+        print('SMILES:', self._smiles)
+        print('Natom_per_RU:', natoms_per_RU)
+        print('length:', self._length)
+        print('Nchains:', self._nchains)
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
@@ -98,35 +122,11 @@ class System:
             None
         '''
 
-        try:
-            from rdkit import Chem
-        except ImportError:
-            raise ImportError(
-                'System\'s write_data function requires RDKit to '
-                'function properly, please install RDKit')
-
-        mol = Chem.MolFromSmiles(self._smiles)
-        natoms_per_RU = mol.GetNumAtoms(onlyExplicit=0) - 2
-        if self._natoms_per_chain:
-            length = round(self._natoms_per_chain / natoms_per_RU)
-        elif self._mw_per_chain:
-            mw_per_RU = Chem.Descriptors.ExactMolWt(mol)
-            length = round(self._mw_per_chain / mw_per_RU)
-        else:
-            length = self._ru_per_chain
-        nchains = round(self._natoms_total / (natoms_per_RU * length + 2))
-
-        print('-----------------------System Stats-----------------------')
-        print('SMILES:', self._smiles)
-        print('Natom_per_RU:', natoms_per_RU)
-        print('length:', length)
-        print('Nchains:', nchains)
-
         psp_input_data = {
             'ID': ['Poly'],
             'smiles': [self._smiles],
-            'Len': [length],
-            'Num': [nchains],
+            'Len': [self._length],
+            'Num': [self._nchains],
             'NumConf': [1],
             'Loop': [False],
             'LeftCap': ['[*][H]'],
@@ -200,6 +200,54 @@ class SolventSystem(System):
         self._solvent_smiles = solvent_smiles
         self._ru_nsolvent_ratio = ru_nsolvent_ratio
 
+    @property
+    def nsolvents(self):
+        return self._nsolvents
+
+    def _calculate_system_spec(self):
+        # Get the number of atoms of a repeating unit and determine the polymer
+        # chain length
+        mol = Chem.MolFromSmiles(self._smiles)
+        natoms_per_ru = mol.GetNumAtoms(onlyExplicit=0) - 2
+        if self._natoms_per_chain:
+            self._length = round(self._natoms_per_chain / natoms_per_ru)
+        elif self._mw_per_chain:
+            mw_per_ru = Chem.Descriptors.ExactMolWt(mol)
+            self._length = round(self._mw_per_chain / mw_per_ru)
+        else:
+            self._length = self._ru_per_chain
+
+        # Get the number of atoms of a solvent molecule
+        mol_solvent = Chem.MolFromSmiles(self._solvent_smiles)
+        natoms_solvent = mol_solvent.GetNumAtoms(onlyExplicit=0)
+
+        # Calculate number of polymer chains and solvents based on target total
+        # number of atoms
+        natoms_total_onechain = (self._ru_nsolvent_ratio * self._length *
+                                 natoms_solvent) + (
+                                     self._length * natoms_per_ru + 2)
+        self._nchains = round(self._natoms_total / natoms_total_onechain)
+        self._nsolvents = round(self._ru_nsolvent_ratio * self._length *
+                                self._nchains)
+
+        print('--------Polymer Stats--------')
+        print('Polymer SMILES:', self._smiles)
+        print('Polymer length:', self._length)
+        print('Polymer number:', self._nchains)
+        print('')
+        print('--------Solvent Stats--------')
+        print('Solvent SMILES:', self._solvent_smiles)
+        print('Solvent number:', self._nsolvents)
+        print('')
+        print('--------System Stats--------')
+        print('Target Nsolvents/Nrepeatunits', self._ru_nsolvent_ratio)
+        print('Final Nsolvents/Nrepeatunits',
+              self._nsolvents / (self._length * self._nchains))
+        print(
+            'Total number of atoms:', self._nsolvents * natoms_solvent +
+            (self._length * natoms_per_ru + 2) * self._nchains)
+        print('')
+
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
         field parameters)
@@ -216,64 +264,17 @@ class SolventSystem(System):
         '''
 
         try:
-            from rdkit import Chem
-        except ImportError:
-            raise ImportError(
-                'SolventSystem\'s write_data function requires RDKit to '
-                'function properly, please install RDKit')
-
-        try:
             import numpy as np
         except ImportError:
             raise ImportError(
                 'SolventSystem\'s write_data function requires numpy to '
                 'function properly, please install numpy')
 
-        # Get the number of atoms of a repeating unit and determine the polymer
-        # chain length
-        mol = Chem.MolFromSmiles(self._smiles)
-        natoms_per_ru = mol.GetNumAtoms(onlyExplicit=0) - 2
-        if self._natoms_per_chain:
-            length = round(self._natoms_per_chain / natoms_per_ru)
-        elif self._mw_per_chain:
-            mw_per_ru = Chem.Descriptors.ExactMolWt(mol)
-            length = round(self._mw_per_chain / mw_per_ru)
-        else:
-            length = self._ru_per_chain
-
-        # Get the number of atoms of a solvent molecule
-        mol_solvent = Chem.MolFromSmiles(self._solvent_smiles)
-        natoms_solvent = mol_solvent.GetNumAtoms(onlyExplicit=0)
-
-        # Calculate number of polymer chains and solvents based on target total
-        # number of atoms
-        natoms_total_onechain = (self._ru_nsolvent_ratio * length *
-                                 natoms_solvent) + (length * natoms_per_ru + 2)
-        nchains = round(self._natoms_total / natoms_total_onechain)
-        nsolvents = round(self._ru_nsolvent_ratio * length * nchains)
-
-        print('--------Polymer Stats--------')
-        print('Polymer SMILES:', self._smiles)
-        print('Polymer length:', length)
-        print('Polymer number:', nchains)
-        print('')
-        print('--------Solvent Stats--------')
-        print('Solvent SMILES:', self._solvent_smiles)
-        print('Solvent number:', nsolvents)
-        print('')
-        print('--------System Stats--------')
-        print('Target Nsolvents/Nrepeatunits', self._ru_nsolvent_ratio)
-        print('Final Nsolvents/Nrepeatunits', nsolvents / (length * nchains))
-        print(
-            'Total number of atoms:', nsolvents * natoms_solvent +
-            (length * natoms_per_ru + 2) * nchains)
-        print('')
-
         psp_input_data = {
             'ID': ['Sol', 'Poly'],
             'smiles': [self._solvent_smiles, self._smiles],
-            'Len': [1, length],
-            'Num': [nsolvents, nchains],
+            'Len': [1, self._length],
+            'Num': [self._nsolvents, self._nchains],
             'NumConf': [1, 1],
             'Loop': [False, False],
             'LeftCap': [np.nan, '[*][H]'],
@@ -294,45 +295,46 @@ def _run_psp(input_data: dict, density: float, force_field: str,
                           'function properly, please install PSP')
 
     print('--------Creating the system, this may take a while--------')
-    with Util.HiddenPrints():
-        amor = ab.Builder(pd.DataFrame(data=input_data),
-                          density=density,
-                          OutDir=output_dir)
-        amor.Build()
+    try:
+        with Util.HiddenPrints():
+            amor = ab.Builder(pd.DataFrame(data=input_data),
+                              density=density,
+                              OutDir=output_dir)
+            amor.Build()
 
-        if force_field == 'opls':
-            amor.get_opls(output_fname=data_fname)
-        elif force_field == 'gaff2':
-            amor.get_gaff2(output_fname=data_fname,
-                           atom_typing='antechamber',
-                           swap_dict={
-                               'ns': 'n',
-                               'nt': 'n',
-                               'nv': 'nh'
-                           })
-    print('--------------- System successfully created---------------')
+            if force_field == 'opls':
+                amor.get_opls(output_fname=data_fname)
+            elif force_field == 'gaff2':
+                amor.get_gaff2(output_fname=data_fname,
+                               atom_typing='antechamber',
+                               swap_dict={
+                                   'ns': 'n',
+                                   'nt': 'n',
+                                   'nv': 'nh'
+                               })
+        print('--------------- System successfully created---------------')
+    finally:
+        if cleanup:
+            import os, shutil
+            force_field_dname = ['ligpargen'
+                                 ] if force_field == 'opls' else ['pysimm']
+            dnames = ['molecules', 'packmol'] + force_field_dname
+            for dir in dnames:
+                try:
+                    shutil.rmtree(os.path.join(output_dir, dir))
+                except FileNotFoundError:
+                    pass
 
-    if cleanup:
-        import os, shutil
-        force_field_dname = ['ligpargen'
-                             ] if force_field == 'opls' else ['pysimm']
-        dnames = ['molecules', 'packmol'] + force_field_dname
-        for dir in dnames:
-            try:
-                shutil.rmtree(os.path.join(output_dir, dir))
-            except FileNotFoundError:
-                pass
+            fnames = ['amor_model.data', 'amor_model.vasp']
+            for file in fnames:
+                try:
+                    os.remove(os.path.join(output_dir, file))
+                except FileNotFoundError:
+                    pass
 
-        fnames = ['amor_model.data', 'amor_model.vasp']
-        for file in fnames:
-            try:
-                os.remove(os.path.join(output_dir, file))
-            except FileNotFoundError:
-                pass
-
-        fnames = ['output_MB.csv', 'molecules.csv']
-        for file in fnames:
-            try:
-                os.remove(file)
-            except FileNotFoundError:
-                pass
+            fnames = ['output_MB.csv', 'molecules.csv']
+            for file in fnames:
+                try:
+                    os.remove(file)
+                except FileNotFoundError:
+                    pass
