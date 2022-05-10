@@ -124,7 +124,6 @@ class Lammps:
             f.write(f'{"atom_style":<15} full\n')
             f.write(f'{"units":<15} {self._units}\n')
             if self._read_data_from:
-                # TODO: move to ForceField Object?
                 force_field = self._read_data_from.force_field
                 force_field.write_settings(f)
                 f.write('\n')
