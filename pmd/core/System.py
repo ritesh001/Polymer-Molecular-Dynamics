@@ -188,6 +188,10 @@ class SolventSystem(System):
                  mw_per_chain: int = None,
                  ru_per_chain: int = None,
                  data_fname: str = 'data.lmps'):
+
+        self._solvent_smiles = solvent_smiles
+        self._ru_nsolvent_ratio = ru_nsolvent_ratio
+        
         super().__init__(smiles,
                          force_field,
                          density,
@@ -196,9 +200,6 @@ class SolventSystem(System):
                          mw_per_chain=mw_per_chain,
                          ru_per_chain=ru_per_chain,
                          data_fname=data_fname)
-
-        self._solvent_smiles = solvent_smiles
-        self._ru_nsolvent_ratio = ru_nsolvent_ratio
 
     @property
     def nsolvents(self):

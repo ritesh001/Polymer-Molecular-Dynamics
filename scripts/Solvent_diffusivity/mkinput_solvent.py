@@ -61,5 +61,6 @@ if __name__ == '__main__':
                      ppn=24,
                      walltime='72:00:00')
 
+    system.smiles = '*CC(*)CCC'
     run = pmd.Pmd(system, lmp, job)
     run.create(system_id, save_metadata=True)
