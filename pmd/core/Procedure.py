@@ -284,9 +284,8 @@ class MSDMeasurement(Procedure):
 
         group (str): The group of atoms that will be considered for MSD
                      calculation. This has to be a string that matches the
-                     syntax of LAMMPS' 
-                     [group](https://docs.lammps.org/group.html) command (e.g.
-                     `molecule <=50`, `type 1 2`, etc)
+                     syntax of [group](https://docs.lammps.org/group.html)
+                     LAMMPS command (e.g. `"molecule <=50"`, `"type 1 2"`, etc)
 
         create_block_every (int): The time interval that new MSD calculation
                                   starting point will be created (e.g. for a
@@ -296,11 +295,15 @@ class MSDMeasurement(Procedure):
                                   ; default: `None`
 
         result_folder_name (str): The name of the folder that PMD creates and
-                                  put result files in; default: `result`
+                                  put result files in; default: `"result"`
         
-        Tdamp (str): Damping parameter for thermostats; default: `$(100.0*dt)`
+        Tdamp (str): Damping parameter for thermostats; default: 
+                     `"$(100.0*dt)"`
         
-        dump_fname (str): Name of the dump file; default: `nvt.lammpstrj`
+        dump_fname (str): Name of the dump file; default: `"nvt.lammpstrj"`
+        
+        dump_image (bool): Whether to dump a image file at the end of the run
+                           ; default: `False`
         
         reset_timestep_before_run (bool): Whether to reset timestep after the 
                                           procedure; default: `False`
@@ -315,6 +318,7 @@ class MSDMeasurement(Procedure):
                  result_folder_name: str = 'result',
                  Tdamp: str = '$(100.0*dt)',
                  dump_fname: str = 'nvt.lammpstrj',
+                 dump_image: bool = False,
                  reset_timestep_before_run: bool = False):
 
         if duration % create_block_every != 0:
@@ -329,6 +333,7 @@ class MSDMeasurement(Procedure):
         self._Tdamp = Tdamp
         self._dump_fname = dump_fname
         self._result_folder_name = result_folder_name
+        self._dump_image = dump_image
         self._reset_timestep_before_run = reset_timestep_before_run
 
     def write_lammps(self, f: TextIOWrapper):
@@ -338,8 +343,9 @@ class MSDMeasurement(Procedure):
         f.write('\n')
         f.write(f'{"dump":<15} dump_nvt all custom 10000 {self._dump_fname} '
                 f'id mol type q xs ys zs ix iy iz\n')
-        f.write(f'{"dump":<15} dump_image all image {self._duration} '
-                f'image.*.jpg type type\n')
+        if self._dump_image:
+            f.write(f'{"dump":<15} dump_image all image {self._duration} '
+                    f'image.*.jpg type type\n')
         f.write(f'{"restart":<15} {self._duration} nvt.restart\n')
         f.write('\n')
         f.write(f'{"fix":<15} fNVT all nvt temp {self._Tinit} '
@@ -351,6 +357,8 @@ class MSDMeasurement(Procedure):
         msd_chunk_id = 'msdchunk'
         f.write(f'{"shell":<15} mkdir {self._result_folder_name}\n')
         f.write(f'{"group":<15} {msd_group_id} {self._group}\n')
+        f.write(f'{"compute":<15} {mol_chunk_id} {msd_group_id} '
+                f'chunk/atom molecule\n')
         f.write('\n')
 
         if self._create_block_every:
@@ -360,27 +368,26 @@ class MSDMeasurement(Procedure):
         for block in range(nblock):
             start = block * self._create_block_every
             f.write(f'##### MSDMeasurement block {block}\n')
-            f.write(f'{"compute":<15} {mol_chunk_id}{block} {msd_group_id} '
-                    f'chunk/atom molecule\n')
             f.write(f'{"compute":<15} {msd_chunk_id}{block} {msd_group_id} '
-                    f'msd/chunk {mol_chunk_id}{block}\n')
+                    f'msd/chunk {mol_chunk_id}\n')
             f.write(f'{"variable":<15} ave{msd_chunk_id}{block} equal '
                     f'ave(c_{msd_chunk_id}{block}[4])\n')
             f.write(
                 f'{"fix":<15} fMSD{block} {msd_group_id} ave/time '
-                f'1 1 10000 v_ave{msd_chunk_id}{block} start {start} file'
+                f'1 1 10000 v_ave{msd_chunk_id}{block} start {start} file '
                 f'{self._result_folder_name}/msd_{start}_{self._duration}.txt'
                 f'\n')
+            f.write(f'{"run":<15} {self._create_block_every}\n')
             f.write('\n')
 
-        f.write(f'{"run":<15} {self._duration}\n')
         f.write('\n')
         f.write(f'{"unfix":<15} fNVT\n')
         for block in range(nblock):
             f.write(f'{"unfix":<15} fMSD{block}\n')
         f.write('\n')
         f.write(f'{"undump":<15} dump_nvt\n')
-        f.write(f'{"undump":<15} dump_image\n')
+        if self._dump_image:
+            f.write(f'{"undump":<15} dump_image\n')
         f.write('\n')
         f.write('\n')
 

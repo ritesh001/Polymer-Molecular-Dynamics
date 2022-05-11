@@ -131,9 +131,8 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
   
 - `group` _str_ - The group of atoms that will be considered for MSD
   calculation. This has to be a string that matches the
-  syntax of LAMMPS&#x27;
-  [group](https://docs.lammps.org/group.html) command (e.g.
-  `molecule &lt;=50`, `type 1 2`, etc)
+  syntax of [group](https://docs.lammps.org/group.html)
+  LAMMPS command (e.g. `"molecule <=50"`, `"type 1 2"`, etc)
   
 - `create_block_every` _int_ - The time interval that new MSD calculation
   starting point will be created (e.g. for a
@@ -143,11 +142,15 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
   ; default: `None`
   
 - `result_folder_name` _str_ - The name of the folder that PMD creates and
-  put result files in; default: `result`
+  put result files in; default: `"result"`
   
-- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Tdamp` _str_ - Damping parameter for thermostats; default:
+  `"$(100.0*dt)"`
   
-- `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
+- `dump_fname` _str_ - Name of the dump file; default: `"nvt.lammpstrj"`
+  
+- `dump_image` _bool_ - Whether to dump a image file at the end of the run
+  ; default: `False`
   
 - `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
   procedure; default: `False`

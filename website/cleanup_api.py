@@ -9,6 +9,8 @@ def cleanup(cleanup_route: str):
         data = fin.read()
         #replace all occurrences of the required string
         data = data.replace('####', '###')
+        data = data.replace('&quot;', '"')
+        data = data.replace('&lt;', '<')
         #close the input file
         fin.close()
         #open the input file in write mode

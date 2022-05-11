@@ -12,3 +12,5 @@ renderer:
   relative_output_path: ./
   relative_sidebar_path: sidebar.json
   sidebar_top_level_label: null
+  markdown:
+    escape_html_in_docstring: true
