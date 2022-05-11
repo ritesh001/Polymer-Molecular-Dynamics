@@ -51,7 +51,7 @@ if __name__ == '__main__':
     lmp.add_procedure(
         pmd.MSDMeasurement(Tinit=300,
                            Tfinal=300,
-                           group=f'molecule <= {system.nsolvents}',
+                           group=system.solvent_group,
                            create_block_every=10000000,
                            duration=200000000,
                            dump_image=True,

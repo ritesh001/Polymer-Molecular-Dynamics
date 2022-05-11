@@ -201,8 +201,8 @@ class SolventSystem(System):
                          data_fname=data_fname)
 
     @property
-    def nsolvents(self):
-        return self._nsolvents
+    def solvent_group(self):
+        return f'molecule <= {self._nsolvents}'
 
     def _calculate_system_spec(self):
         # Get the number of atoms of a repeating unit and determine the polymer
