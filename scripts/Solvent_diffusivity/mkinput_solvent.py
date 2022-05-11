@@ -32,9 +32,9 @@ if __name__ == '__main__':
     system = pmd.SolventSystem(smiles=smiles,
                                solvent_smiles=solvent,
                                ru_nsolvent_ratio=ratio,
-                               force_field=pmd.GAFF2(),
+                               force_field=pmd.GAFF2(charge_method='am1bcc'),
                                density=0.8,
-                               natoms_total=10000,
+                               natoms_total=5000,
                                natoms_per_chain=150)
 
     lmp = pmd.Lammps(read_data_from=system)
@@ -51,9 +51,10 @@ if __name__ == '__main__':
     lmp.add_procedure(
         pmd.MSDMeasurement(Tinit=300,
                            Tfinal=300,
-                           group=f'molecule <={system.nsolvents}',
+                           group=f'molecule <= {system.nsolvents}',
                            create_block_every=10000000,
                            duration=200000000,
+                           dump_image=True,
                            reset_timestep_before_run=True))
 
     job = pmd.Torque(run_lammps=lmp,
