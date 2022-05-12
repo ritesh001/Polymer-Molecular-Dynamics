@@ -43,6 +43,9 @@ class Torque(Job):
         self._gpus = gpus
         self._job_fname = job_fname
 
+    def __repr__(self) -> str:
+        return type(self).__name__
+
     @Util.build_dir
     def write_job(self, output_dir: str = '.') -> None:
         '''Method to make the Torque job scheduler input file
@@ -109,6 +112,9 @@ class Slurm(Job):
         self._time = time
         self._gpus = gpus
         self._job_fname = job_fname
+
+    def __repr__(self) -> str:
+        return type(self).__name__
 
     @Util.build_dir
     def write_job(self, output_dir: str = '.') -> None:

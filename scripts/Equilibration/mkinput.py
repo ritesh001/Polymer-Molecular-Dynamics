@@ -22,4 +22,4 @@ if __name__ == '__main__':
                      ppn=24,
                      walltime='24:00:00')
     run = pmd.Pmd(system=system, lammps=lmp, job=job)
-    run.create(output_dir='PE_equilibration', save_metadata=True)
+    run.create(output_dir='PE_equilibration', save_config=True)

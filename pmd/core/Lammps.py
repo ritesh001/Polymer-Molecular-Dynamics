@@ -82,6 +82,9 @@ class Lammps:
         self._lmp_input_fname = lmp_input_fname
         self._procedures: List[Procedure] = []
 
+    def __repr__(self) -> str:
+        return type(self).__name__
+
     @property
     def lmp_input_fname(self) -> str:
         return self._lmp_input_fname

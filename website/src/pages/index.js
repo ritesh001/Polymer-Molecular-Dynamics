@@ -78,7 +78,7 @@ function HomepageHeader() {
                 "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
                 "    syst.smiles = smiles\n" +
                 "    job.jobname = smiles\n" +
-                "    run.create(output_dir=smiles, save_metadata=True)"}
+                "    run.create(output_dir=smiles, save_config=True)"}
             </CodeBlock>
           </div>
         </div>

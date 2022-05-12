@@ -9,8 +9,11 @@ class ForceField():
     def __init__(self, charge_method: str) -> None:
         self._charge_method = charge_method
 
+    def __repr__(self) -> str:
+        return type(self).__name__
+
     @property
-    def charge_method(self):
+    def charge_method(self) -> str:
         return self._charge_method
 
 

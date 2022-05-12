@@ -76,6 +76,9 @@ class System:
 
         self._calculate_system_spec()
 
+    def __repr__(self) -> str:
+        return type(self).__name__
+
     @property
     def smiles(self) -> str:
         return self._smiles

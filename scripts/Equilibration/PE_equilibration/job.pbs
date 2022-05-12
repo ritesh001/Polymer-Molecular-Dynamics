@@ -1,0 +1,11 @@
+#PBS -A GT-rramprasad3-CODA20
+#PBS -q inferno
+#PBS -N PE_equilibration
+#PBS -l nodes=1:ppn=24
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -o out.$PBS_JOBID
+
+cd $PBS_O_WORKDIR
+module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20
+mpirun -np 24 lmp -in lmp.in
