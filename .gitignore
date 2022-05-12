@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# PMD generated files (except for yaml files)
+.lmps
+.in
+.pbs
