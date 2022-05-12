@@ -27,14 +27,15 @@ Template object to contain LAMMPS initialization settings
   
 - `atom_style` _str_ - LAMMPS
   [atom_style](https://docs.lammps.org/atom_style.html)
-  to use during simulation; default: `full`
+  to use during simulation; default: `"full"`
   
 - `units` _str_ - LAMMPS [units](https://docs.lammps.org/units.html) to use
-  during simulation; default: `real`
+  during simulation; default: `"real"`
   
 - `timestep` _float_ - LAMMPS
   [timestep](https://docs.lammps.org/timestep.html) to
-  use during simulation; default: `1 fs`
+  use during simulation; default: `1.0` (in unit of fs
+  if `units` is `"real"`)
   
 - `neighbor_skin` _float_ - LAMMPS
   [neighbor](https://docs.lammps.org/neighbor.html)
@@ -44,12 +45,13 @@ Template object to contain LAMMPS initialization settings
 - `neighbor_every` _int_ - LAMMPS
   [neighbor](https://docs.lammps.org/neighbor.html)
   list checking frequency to use during the
-  simulation; default: `1 fs`
+  simulation; default: `1`
   
 - `thermo` _int_ - LAMMPS [thermo](https://docs.lammps.org/thermo.html)
   to use during simulation; default: `1000 timestep`
   
-- `lmp_input_fname` _str_ - Name of the LAMMPS input file; default: `lmp.in`
+- `lmp_input_fname` _str_ - Name of the LAMMPS input file; default:
+  `"lmp.in"`
 
 ### add\_procedure
 
@@ -61,8 +63,8 @@ Method to add simulation procedure
 
 **Arguments**:
 
-- `procedure` _Procedure_ - One of `minimization`, `equilibration`,
-  `NPT`, `NVT`, and `Tg_measurement`
+- `procedure` _Procedure_ - One of `Minimization`, `Equilibration`,
+  `NPT`, `NVT`, `MSDMeasurement`, `TgMeasurement`, and `Deformation`
   
 
 **Returns**:
@@ -81,7 +83,7 @@ Method to make LAMMPS input files
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the generated LAMMPS input file
-  ; default: `.`
+  ; default: `"."`
   
 
 **Returns**:

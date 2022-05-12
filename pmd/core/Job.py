@@ -20,9 +20,9 @@ class Torque(Job):
         project (str): Project name
         nodes (int): Number of nodes
         ppn (int): Number of processors (CPU)
-        walltime (str): Job walltime
+        walltime (str): Job walltime (in format of HH:MM:SS)
         gpus (int): Number of processors (GPU)
-        job_fname (str): Name of the PBS input file; default: `job.pbs`
+        job_fname (str): Name of the PBS input file; default: `"job.pbs"`
     '''
 
     def __init__(self,
@@ -51,7 +51,7 @@ class Torque(Job):
         '''Method to make the Torque job scheduler input file
 
         Parameters:
-            output_dir (str): Directory for the Torque input file; default: `.`
+            output_dir (str): Directory for the Torque input file; default: `"."`
 
         Returns:
             None
@@ -94,7 +94,7 @@ class Slurm(Job):
         ntasks_per_node (int): Number of processors (CPU)
         time (str): Job time
         gpus (int): Number of processors (GPU)
-        job_fname (str): Name of the Slurm input file; default: `job.sh`
+        job_fname (str): Name of the Slurm input file; default: `"job.sh"`
     '''
 
     def __init__(self,

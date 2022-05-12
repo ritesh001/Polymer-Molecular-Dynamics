@@ -39,7 +39,7 @@ Template object to contain System initialization settings
   
 - `data_fname` _str_ - File name of the output data file, which will be read in by
   LAMMPS [read_data](https://docs.lammps.org/read_data.html)
-  command; default: `data.lmps`
+  command; default: `"data.lmps"`
 
 ### write\_data
 
@@ -53,7 +53,7 @@ field parameters)
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the generated LAMMPS data file
-  ; default: `.`
+  ; default: `"."`
   
 - `cleanup` _bool_ - Whether to clean up files other than the LAMMPS data
   file PSP generated
@@ -105,7 +105,7 @@ Template object to contain System with solvents initialization settings
   
 - `data_fname` _str_ - File name of the output data file, which will be read in by
   LAMMPS [read_data](https://docs.lammps.org/read_data.html)
-  command; default: `data.lmps`
+  command; default: `"data.lmps"`
 
 ### write\_data
 
@@ -119,7 +119,7 @@ field parameters)
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the generated LAMMPS data file
-  ; default: `.`
+  ; default: `"."`
   
 - `cleanup` _bool_ - Whether to clean up files other than the LAMMPS data
   file PSP generated

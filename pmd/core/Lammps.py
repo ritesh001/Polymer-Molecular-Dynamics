@@ -26,14 +26,15 @@ class Lammps:
 
         atom_style (str): LAMMPS 
                           [atom_style](https://docs.lammps.org/atom_style.html)
-                          to use during simulation; default: `full`
+                          to use during simulation; default: `"full"`
 
         units (str): LAMMPS [units](https://docs.lammps.org/units.html) to use
-                     during simulation; default: `real`
+                     during simulation; default: `"real"`
                      
         timestep (float): LAMMPS 
                           [timestep](https://docs.lammps.org/timestep.html) to
-                          use during simulation; default: `1 fs`
+                          use during simulation; default: `1.0` (in unit of fs
+                          if `units` is `"real"`)
 
         neighbor_skin (float): LAMMPS 
                             [neighbor](https://docs.lammps.org/neighbor.html)
@@ -43,12 +44,13 @@ class Lammps:
         neighbor_every (int): LAMMPS 
                             [neighbor](https://docs.lammps.org/neighbor.html) 
                             list checking frequency to use during the
-                            simulation; default: `1 fs`
+                            simulation; default: `1`
 
         thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) 
                       to use during simulation; default: `1000 timestep`
             
-        lmp_input_fname (str): Name of the LAMMPS input file; default: `lmp.in`
+        lmp_input_fname (str): Name of the LAMMPS input file; default: 
+                               `"lmp.in"`
     '''
 
     def __init__(self,
@@ -93,8 +95,8 @@ class Lammps:
                                              List[Procedure]]) -> Lammps:
         '''Method to add simulation procedure
         Parameters:
-            procedure (Procedure): One of `minimization`, `equilibration`, 
-            `NPT`, `NVT`, and `Tg_measurement`
+            procedure (Procedure): One of `Minimization`, `Equilibration`, 
+            `NPT`, `NVT`, `MSDMeasurement`, `TgMeasurement`, and `Deformation`
 
         Returns:
             Lammps (Lammps): Lammps instance itself (builder design pattern)
@@ -111,7 +113,7 @@ class Lammps:
         '''Method to make LAMMPS input files
         Parameters:
             output_dir (str): Directory for the generated LAMMPS input file
-                              ; default: `.`
+                              ; default: `"."`
 
         Returns:
             None

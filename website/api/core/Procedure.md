@@ -18,7 +18,7 @@ local potential energy minimum.
 
 - `min_style` _str_ - Minimization algorithm, see
   [here](https://docs.lammps.org/min_style.html) for all
-  options; default: `cg`
+  options; default: `"cg"`
   
 - `etol` _float_ - Stopping tolerance for energy (unitless); default:
   `10**(-6)`
@@ -51,11 +51,18 @@ Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
 - `Pmax` _float_ - Maximum pressure during the equilibration; default:
   `50000`
   
-- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Tdamp` _str_ - Damping parameter for the thermostat; default:
+  `"$(100.0*dt)"`
   
-- `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+- `Pdamp` _str_ - Damping parameter for the barostat; default:
+  `"$(100.0*dt)"`
   
-- `dump_fname` _str_ - Name of the dump file; default: `equil.lammpstrj`
+- `dump_fname` _str_ - Name of the dump file; default: `"equil.lammpstrj"`
+  
+- `dump_every` _int_ - Dump every this many timesteps; default: `10000`
+  
+- `dump_image` _bool_ - Whether to dump a image file at the end of the run
+  ; default: `False`
   
 - `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
   procedure; default: `True`
@@ -81,11 +88,18 @@ and barostat).
   
 - `Pfinal` _float_ - Final pressure
   
-- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Tdamp` _str_ - Damping parameter for the thermostat; default:
+  `"$(100.0*dt)"`
   
-- `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+- `Pdamp` _str_ - Damping parameter for the barostat; default:
+  `"$(100.0*dt)"`
   
-- `dump_fname` _str_ - Name of the dump file; default: `npt.lammpstrj`
+- `dump_fname` _str_ - Name of the dump file; default: `"npt.lammpstrj"`
+  
+- `dump_every` _int_ - Dump every this many timesteps; default: `10000`
+  
+- `dump_image` _bool_ - Whether to dump a image file at the end of the run
+  ; default: `False`
   
 - `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
   procedure; default: `False`
@@ -106,9 +120,15 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
   
 - `Tfinal` _float_ - Final temperature
   
-- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Tdamp` _str_ - Damping parameter for thermostats; default:
+  `"$(100.0*dt)"`
   
-- `dump_fname` _str_ - Name of the dump file; default: `nvt.lammpstrj`
+- `dump_fname` _str_ - Name of the dump file; default: `"nvt.lammpstrj"`
+  
+- `dump_every` _int_ - Dump every this many timesteps; default: `10000`
+  
+- `dump_image` _bool_ - Whether to dump a image file at the end of the run
+  ; default: `False`
   
 - `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
   procedure; default: `False`
@@ -149,6 +169,8 @@ Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
   
 - `dump_fname` _str_ - Name of the dump file; default: `"nvt.lammpstrj"`
   
+- `dump_every` _int_ - Dump every this many timesteps; default: `10000`
+  
 - `dump_image` _bool_ - Whether to dump a image file at the end of the run
   ; default: `False`
   
@@ -180,13 +202,20 @@ by iteratively cooling the system and equilibrate.
   
 - `pressure` _float_ - Pressure during the cooling process; default: `1`
   
-- `Tdamp` _str_ - Damping parameter for thermostats; default: `$(100.0*dt)`
+- `Tdamp` _str_ - Damping parameter for the thermostat; default:
+  `"$(100.0*dt)"`
   
-- `Pdamp` _str_ - Damping parameter for barostats; default: `$(100.0*dt)`
+- `Pdamp` _str_ - Damping parameter for the barostat; default:
+  `"$(100.0*dt)"`
   
 - `dump_fname` _str_ - Name of the dump file; default:
-  `Tg_measurement.lammpstrj`
+  `"Tg_measurement.lammpstrj"`
+  
+- `dump_every` _int_ - Dump every this many timesteps; default: `10000`
+  
+- `dump_image` _bool_ - Whether to dump a image file at the end of the run
+  ; default: `False`
   
 - `result_fname` _str_ - Name of the result file; default:
-  `temp_vs_density.txt`
+  `"temp_vs_density.txt"`
 

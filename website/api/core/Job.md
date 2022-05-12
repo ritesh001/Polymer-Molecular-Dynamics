@@ -17,9 +17,9 @@ Template Torque object to contain Torque job initialization settings
 - `project` _str_ - Project name
 - `nodes` _int_ - Number of nodes
 - `ppn` _int_ - Number of processors (CPU)
-- `walltime` _str_ - Job walltime
+- `walltime` _str_ - Job walltime (in format of HH:MM:SS)
 - `gpus` _int_ - Number of processors (GPU)
-- `job_fname` _str_ - Name of the PBS input file; default: `job.pbs`
+- `job_fname` _str_ - Name of the PBS input file; default: `"job.pbs"`
 
 ### write\_job
 
@@ -32,7 +32,7 @@ Method to make the Torque job scheduler input file
 
 **Arguments**:
 
-- `output_dir` _str_ - Directory for the Torque input file; default: `.`
+- `output_dir` _str_ - Directory for the Torque input file; default: `"."`
   
 
 **Returns**:
@@ -54,7 +54,7 @@ Template Slurm object to contain Slurm job initialization settings
 - `ntasks_per_node` _int_ - Number of processors (CPU)
 - `time` _str_ - Job time
 - `gpus` _int_ - Number of processors (GPU)
-- `job_fname` _str_ - Name of the Slurm input file; default: `job.sh`
+- `job_fname` _str_ - Name of the Slurm input file; default: `"job.sh"`
 
 ### write\_job
 

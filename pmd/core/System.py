@@ -36,7 +36,7 @@ class System:
 
         data_fname (str): File name of the output data file, which will be read in by 
                           LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
-                          command; default: `data.lmps`
+                          command; default: `"data.lmps"`
     '''
 
     def __init__(self,
@@ -121,7 +121,7 @@ class System:
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
-                          ; default: `.`
+                          ; default: `"."`
 
         cleanup (bool): Whether to clean up files other than the LAMMPS data 
                         file PSP generated
@@ -181,7 +181,7 @@ class SolventSystem(System):
 
         data_fname (str): File name of the output data file, which will be read in by 
                           LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
-                          command; default: `data.lmps`
+                          command; default: `"data.lmps"`
     '''
 
     def __init__(self,
@@ -263,7 +263,7 @@ class SolventSystem(System):
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
-                          ; default: `.`
+                          ; default: `"."`
 
         cleanup (bool): Whether to clean up files other than the LAMMPS data 
                         file PSP generated
