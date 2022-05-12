@@ -1,3 +1,4 @@
+import re
 from typing import Union
 from rdkit import Chem
 
@@ -58,6 +59,11 @@ class System:
         elif num_given_options > 1:
             raise ValueError('Only one of natoms_per_chain, mw_per_chain, and '
                              'ru_per_chain can be provided')
+
+        # convert * to [*]
+        stars_no_bracket = re.findall(r'(?<!\[)\*(?!\])', smiles)
+        if len(stars_no_bracket) == 2:
+            smiles = smiles.replace('*', '[*]')
 
         self._smiles = smiles
         self._density = density

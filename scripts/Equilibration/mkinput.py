@@ -3,8 +3,8 @@ import pmd
 if __name__ == '__main__':
     # Build a Polyethlyene system
     system = pmd.System(smiles='*CC*',
-                        density=0.8,
-                        force_field=pmd.OPLS(),
+                        density=0.5,
+                        force_field=pmd.GAFF2(),
                         natoms_total=2500,
                         natoms_per_chain=150)
 
@@ -12,7 +12,7 @@ if __name__ == '__main__':
     lmp = pmd.Lammps(read_data_from=system)
     lmp.add_procedure(pmd.Minimization())
     lmp.add_procedure(
-        pmd.Equilibration(Teq=600, Peq=1, Tmax=1000, Pmax=49346.163))
+        pmd.Equilibration(Teq=300, Peq=1, Tmax=800, Pmax=49346.163))
 
     # Job setup for the Torque job scheduling system
     job = pmd.Torque(run_lammps=lmp,
