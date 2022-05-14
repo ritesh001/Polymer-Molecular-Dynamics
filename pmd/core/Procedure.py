@@ -1,4 +1,5 @@
 from io import TextIOWrapper
+from typing import Optional
 
 
 class Procedure():
@@ -345,7 +346,7 @@ class MSDMeasurement(Procedure):
                  Tinit: float,
                  Tfinal: float,
                  group: str,
-                 create_block_every: int = None,
+                 create_block_every: Optional[int] = None,
                  result_folder_name: str = 'result',
                  Tdamp: str = '$(100.0*dt)',
                  dump_fname: str = f'MSD_measurement.lammpstrj',

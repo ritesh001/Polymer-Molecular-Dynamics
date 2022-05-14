@@ -1,5 +1,5 @@
 import re
-from typing import Union
+from typing import Optional, Union
 from rdkit import Chem
 
 from pmd.core.ForceField import GAFF2, OPLS, ForceField
@@ -45,9 +45,9 @@ class System:
                  density: float,
                  natoms_total: int,
                  *,
-                 natoms_per_chain: int = None,
-                 mw_per_chain: int = None,
-                 ru_per_chain: int = None,
+                 natoms_per_chain: Optional[int] = None,
+                 mw_per_chain: Optional[int] = None,
+                 ru_per_chain: Optional[int] = None,
                  data_fname: str = 'data.lmps'):
 
         chain_length_options = [natoms_per_chain, mw_per_chain, ru_per_chain]
@@ -192,9 +192,9 @@ class SolventSystem(System):
                  density: float,
                  natoms_total: int,
                  *,
-                 natoms_per_chain: int = None,
-                 mw_per_chain: int = None,
-                 ru_per_chain: int = None,
+                 natoms_per_chain: Optional[int] = None,
+                 mw_per_chain: Optional[int] = None,
+                 ru_per_chain: Optional[int] = None,
                  data_fname: str = 'data.lmps'):
 
         self._solvent_smiles = solvent_smiles

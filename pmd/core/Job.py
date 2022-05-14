@@ -9,7 +9,7 @@ class Job(ABC):
 
     @abstractmethod
     def write_job(self, output_dir: str):
-        pass
+        raise NotImplementedError
 
 
 class Torque(Job):

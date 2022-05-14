@@ -1,5 +1,5 @@
 import os
-from typing import List, TypeVar, Union
+from typing import List, Optional, TypeVar, Union
 
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
@@ -54,8 +54,8 @@ class Lammps:
     '''
 
     def __init__(self,
-                 read_data_from: System = None,
-                 read_restart_from: Lammps = None,
+                 read_data_from: Optional[System] = None,
+                 read_restart_from: Optional[Lammps] = None,
                  atom_style: str = 'full',
                  units: str = 'real',
                  timestep: int = 1,

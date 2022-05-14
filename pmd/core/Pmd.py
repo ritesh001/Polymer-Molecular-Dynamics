@@ -1,7 +1,9 @@
 import os
 import yaml
-from typing import Any, Dict, List, Union
+import inspect
+from typing import Any, Dict, List, Optional, Union
 
+import pmd.core
 from pmd.core.ForceField import ForceField
 from pmd.core.Job import Job
 from pmd.core.Lammps import Lammps
@@ -39,6 +41,46 @@ def custom_class_yaml_dumper(v: Any) -> Any:
     return return_value
 
 
+def instantiate_from_cls_name(class_name: str, prop_dict: dict):
+    # first obtain a list of all classes in this module
+    class_list = inspect.getmembers(pmd.core, inspect.isclass)
+    class_dict = {k: v for k, v in class_list}
+
+    # find the matching class
+    the_class = class_dict.get(class_name, None)
+    if the_class is None:
+        raise NameError(
+            f"{class_name} type is not found in {pmd.core.__name__} module")
+
+    # get the constructor parameter list of the class
+    sig = inspect.signature(the_class.__init__)
+    param_keys = list(sig.parameters.keys())
+    if param_keys[0] == "self":
+        param_keys = param_keys[1:]
+
+    # remove props not in the parameter list of the class
+    filtered_prop_dict = {
+        k: custom_class_yaml_loader(v)
+        for k, v in prop_dict.items() if k in param_keys
+    }
+
+    return the_class(**filtered_prop_dict)
+
+
+# Custom method to load values from the yaml config file
+def custom_class_yaml_loader(v: Any) -> Any:
+    return_value = v
+    # If value is a list, recursively go through each item in the list
+    # Specifically, this is for the Lammps procedure list
+    if isinstance(v, list):
+        return_value = [custom_class_yaml_loader(i) for i in v]
+    # If value is a dict, instantiate it to an object
+    elif isinstance(v, dict):
+        class_name, props_dict = next(iter(v.items()))
+        return_value = instantiate_from_cls_name(class_name, props_dict)
+    return return_value
+
+
 class Pmd:
     '''Template object to perform tasks for Systems, Lammps, and Jobs 
        altogether (e.g. create data files, lammps input files, job scheduler
@@ -54,9 +96,9 @@ class Pmd:
 
     def __init__(
         self,
-        system: System = None,
-        lammps: Union[Lammps, List[Lammps]] = None,
-        job: Union[Job, List[Job]] = None,
+        system: Optional[System] = None,
+        lammps: Optional[Union[Lammps, List[Lammps]]] = None,
+        job: Optional[Union[Job, List[Job]]] = None,
     ):
         if lammps and not isinstance(lammps, list):
             lammps = [lammps]
@@ -66,7 +108,7 @@ class Pmd:
         self._system = system
         self._lammps = lammps
         self._job = job
-        self._config_items: List[Union[System, Lammps, Job]] = []
+        # self._config_items: List[Union[System, Lammps, Job]] = []
 
     @Util.build_dir
     def create(self,
@@ -91,15 +133,15 @@ class Pmd:
         '''
         if self._system:
             self._system.write_data(output_dir)
-            self._config_items.append(self._system)
+            # self._config_items.append(self._system)
         if self._lammps:
             for lmp in self._lammps:
                 lmp.write_lammps(output_dir)
-                self._config_items.append(lmp)
+                # self._config_items.append(lmp)
         if self._job:
             for job in self._job:
                 job.write_job(output_dir)
-                self._config_items.append(job)
+                # self._config_items.append(job)
 
         if save_config:
             self.save_config(output_dir, config_fname)
@@ -119,14 +161,37 @@ class Pmd:
         Returns:
             None
         '''
-        with open(os.path.join(output_dir, config_fname), 'w') as yaml_file:
-            config = {
-                str(config_item): to_yaml_dict(config_item)
-                for config_item in self._config_items
-            }
-            yaml.dump(config, yaml_file, sort_keys=False)
 
-    def load_config(self, config_file: str):
+        config_dict = {}
+
+        if self._system:
+            config_dict[str(self._system)] = to_yaml_dict(self._system)
+
+        if self._lammps and len(self._lammps) > 1:
+            for i, lmp in enumerate(self._lammps):
+                config_dict[f"{lmp}-{i}"] = to_yaml_dict(lmp)
+        elif self._lammps and len(self._lammps) == 1:
+            config_dict[str(self._lammps[0])] = to_yaml_dict(self._lammps[0])
+
+        if self._job and len(self._job) > 1:
+            for i, job in enumerate(self._job):
+                config_dict[f"{job}-{i}"] = to_yaml_dict(job)
+        elif self._job and len(self._job) == 1:
+            config_dict[str(self._job[0])] = to_yaml_dict(self._job[0])
+
+        with open(os.path.join(output_dir, config_fname), 'w') as yaml_file:
+            # config_list = []
+            # for config_item in self._config_items:
+            #     config_list.append(
+            #         {str(config_item): to_yaml_dict(config_item)})
+            # config = {
+            #     str(config_item): to_yaml_dict(config_item)
+            #     for config_item in self._config_items
+            # }
+            yaml.safe_dump(config_dict, yaml_file, sort_keys=False)
+
+    @staticmethod
+    def load_config(config_file: str):
         '''Method to load a config file and create all the objects listed in 
         the config file
 
@@ -143,6 +208,6 @@ class Pmd:
                 f'(file must end with {" ,".join(SUPPORTED_YAML_EXTS)})')
 
         with open(config_file) as yaml_file:
-            data_dict = yaml.safe_load(yaml_file)
-            print(data_dict)
-            # TODO: create system, lammps, job objects with this dict
+            yaml_dict = yaml.safe_load(yaml_file)
+            for k, v in yaml_dict.items():
+                obj = instantiate_from_cls_name(k, v)
