@@ -57,28 +57,26 @@ function HomepageHeader() {
             <CodeBlock className="language-python" title="example-mkinput.py">
               {"import pmd\n" +
                 "\n" +
+                "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
                 "# Define polymer and system specs\n" +
-                "syst = pmd.System(smiles='tmp', force_field=pmd.OPLS(),\n" +
+                "syst = pmd.System(smiles=smiles, force_field=pmd.OPLS(),\n" +
                 "                  density=0.8, natoms_total=10000,\n" +
                 "                  natoms_per_chain=150)\n" +
                 "\n" +
                 "# Customize LAMMPS simulation\n" +
-                "lmp = pmd.Lammps(read_data_from=syst)\n" +
-                "lmp.add_procedure(pmd.Minimization())\n" +
-                "lmp.add_procedure(pmd.Equilibration())\n" +
-                "lmp.add_procedure(pmd.TgMeasurement())\n" +
+                "lmp = pmd.Lammps(read_data_from=syst, procedures=[\n" +
+                "                 pmd.Minimization(min_style='cg'),\n" +
+                "                 pmd.Equilibration(Teq=600, Tmax=800),\n" +
+                "                 pmd.TgMeasurement(Tinit=600, Tfinal=200)])\n" +
                 "\n" +
                 "# Create job scheduler settings\n" +
-                "job = pmd.Torque(run_lammps=lmp, jobname='tmp',\n" +
+                "job = pmd.Torque(run_lammps=lmp, jobname=smiles,\n" +
                 "                 project='Your-pid', nodes=2, ppn=24,\n" +
                 "                 walltime='48:00:00')\n" +
                 "\n" +
-                "# Systematically generate all simulation files\n" +
+                "# Generate all necessary simulation files\n" +
                 "run = pmd.Pmd(system=syst, lammps=lmp, job=job)\n" +
-                "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
-                "    syst.smiles = smiles\n" +
-                "    job.jobname = smiles\n" +
-                "    run.create(output_dir=smiles, save_config=True)"}
+                "run.create(output_dir=smiles, save_config=True)"}
             </CodeBlock>
           </div>
         </div>

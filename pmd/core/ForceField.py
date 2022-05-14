@@ -1,7 +1,11 @@
 from io import TextIOWrapper
+from typing import TypeVar
+
+ForceField = TypeVar("ForceField", bound="ForceField")
 
 OPLS_CHARGE_METHOD_OPTIONS = ['cm1a-lbcc', 'cm1a']
 GAFF2_CHARGE_METHOD_OPTIONS = ['gasteiger', 'am1bcc']
+GLOBAL_FORCE_FIELD: ForceField = None
 
 
 class ForceField():
@@ -15,6 +19,9 @@ class ForceField():
     @property
     def charge_method(self) -> str:
         return self._charge_method
+
+    def write_settings(self, f: TextIOWrapper):
+        raise NotImplementedError
 
 
 class OPLS(ForceField):

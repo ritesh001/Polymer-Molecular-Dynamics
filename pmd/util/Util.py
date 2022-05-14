@@ -1,5 +1,5 @@
 import os, sys
-from typing import Callable
+from typing import Callable, Tuple
 
 
 def build_dir(func: Callable) -> Callable:
@@ -23,3 +23,15 @@ class HiddenPrints:
     def __exit__(self, exc_type, exc_val, exc_tb):
         sys.stdout.close()
         sys.stdout = self._original_stdout
+
+
+def validate_options(cls, options: Tuple[str]):
+    num_given_options = sum(cls.__dict__[f"_{opt}"] is not None
+                            for opt in options)
+    option_string = ", ".join(opt for opt in options)
+    if num_given_options == 0:
+        raise ValueError(f'One of {option_string} has to be provided '
+                         f'for the {cls} object')
+    elif num_given_options > 1:
+        raise ValueError(f'Only one of {option_string} can be provided '
+                         f'for the {cls} object')

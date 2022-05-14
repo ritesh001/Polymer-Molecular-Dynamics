@@ -26,29 +26,30 @@ Below is an example python script where we use PMD to generate LAMMPS data and i
 ```python
 import pmd
 
-for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:
-    # Define system specs and make the data file
-    s = pmd.System(smiles=smiles, force_field=pmd.OPLS(), density=0.8,
-                   natoms_total=5000, natoms_per_chain=150)
-    s.write_data(output_dir=smiles)
+for smiles in ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']:
+    # Define polymer and system specs
+    syst = pmd.System(smiles=smiles, force_field=pmd.OPLS(), density=0.8,
+                      natoms_total=5000, natoms_per_chain=150)
 
-    # Customize LAMMPS simulation and make the input file
-    lmp = pmd.Lammps(read_data_from=s)
-    lmp.add_procedure(pmd.Minimization())
-    lmp.add_procedure(pmd.Equilibration())
-    lmp.add_procedure(pmd.TgMeasurement())
-    lmp.write_lammps(output_dir=smiles)
+    # Customize LAMMPS simulation
+    lmp = pmd.Lammps(read_data_from=syst, 
+                     procedures=[pmd.Minimization(min_style='cg'),
+                                 pmd.Equilibration(Teq=600, Tmax=800), 
+                                 pmd.TgMeasurement(Tinit=600, Tfinal=200)])
 
-    # Create job scheduler file
+    # Create job scheduler settings
     job = pmd.Torque(run_lammps=lmp, jobname=smiles, project='Your-project-id',
                      nodes=2, ppn=24, walltime='48:00:00')
-    job.write_job(output_dir=smiles)
+    
+    # Generate all necessary files
+    run = pmd.Pmd(system=syst, lammps=lmp, job=job)
+    run.create(output_dir=smiles, save_config=True)
 ```
 
 PMD can generate config file in YAML format out of the box, which helps you keep track of all the parameters used for each simulation systematically. At the same time you can also run PMD directly with the config file. For example, you can run the `pmd-load` command with the following `config.yaml` to get exact same setup as the above example python script.
 
 ```bash
-$ pmd-load config.yaml
+$ pmd-load config.yaml [-o output_dir]
 ```
 #### config.yaml
 ```yaml
@@ -60,14 +61,19 @@ pmd.System:
   natoms_per_chain: 150
   data_fname: data.lmps
 pmd.Lammps:
-  read_data: data.lmps
-  force_field: pmd.OPLS
+  read_data: data.lmps # Has to match data_fname if build from a yaml file
   lmp_input_fname: lmp.in
   procedures:
-  - pmd.Minimization
-  - pmd.Equilibration
+  - pmd.Minimization:
+      min_style: cg
+  - pmd.Equilibration:
+      Teq: 600
+      Tmax: 800
+  - pmd.TgMeasurement:
+      Tinit: 600
+      Tfinal: 200
 pmd.Torque:
-  run_lammps: lmp.in
+  run_lammps: lmp.in # Has to match lmp_input_fname if build from a yaml file
   jobname: '[*]CC[*]'
   project: Your-project-id
   nodes: 2

@@ -14,6 +14,7 @@ from pmd.util import Util
 PRIMITIVE_TYPES = (str, int, float, bool)
 EXCLUDED_VALUE_TYPES = (System, Lammps)
 SUPPORTED_YAML_EXTS = (".yml", ".yaml")
+OBJECT_PRFIX = 'pmd.'
 
 
 # Custom yaml config file dictionary constructor
@@ -37,7 +38,7 @@ def custom_class_yaml_dumper(v: Any) -> Any:
         return_value = [custom_class_yaml_dumper(i) for i in v]
     # If value is a non-primitive type, expand it to a dict
     elif not isinstance(v, PRIMITIVE_TYPES):
-        return_value = {str(v): to_yaml_dict(v)}
+        return_value = {f"{OBJECT_PRFIX}{v}": to_yaml_dict(v)}
     return return_value
 
 
@@ -47,7 +48,8 @@ def instantiate_from_cls_name(class_name: str, prop_dict: dict):
     class_dict = {k: v for k, v in class_list}
 
     # find the matching class
-    the_class = class_dict.get(class_name, None)
+    filtered_class_name = class_name.lstrip(OBJECT_PRFIX).split('-')[0]
+    the_class = class_dict.get(filtered_class_name, None)
     if the_class is None:
         raise NameError(
             f'{class_name} type is not found in {pmd.core.__name__} module')
@@ -168,29 +170,24 @@ class Pmd:
         config_dict = {}
 
         if self._system:
-            config_dict[str(self._system)] = to_yaml_dict(self._system)
+            config_dict[f'{OBJECT_PRFIX}{self._system}'] = to_yaml_dict(
+                self._system)
 
         if self._lammps and len(self._lammps) > 1:
             for i, lmp in enumerate(self._lammps):
-                config_dict[f"{lmp}-{i}"] = to_yaml_dict(lmp)
+                config_dict[f'{OBJECT_PRFIX}{lmp}-{i}'] = to_yaml_dict(lmp)
         elif self._lammps and len(self._lammps) == 1:
-            config_dict[str(self._lammps[0])] = to_yaml_dict(self._lammps[0])
+            config_dict[f'{OBJECT_PRFIX}{self._lammps[0]}'] = to_yaml_dict(
+                self._lammps[0])
 
         if self._job and len(self._job) > 1:
             for i, job in enumerate(self._job):
-                config_dict[f"{job}-{i}"] = to_yaml_dict(job)
+                config_dict[f'{OBJECT_PRFIX}{job}-{i}'] = to_yaml_dict(job)
         elif self._job and len(self._job) == 1:
-            config_dict[str(self._job[0])] = to_yaml_dict(self._job[0])
+            config_dict[f'{OBJECT_PRFIX}{self._job[0]}'] = to_yaml_dict(
+                self._job[0])
 
         with open(os.path.join(output_dir, config_fname), 'w') as yaml_file:
-            # config_list = []
-            # for config_item in self._config_items:
-            #     config_list.append(
-            #         {str(config_item): to_yaml_dict(config_item)})
-            # config = {
-            #     str(config_item): to_yaml_dict(config_item)
-            #     for config_item in self._config_items
-            # }
             yaml.safe_dump(config_dict, yaml_file, sort_keys=False)
 
     @staticmethod
@@ -214,3 +211,4 @@ class Pmd:
             yaml_dict = yaml.safe_load(yaml_file)
             for k, v in yaml_dict.items():
                 obj = instantiate_from_cls_name(k, v)
+                # TODO: wrap it up

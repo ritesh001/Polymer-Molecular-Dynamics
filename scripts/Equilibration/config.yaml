@@ -1,15 +1,16 @@
-System:
+pmd.System:
   smiles: '[*]CC[*]'
   density: 0.5
   force_field:
-    GAFF2:
+    pmd.GAFF2:
       charge_method: gasteiger
   natoms_total: 2500
   natoms_per_chain: 150
   data_fname: data.lmps
   length: 25
   nchains: 16
-Lammps:
+pmd.Lammps:
+  read_data_from: data.lmps
   atom_style: full
   units: real
   timestep: 1
@@ -18,13 +19,13 @@ Lammps:
   thermo: 1000
   lmp_input_fname: lmp.in
   procedures:
-  - Minimization:
+  - pmd.Minimization:
       min_style: cg
       etol: 1.0e-06
       ftol: 1.0e-08
       maxiter: 100000
       maxeval: 10000000
-  - Equilibration:
+  - pmd.Equilibration:
       Teq: 300
       Peq: 1
       Tmax: 800
@@ -36,10 +37,11 @@ Lammps:
       dump_every: 10000
       dump_image: false
       reset_timestep_before_run: true
-Torque:
+pmd.Torque:
+  run_lammps: lmp.in
   jobname: PE_equilibration
+  job_fname: job.pbs
   project: GT-rramprasad3-CODA20
   nodes: 1
   ppn: 24
   walltime: '24:00:00'
-  job_fname: job.pbs

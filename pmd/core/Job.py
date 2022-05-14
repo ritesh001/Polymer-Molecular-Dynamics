@@ -1,13 +1,22 @@
 import os
+from typing import Union
 
 from pmd.core.Lammps import Lammps
 from pmd.util import Util
-from abc import ABC, abstractmethod
 
 
-class Job(ABC):
+class Job():
 
-    @abstractmethod
+    def __init__(self, run_lammps: Union[Lammps, str], jobname: str,
+                 job_fname: str):
+        self._run_lammps = run_lammps.lmp_input_fname if isinstance(
+            run_lammps, Lammps) else run_lammps
+        self._jobname = jobname
+        self._job_fname = job_fname
+
+    def __repr__(self) -> str:
+        return type(self).__name__
+
     def write_job(self, output_dir: str):
         raise NotImplementedError
 
@@ -34,17 +43,13 @@ class Torque(Job):
                  walltime: str,
                  gpus: int = None,
                  job_fname: str = 'job.pbs'):
-        self._run_lammps = run_lammps
-        self._jobname = jobname
+
+        super().__init__(run_lammps, jobname, job_fname)
         self._project = project
         self._nodes = nodes
         self._ppn = ppn
         self._walltime = walltime
         self._gpus = gpus
-        self._job_fname = job_fname
-
-    def __repr__(self) -> str:
-        return type(self).__name__
 
     @Util.build_dir
     def write_job(self, output_dir: str = '.') -> None:
@@ -77,12 +82,12 @@ class Torque(Job):
                 )
                 f.write(f'mpirun -np {self._nodes * self._ppn} '
                         f'lmp -sf gpu -pk gpu {self._gpus} -in '
-                        f'{self._run_lammps.lmp_input_fname}\n')
+                        f'{self._run_lammps}\n')
             else:
                 f.write(
                     'module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
                 f.write(f'mpirun -np { self._nodes * self._ppn} '
-                        f'lmp -in {self._run_lammps.lmp_input_fname}')
+                        f'lmp -in {self._run_lammps}')
 
 
 class Slurm(Job):
@@ -105,16 +110,12 @@ class Slurm(Job):
                  time: str,
                  gpus: int = 0,
                  job_fname: str = 'job.sh'):
-        self._run_lammps = run_lammps
-        self._jobname = jobname
+
+        super().__init__(run_lammps, jobname, job_fname)
         self._nodes = nodes
         self._ntasks_per_node = ntasks_per_node
         self._time = time
         self._gpus = gpus
-        self._job_fname = job_fname
-
-    def __repr__(self) -> str:
-        return type(self).__name__
 
     @Util.build_dir
     def write_job(self, output_dir: str = '.') -> None:
@@ -143,4 +144,4 @@ class Slurm(Job):
                 print('Have not implemented GPU Slurm yet')
             else:
                 f.write('module load intel/18.0.2 impi/18.0.2 lammps/9Jan20\n')
-                f.write(f'ibrun lmp -in {self._run_lammps.lmp_input_fname}\n')
+                f.write(f'ibrun lmp -in {self._run_lammps}\n')

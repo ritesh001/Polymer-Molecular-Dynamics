@@ -2,8 +2,11 @@ import re
 from typing import Optional, Union
 from rdkit import Chem
 
+from . import ForceField as ForceFieldModule
 from pmd.core.ForceField import GAFF2, OPLS, ForceField
 from pmd.util import Util
+
+CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
 
 
 class System:
@@ -50,16 +53,6 @@ class System:
                  ru_per_chain: Optional[int] = None,
                  data_fname: str = 'data.lmps'):
 
-        chain_length_options = [natoms_per_chain, mw_per_chain, ru_per_chain]
-        num_given_options = sum(option is not None
-                                for option in chain_length_options)
-        if num_given_options == 0:
-            raise ValueError('One of natoms_per_chain, mw_per_chain, and '
-                             'ru_per_chain has to be provided')
-        elif num_given_options > 1:
-            raise ValueError('Only one of natoms_per_chain, mw_per_chain, and '
-                             'ru_per_chain can be provided')
-
         # convert * to [*]
         stars_no_bracket = re.findall(r'(?<!\[)\*(?!\])', smiles)
         if len(stars_no_bracket) == 2:
@@ -74,6 +67,13 @@ class System:
         self._ru_per_chain = ru_per_chain
         self._data_fname = data_fname
 
+        # Make sure only 1 chain length option is given
+        Util.validate_options(self, CHAIN_LENGTH_OPTIONS)
+
+        # Set global force field
+        self._set_global_force_field()
+
+        # Calculate system specs such as chain length, # of polymers
         self._calculate_system_spec()
 
     def __repr__(self) -> str:
@@ -95,6 +95,14 @@ class System:
     def smiles(self, smiles: str):
         self._smiles = smiles
         self._calculate_system_spec()
+
+    @force_field.setter
+    def force_field(self, force_field: str):
+        self._force_field = force_field
+        self._set_global_force_field()
+
+    def _set_global_force_field(self):
+        ForceFieldModule.GLOBAL_FORCE_FIELD = self._force_field
 
     def _calculate_system_spec(self):
         mol = Chem.MolFromSmiles(self._smiles)

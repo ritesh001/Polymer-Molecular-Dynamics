@@ -1,11 +1,15 @@
 import os
 from typing import List, Optional, TypeVar, Union
 
+from . import ForceField as ForceFieldModule
+from pmd.core.ForceField import ForceField
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
 from pmd.util import Util
 
 Lammps = TypeVar("Lammps", bound="Lammps")
+
+DATA_SOURCE_OPTIONS = ('read_data_from', 'read_restart_from')
 
 
 class Lammps:
@@ -54,8 +58,10 @@ class Lammps:
     '''
 
     def __init__(self,
-                 read_data_from: Optional[System] = None,
-                 read_restart_from: Optional[Lammps] = None,
+                 read_data_from: Optional[Union[System, str]] = None,
+                 read_restart_from: Optional[Union[Lammps, str]] = None,
+                 force_field: Optional[ForceField] = None,
+                 procedure: List[Procedure] = [],
                  atom_style: str = 'full',
                  units: str = 'real',
                  timestep: int = 1,
@@ -64,16 +70,9 @@ class Lammps:
                  thermo: int = 1000,
                  lmp_input_fname: str = 'lmp.in'):
 
-        if not read_data_from and not read_restart_from:
-            raise ValueError(
-                'One of read_data_from and read_restart_from has to be defined'
-            )
-        elif read_data_from and read_restart_from:
-            raise ValueError(
-                'Only one of read_data_from and read_restart_from can be defined'
-            )
-
-        self._read_data_from = read_data_from
+        self._read_data_from = read_data_from.data_fname if isinstance(
+            read_data_from, System) else read_data_from
+        self._force_field = force_field
         self._read_restart_from = read_restart_from
         self._atom_style = atom_style
         self._units = units
@@ -82,7 +81,10 @@ class Lammps:
         self._neighbor_every = neighbor_every
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
-        self._procedures: List[Procedure] = []
+        self._procedures = procedure
+
+        # Make sure only 1 data source option is given
+        Util.validate_options(self, DATA_SOURCE_OPTIONS)
 
     def __repr__(self) -> str:
         return type(self).__name__
@@ -128,12 +130,14 @@ class Lammps:
             f.write('### Initialization\n')
             f.write(f'{"atom_style":<15} full\n')
             f.write(f'{"units":<15} {self._units}\n')
+            f.write('\n')
+
+            if ForceFieldModule.GLOBAL_FORCE_FIELD:
+                ForceFieldModule.GLOBAL_FORCE_FIELD.write_settings(f)
+            elif self._force_field:
+                self._force_field.write_settings(f)
             if self._read_data_from:
-                force_field = self._read_data_from.force_field
-                force_field.write_settings(f)
-                f.write('\n')
-                f.write(
-                    f'{"read_data":<15} {self._read_data_from.data_fname}\n')
+                f.write(f'{"read_data":<15} {self._read_data_from}\n')
 
             # TODO: add last_restart_fname
             # elif self._read_restart_from:
