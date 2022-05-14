@@ -20,8 +20,11 @@ You can calculate various polymer properties from MD simulations with this packa
 
 ## Example
 
-Below is an example python script where we use PMD to generate LAMMPS data and input files for Tg measurement with a list of SMILES strings.
+Below is an example where we use PMD to generate LAMMPS data and input files for Tg measurement with a list of SMILES strings.
 
+### From a python script
+
+Construct the 3 main PMD objects: `System`, `Lammps`, and `Job` to create all simulation files systematically and programmatically.
 #### example.py
 ```python
 import pmd
@@ -46,7 +49,8 @@ for smiles in ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']:
     run.create(output_dir=smiles, save_config=True)
 ```
 
-PMD can generate config file in YAML format out of the box, which helps you keep track of all the parameters used for each simulation systematically. At the same time you can also run PMD directly with the config file. For example, you can run the `pmd-load` command with the following `config.yaml` to get exact same setup as the above example python script.
+### From the command line
+PMD can generate config file in YAML format out of the box, which helps you keep track of all the parameters used for each simulation. At the same time, you can build PMD systems directly via the config file from the command line. For example, run the `pmd-load` command with the following `config.yaml` to get exact same setup as the above example python script (but only for '[*]CC[*]').
 
 ```bash
 $ pmd-load config.yaml [-o output_dir]
