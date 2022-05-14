@@ -22,12 +22,13 @@ You can calculate various polymer properties from MD simulations with this packa
 
 Below is an example python script where we use PMD to generate LAMMPS data and input files for Tg measurement with a list of SMILES strings.
 
+#### example.py
 ```python
 import pmd
 
 for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:
     # Define system specs and make the data file
-    s = pmd.System(smiles=smiles, force_field='opls', density=0.8,
+    s = pmd.System(smiles=smiles, force_field=pmd.OPLS(), density=0.8,
                    natoms_total=5000, natoms_per_chain=150)
     s.write_data(output_dir=smiles)
 
@@ -42,6 +43,37 @@ for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:
     job = pmd.Torque(run_lammps=lmp, jobname=smiles, project='Your-project-id',
                      nodes=2, ppn=24, walltime='48:00:00')
     job.write_job(output_dir=smiles)
+```
+
+PMD can generate config file in YAML format out of the box, which helps you keep track of all the parameters used for each simulation systematically. At the same time you can also run PMD directly with the config file. For example, you can run the `pmd-load` command with the following `config.yaml` to get exact same setup as the above example python script.
+
+```bash
+$ pmd-load config.yaml
+```
+#### config.yaml
+```yaml
+pmd.System:
+  smiles: '[*]CC[*]'
+  density: 0.8
+  force_field: pmd.OPLS
+  natoms_total: 5000
+  natoms_per_chain: 150
+  data_fname: data.lmps
+pmd.Lammps:
+  read_data: data.lmps
+  force_field: pmd.OPLS
+  lmp_input_fname: lmp.in
+  procedures:
+  - pmd.Minimization
+  - pmd.Equilibration
+pmd.Torque:
+  run_lammps: lmp.in
+  jobname: '[*]CC[*]'
+  project: Your-project-id
+  nodes: 2
+  ppn: 24
+  walltime: '48:00:00'
+  job_fname: job.pbs
 ```
 
 ## Installation

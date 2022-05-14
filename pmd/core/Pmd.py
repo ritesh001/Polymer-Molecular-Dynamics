@@ -50,12 +50,12 @@ def instantiate_from_cls_name(class_name: str, prop_dict: dict):
     the_class = class_dict.get(class_name, None)
     if the_class is None:
         raise NameError(
-            f"{class_name} type is not found in {pmd.core.__name__} module")
+            f'{class_name} type is not found in {pmd.core.__name__} module')
 
     # get the constructor parameter list of the class
     sig = inspect.signature(the_class.__init__)
     param_keys = list(sig.parameters.keys())
-    if param_keys[0] == "self":
+    if param_keys[0] == 'self':
         param_keys = param_keys[1:]
 
     # remove props not in the parameter list of the class
@@ -64,6 +64,9 @@ def instantiate_from_cls_name(class_name: str, prop_dict: dict):
         for k, v in prop_dict.items() if k in param_keys
     }
 
+    filtered_props = '\n'.join(
+        [f'{k}: {v}' for k, v in filtered_prop_dict.items()])
+    print(f'{str(the_class)} object created:\n{filtered_props}')
     return the_class(**filtered_prop_dict)
 
 
