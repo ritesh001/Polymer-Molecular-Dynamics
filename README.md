@@ -23,8 +23,6 @@ You can calculate various polymer properties from MD simulations with this packa
 Below is an example where we use PMD to generate LAMMPS data and input files for Tg measurement with a list of SMILES strings.
 
 ### From a python script
-
-Construct the 3 main PMD objects: `System`, `Lammps`, and `Job` to create all simulation files systematically and programmatically.
 #### example.py
 ```python
 import pmd
@@ -50,7 +48,7 @@ for smiles in ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']:
 ```
 
 ### From the command line
-PMD can generate config file in YAML format out of the box, which helps you keep track of all the parameters used for each simulation. At the same time, you can build PMD systems directly via the config file from the command line. For example, run the `pmd-load` command with the following `config.yaml` to get exact same setup as the above example python script (but only for '[*]CC[*]').
+PMD can generate config file in YAML format out of the box, which helps you keep track of all the parameters used for each simulation. At the same time, you can build PMD systems directly via the config file from the command line. For example, run the `pmd-load` command with the following `config.yaml` to get exact same setup as the above example python script (but only for '\*CC\*').
 
 ```bash
 $ pmd-load config.yaml [-o output_dir]
@@ -58,7 +56,7 @@ $ pmd-load config.yaml [-o output_dir]
 #### config.yaml
 ```yaml
 pmd.System:
-  smiles: '[*]CC[*]'
+  smiles: '*CC*'
   density: 0.8
   force_field: pmd.OPLS
   natoms_total: 5000
@@ -78,7 +76,7 @@ pmd.Lammps:
       Tfinal: 200
 pmd.Torque:
   run_lammps: lmp.in # Has to match lmp_input_fname if build from a yaml file
-  jobname: '[*]CC[*]'
+  jobname: '*CC*'
   project: Your-project-id
   nodes: 2
   ppn: 24
