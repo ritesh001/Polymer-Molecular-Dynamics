@@ -12,7 +12,6 @@ from pmd.core.System import System
 from pmd.util import Util
 
 PRIMITIVE_TYPES = (str, int, float, bool)
-EXCLUDED_VALUE_TYPES = (System, Lammps)
 SUPPORTED_YAML_EXTS = (".yml", ".yaml")
 OBJECT_PRFIX = 'pmd.'
 
@@ -21,24 +20,26 @@ OBJECT_PRFIX = 'pmd.'
 def to_yaml_dict(
         cls: Union[System, ForceField, Lammps, Procedure, Job]) -> Dict:
     return {
-        # strip off the front underscore
+        # strip off the front underscore and only add to dict
+        # if value is not None
         k.lstrip('_'): custom_class_yaml_dumper(v)
-        for k, v in cls.__dict__.items()
-        # only add to dict if value is not None nor System/Lammps instances
-        if v is not None and not issubclass(type(v), EXCLUDED_VALUE_TYPES)
+        for k, v in cls.__dict__.items() if v is not None
     }
 
 
 # Custom method to dump values of non-primitive type to the yaml config file
 def custom_class_yaml_dumper(v: Any) -> Any:
     return_value = v
+
     # If value is a list, recursively go through each item in the list
     # Specifically, this is for the Lammps procedure list
     if isinstance(v, list):
         return_value = [custom_class_yaml_dumper(i) for i in v]
+
     # If value is a non-primitive type, expand it to a dict
     elif not isinstance(v, PRIMITIVE_TYPES):
         return_value = {f"{OBJECT_PRFIX}{v}": to_yaml_dict(v)}
+
     return return_value
 
 
@@ -73,18 +74,22 @@ def instantiate_from_cls_name(class_name: str, prop_dict: dict):
 # Custom method to load values from the yaml config file
 def custom_class_yaml_loader(v: Any) -> Any:
     return_value = v
+
     # If value is a list, recursively go through each item in the list
     # Specifically, this is for the Lammps procedure list
     if isinstance(v, list):
         return_value = [custom_class_yaml_loader(i) for i in v]
+
     # If value is a dict, instantiate it to an object
     elif isinstance(v, dict):
         class_name, props_dict = next(iter(v.items()))
         return_value = instantiate_from_cls_name(class_name, props_dict)
+
     # If value is starts with pmd., instantiate it to an object with
     # default params
     elif isinstance(v, str) and v.startswith(OBJECT_PRFIX):
         return_value = instantiate_from_cls_name(v, {})
+
     return return_value
 
 
