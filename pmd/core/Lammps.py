@@ -61,7 +61,7 @@ class Lammps:
                  read_data_from: Optional[Union[System, str]] = None,
                  read_restart_from: Optional[Union[Lammps, str]] = None,
                  force_field: Optional[ForceField] = None,
-                 procedure: List[Procedure] = [],
+                 procedures: List[Procedure] = [],
                  atom_style: str = 'full',
                  units: str = 'real',
                  timestep: int = 1,
@@ -81,7 +81,7 @@ class Lammps:
         self._neighbor_every = neighbor_every
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
-        self._procedures = procedure
+        self._procedures = procedures
 
         # Make sure only 1 data source option is given
         Util.validate_options(self, DATA_SOURCE_OPTIONS)
@@ -158,3 +158,5 @@ class Lammps:
 
             for procedure in self._procedures:
                 procedure.write_lammps(f)
+
+        print('-----------Lammps input file successfully created---------')

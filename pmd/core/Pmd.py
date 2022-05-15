@@ -66,9 +66,7 @@ def instantiate_from_cls_name(class_name: str, prop_dict: dict):
         for k, v in prop_dict.items() if k in param_keys
     }
 
-    filtered_props = '\n'.join(
-        [f'{k}: {v}' for k, v in filtered_prop_dict.items()])
-    print(f'{str(the_class)} object created:\n{filtered_props}')
+    print(f'{class_name} object successfully loaded from the YAML file.')
     return the_class(**filtered_prop_dict)
 
 
@@ -83,6 +81,10 @@ def custom_class_yaml_loader(v: Any) -> Any:
     elif isinstance(v, dict):
         class_name, props_dict = next(iter(v.items()))
         return_value = instantiate_from_cls_name(class_name, props_dict)
+    # If value is starts with pmd., instantiate it to an object with
+    # default params
+    elif isinstance(v, str) and v.startswith(OBJECT_PRFIX):
+        return_value = instantiate_from_cls_name(v, {})
     return return_value
 
 
@@ -113,7 +115,6 @@ class Pmd:
         self._system = system
         self._lammps = lammps
         self._job = job
-        # self._config_items: List[Union[System, Lammps, Job]] = []
 
     @Util.build_dir
     def create(self,
@@ -138,15 +139,12 @@ class Pmd:
         '''
         if self._system:
             self._system.write_data(output_dir)
-            # self._config_items.append(self._system)
         if self._lammps:
             for lmp in self._lammps:
                 lmp.write_lammps(output_dir)
-                # self._config_items.append(lmp)
         if self._job:
             for job in self._job:
                 job.write_job(output_dir)
-                # self._config_items.append(job)
 
         if save_config:
             self.save_config(output_dir, config_fname)
@@ -191,13 +189,16 @@ class Pmd:
             yaml.safe_dump(config_dict, yaml_file, sort_keys=False)
 
     @staticmethod
-    def load_config(config_file: str):
+    def load_config(config_file: str, output_dir: str = '.'):
         '''Method to load a config file and create all the objects listed in 
         the config file
 
         Parameters:            
             config_file (str): Config file to load
 
+            output_dir (str): Directory for all the generated files; default:
+                              `"."`
+            
         Returns:
             None
         '''
@@ -211,4 +212,9 @@ class Pmd:
             yaml_dict = yaml.safe_load(yaml_file)
             for k, v in yaml_dict.items():
                 obj = instantiate_from_cls_name(k, v)
-                # TODO: wrap it up
+                if isinstance(obj, System):
+                    obj.write_data(output_dir)
+                elif isinstance(obj, Lammps):
+                    obj.write_lammps(output_dir)
+                elif isinstance(obj, Job):
+                    obj.write_job(output_dir)

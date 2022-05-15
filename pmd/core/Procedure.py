@@ -19,6 +19,9 @@ class Procedure():
     def __repr__(self) -> str:
         return type(self).__name__
 
+    def write_lammps(self, f: TextIOWrapper):
+        raise NotImplementedError
+
     def write_before_run(self, f: TextIOWrapper):
         f.write(f'### {self}\n')
         if self._reset_timestep_before_run:

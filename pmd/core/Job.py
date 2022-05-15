@@ -89,6 +89,8 @@ class Torque(Job):
                 f.write(f'mpirun -np { self._nodes * self._ppn} '
                         f'lmp -in {self._run_lammps}')
 
+        print('-------------Job file successfully created------------')
+
 
 class Slurm(Job):
     '''Template Slurm object to contain Slurm job initialization settings
@@ -145,3 +147,5 @@ class Slurm(Job):
             else:
                 f.write('module load intel/18.0.2 impi/18.0.2 lammps/9Jan20\n')
                 f.write(f'ibrun lmp -in {self._run_lammps}\n')
+
+        print('---------------Job file successfully created--------------')
