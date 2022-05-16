@@ -19,7 +19,10 @@ setup(
     url='https://github.com/Ramprasad-Group/High-throughput-MD-simulations',
     packages=find_packages(),
     python_requires=">=3.7",
-    entry_points={"console_scripts": [
-        "pmd-load = pmd.entry.load:main",
-    ]},
+    entry_points={
+        "console_scripts": [
+            "pmd-load = pmd.entry.load:main",
+            "pmd-analyze = pmd.entry.analyze:main",
+        ]
+    },
     zip_safe=True)

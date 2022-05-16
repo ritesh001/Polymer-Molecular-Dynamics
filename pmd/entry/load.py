@@ -1,11 +1,11 @@
 import argparse
-import pmd
+
+from pmd.core.Pmd import Pmd
 
 
 def main(args=None):
     args = parse_command_line(args)
-    # TODO: Make nicer import
-    pmd.Pmd.load_config(args.config)
+    Pmd.load_config(args.config)
 
 
 def parse_command_line(args=None):
