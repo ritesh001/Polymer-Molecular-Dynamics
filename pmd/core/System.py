@@ -1,9 +1,11 @@
 import re
+import numpy as np
+import pandas as pd
+
 from typing import Optional, Union
 from rdkit import Chem
 
-from . import ForceField as ForceFieldModule
-from pmd.core.ForceField import GAFF2, OPLS, ForceField
+from pmd.core.ForceField import GAFF2, OPLS, ForceField, GLOBAL_FORCE_FIELD
 from pmd.util import Util
 
 CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
@@ -102,7 +104,7 @@ class System:
         self._set_global_force_field()
 
     def _set_global_force_field(self):
-        ForceFieldModule.GLOBAL_FORCE_FIELD = self._force_field
+        GLOBAL_FORCE_FIELD = self._force_field
 
     def _calculate_system_spec(self):
         mol = Chem.MolFromSmiles(self._smiles)
@@ -280,13 +282,6 @@ class SolventSystem(System):
             None
         '''
 
-        try:
-            import numpy as np
-        except ImportError:
-            raise ImportError(
-                'SolventSystem\'s write_data function requires numpy to '
-                'function properly, please install numpy')
-
         psp_input_data = {
             'ID': ['Sol', 'Poly'],
             'smiles': [self._solvent_smiles, self._smiles],
@@ -306,7 +301,6 @@ def _run_psp(input_data: dict, density: float, force_field: ForceField,
              data_fname: str, output_dir: str, cleanup: bool) -> None:
     try:
         import psp.AmorphousBuilder as ab
-        import pandas as pd
     except ImportError:
         raise ImportError('System\'s write_data function requires PSP to '
                           'function properly, please install PSP')

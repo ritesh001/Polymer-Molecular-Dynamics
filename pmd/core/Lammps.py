@@ -1,8 +1,7 @@
 import os
 from typing import List, Optional, TypeVar, Union
 
-from . import ForceField as ForceFieldModule
-from pmd.core.ForceField import ForceField
+from pmd.core.ForceField import ForceField, GLOBAL_FORCE_FIELD
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
 from pmd.util import Util
@@ -61,7 +60,7 @@ class Lammps:
                  read_data_from: Optional[Union[System, str]] = None,
                  read_restart_from: Optional[Union[Lammps, str]] = None,
                  force_field: Optional[ForceField] = None,
-                 procedures: List[Procedure] = [],
+                 procedures: List[Procedure] = None,
                  atom_style: str = 'full',
                  units: str = 'real',
                  timestep: int = 1,
@@ -81,7 +80,7 @@ class Lammps:
         self._neighbor_every = neighbor_every
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
-        self._procedures = procedures
+        self._procedures = procedures if procedures else []
 
         # Make sure only 1 data source option is given
         Util.validate_options(self, DATA_SOURCE_OPTIONS)
@@ -132,8 +131,8 @@ class Lammps:
             f.write(f'{"units":<15} {self._units}\n')
             f.write('\n')
 
-            if ForceFieldModule.GLOBAL_FORCE_FIELD:
-                ForceFieldModule.GLOBAL_FORCE_FIELD.write_settings(f)
+            if GLOBAL_FORCE_FIELD:
+                GLOBAL_FORCE_FIELD.write_settings(f)
             elif self._force_field:
                 self._force_field.write_settings(f)
             if self._read_data_from:

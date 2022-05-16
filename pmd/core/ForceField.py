@@ -20,7 +20,7 @@ class ForceField():
     def charge_method(self) -> str:
         return self._charge_method
 
-    def write_settings(self, f: TextIOWrapper):
+    def write_settings(self, f: TextIOWrapper) -> None:
         raise NotImplementedError
 
 
