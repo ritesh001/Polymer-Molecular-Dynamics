@@ -1,4 +1,13 @@
-def calculate_Tg(result_fname: str, make_plot: bool = True) -> int:
+from typing import Optional
+from scipy import optimize
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+
+
+def calculate_Tg(result_fname: str,
+                 make_plot: bool = True,
+                 append_result_to_yaml: Optional[str] = None) -> int:
     '''Method to calculate glass transition temperature based on the
     result file obtained from TgMeasurement Procedure
 
@@ -6,15 +15,15 @@ def calculate_Tg(result_fname: str, make_plot: bool = True) -> int:
         result_fname (str): Name of the result file from TgMeasurement 
                             Procedure
         make_plot (bool): Whether to make a plot to visualize the fitting
+        append_result_to_yaml (str): YAML file name to append result value to
+                                     ;default: `None`
 
     Returns:
         Tg (int): Glass transition temperature of the system
     '''
 
-    from scipy import optimize
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import pandas as pd
+    # TODO: implement append_result_to_yaml with dict structure like
+    # {result: {Tg: value}} or {result_{smiles}: {Tg: value}}
 
     def piecewise_linear(x, x0, y0, k1, k2):
         return np.piecewise(
@@ -23,11 +32,12 @@ def calculate_Tg(result_fname: str, make_plot: bool = True) -> int:
 
     # Read result file (should have first column as temperature,
     # and second column as the corresponding density)
-    df = pd.read_csv(result_fname,
-                     header=1,
-                     usecols=[1, 2],
-                     names=['Temp', 'Rho'],
-                     delim_whitespace=True)
+    df = pd.read_csv(
+        result_fname,
+        header=1,
+        usecols=[1, 2],  #TODO: relax hard-coded col index
+        names=['Temp', 'Rho'],
+        delim_whitespace=True)
     x = np.array(df['Temp'])
     y = np.array(df['Rho'])
 
@@ -69,8 +79,6 @@ def calculate_MSD(r, ir, box_bounds, id2type=[]):
     Returns:
         msd_dict: dict of the calculated MSDs for each type
     '''
-
-    import numpy as np
 
     # set up some constants
     frames = len(r)
