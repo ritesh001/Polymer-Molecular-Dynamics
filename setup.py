@@ -1,28 +1,11 @@
-import os
-from setuptools import setup, find_packages
+from setuptools import setup
 
-# Read the contents of your README file
-PACKAGE_DIR = os.path.abspath(os.path.dirname(__file__))
-with open(os.path.join(PACKAGE_DIR, 'README.md'), encoding='utf-8') as f:
-    LONG_DESCRIPTION = f.read()
-
-setup(
-    name='pmd',
-    version='0.1.0',
-    author='Kuan-Hsuan Shen',
-    author_email='kshen64@gatech.edu',
-    description=
-    'Automated generation of LAMMPS data and input files for polymer molecular dynamics simulations',
-    long_description=LONG_DESCRIPTION,
-    long_description_content_type='text/markdown',
-    keywords=['LAMMPS', 'polymer', 'SMILES'],
-    url='https://github.com/Ramprasad-Group/High-throughput-MD-simulations',
-    packages=find_packages(),
-    python_requires=">=3.7",
-    entry_points={
-        "console_scripts": [
-            "pmd-load = pmd.entry.load:main",
-            "pmd-analyze = pmd.entry.analyze:main",
-        ]
-    },
-    zip_safe=True)
+if __name__ == "__main__":
+    try:
+        setup(use_scm_version={"version_scheme": "no-guess-dev"})
+    except:
+        print("\n\nAn error occurred while building the project, "
+              "please ensure you have the most updated version of setuptools, "
+              "setuptools_scm and wheel with:\n"
+              "   pip install -U setuptools setuptools_scm wheel\n\n")
+        raise
