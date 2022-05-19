@@ -1,5 +1,6 @@
 import logging
-import os, sys
+import os
+import sys
 from typing import Callable, Tuple
 
 pmdlogger = logging.getLogger(__name__)
@@ -31,10 +32,10 @@ def validate_options(cls, options: Tuple[str]):
 def build_dir(func: Callable) -> Callable:
 
     def wrapper_build_dir(*args, **kwargs):
-        output_dir_key = 'output_dir'
-        output_dir = (kwargs[output_dir_key]
-                      if output_dir_key in kwargs.keys() else args[1])
-        os.makedirs(output_dir, exist_ok=True)
+        if 'output_dir' in kwargs:
+            os.makedirs(kwargs['output_dir'], exist_ok=True)
+        elif len(args) > 1:
+            os.makedirs(args[1], exist_ok=True)
         return func(*args, **kwargs)
 
     return wrapper_build_dir

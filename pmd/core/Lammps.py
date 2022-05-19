@@ -20,7 +20,7 @@ class Lammps:
                                  `read_restart_from` has to be provided but not
                                  both (providing both will result in an error)
                                  ; default: `None`
-        
+
         read_restart_from (Lammps): Lammps object that the last restart file 
                                     created will be read from; one of this 
                                     attribute and `read_data_from` has to be
@@ -33,7 +33,7 @@ class Lammps:
 
         units (str): LAMMPS [units](https://docs.lammps.org/units.html) to use
                      during simulation; default: `"real"`
-                     
+
         timestep (float): LAMMPS 
                           [timestep](https://docs.lammps.org/timestep.html) to
                           use during simulation; default: `1.0` (in unit of fs
@@ -43,7 +43,7 @@ class Lammps:
                             [neighbor](https://docs.lammps.org/neighbor.html)
                             skin size to use during the simulation; default: 
                             `2.0 Angstrom`
-                            
+
         neighbor_every (int): LAMMPS 
                             [neighbor](https://docs.lammps.org/neighbor.html) 
                             list checking frequency to use during the
@@ -51,7 +51,7 @@ class Lammps:
 
         thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) 
                       to use during simulation; default: `1000 timestep`
-            
+
         lmp_input_fname (str): Name of the LAMMPS input file; default: 
                                `"lmp.in"`
     '''
