@@ -2,10 +2,10 @@ import re
 import numpy as np
 import pandas as pd
 
-from typing import Optional, Union
+from typing import Optional
 from rdkit import Chem
 
-from pmd.core.ForceField import GAFF2, OPLS, ForceField, GLOBAL_FORCE_FIELD
+from pmd.core.ForceField import ForceField, GAFF2, OPLS
 from pmd.util import Util
 
 CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
@@ -72,9 +72,6 @@ class System:
         # Make sure only 1 chain length option is given
         Util.validate_options(self, CHAIN_LENGTH_OPTIONS)
 
-        # Set global force field
-        self._set_global_force_field()
-
         # Calculate system specs such as chain length, # of polymers
         self._calculate_system_spec()
 
@@ -90,7 +87,7 @@ class System:
         return self._data_fname
 
     @property
-    def force_field(self) -> Union[OPLS, GAFF2]:
+    def force_field(self) -> ForceField:
         return self._force_field
 
     @smiles.setter
@@ -101,10 +98,6 @@ class System:
     @force_field.setter
     def force_field(self, force_field: str):
         self._force_field = force_field
-        self._set_global_force_field()
-
-    def _set_global_force_field(self):
-        GLOBAL_FORCE_FIELD = self._force_field
 
     def _calculate_system_spec(self):
         mol = Chem.MolFromSmiles(self._smiles)

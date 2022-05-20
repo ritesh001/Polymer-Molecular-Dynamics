@@ -1,7 +1,7 @@
 import os
 from typing import List, Optional, TypeVar, Union
 
-from pmd.core.ForceField import ForceField, GLOBAL_FORCE_FIELD
+from pmd.core.ForceField import ForceField
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
 from pmd.util import Util
@@ -15,17 +15,28 @@ class Lammps:
     '''Template object to contain LAMMPS initialization settings
 
     Attributes:
-        read_data_from (System): System object that the data file will be read
-                                 from; one of this attribute and 
+        read_data_from (System | str): System object that the data file will
+                                 be read from. This can also be your data
+                                 file name string if you do not generate your 
+                                 system via PMD; one of this attribute and 
                                  `read_restart_from` has to be provided but not
                                  both (providing both will result in an error)
                                  ; default: `None`
 
-        read_restart_from (Lammps): Lammps object that the last restart file 
-                                    created will be read from; one of this 
-                                    attribute and `read_data_from` has to be
-                                    provided but not both (providing both will
-                                    result in an error); default: `None`
+        read_restart_from (Lammps | str): Lammps object that the last restart 
+                                    file created will be read from. This can 
+                                    also be your previous lammps file name 
+                                    string if you do not have previous Lammps
+                                    object; one of this attribute and 
+                                    `read_data_from` has to be provided but
+                                    not both (providing both will result in an
+                                    error); default: `None`
+        
+        force_foeld (ForceField): Only needed if `read_data_from` or
+                                  `read_restart_from` is provided as a file 
+                                  name string. This is needed for specifying
+                                  potential form for LAMMPS input file
+                                  ; default: `None`
 
         atom_style (str): LAMMPS 
                           [atom_style](https://docs.lammps.org/atom_style.html)
@@ -69,10 +80,19 @@ class Lammps:
                  thermo: int = 1000,
                  lmp_input_fname: str = 'lmp.in'):
 
-        self._read_data_from = read_data_from.data_fname if isinstance(
-            read_data_from, System) else read_data_from
         self._force_field = force_field
-        self._read_restart_from = read_restart_from
+        if isinstance(read_data_from, System):
+            self._read_data_from = read_data_from.data_fname
+            self._force_field = read_data_from.force_field
+        else:
+            self._read_data_from = read_data_from
+        if isinstance(read_restart_from, Lammps):
+            # TODO: implement this
+            # self._read_restart_from =
+            # read_restart_from.last_restart_fname
+            self._force_field = read_restart_from.force_field
+        else:
+            self._read_restart_from = read_restart_from
         self._atom_style = atom_style
         self._units = units
         self._timestep = timestep
@@ -91,6 +111,10 @@ class Lammps:
     @property
     def lmp_input_fname(self) -> str:
         return self._lmp_input_fname
+
+    @property
+    def force_field(self) -> Optional[ForceField]:
+        return self._force_field
 
     def add_procedure(self, procedure: Union[Procedure,
                                              List[Procedure]]) -> Lammps:
@@ -131,22 +155,23 @@ class Lammps:
             f.write(f'{"units":<15} {self._units}\n')
             f.write('\n')
 
-            if GLOBAL_FORCE_FIELD:
-                GLOBAL_FORCE_FIELD.write_settings(f)
-            elif self._force_field:
+            if self._force_field:
                 self._force_field.write_settings(f)
+            f.write('\n')
+
             if self._read_data_from:
                 f.write(f'{"read_data":<15} {self._read_data_from}\n')
-
             # TODO: add last_restart_fname
             # elif self._read_restart_from:
             #   f.write(f'{"read_restart":<15} '
             #           f'{self._read_restart_from.last_restart_fname}\n')
             f.write('\n')
+
             f.write(f'{"neighbor":<15} {self._neighbor_skin} bin\n')
             f.write(f'{"neigh_modify":<15} delay 0 every '
                     f'{self._neighbor_every} check yes\n')
             f.write('\n')
+
             f.write(
                 f'{"thermo_style":<15} custom step temp density vol press ke '
                 f'pe ebond evdwl ecoul elong\n')

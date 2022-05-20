@@ -5,7 +5,6 @@ ForceField = TypeVar("ForceField", bound="ForceField")
 
 OPLS_CHARGE_METHOD_OPTIONS = ['cm1a-lbcc', 'cm1a']
 GAFF2_CHARGE_METHOD_OPTIONS = ['gasteiger', 'am1bcc']
-GLOBAL_FORCE_FIELD: ForceField = None
 
 
 class ForceField():
