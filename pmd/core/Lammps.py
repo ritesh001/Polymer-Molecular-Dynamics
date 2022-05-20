@@ -80,19 +80,9 @@ class Lammps:
                  thermo: int = 1000,
                  lmp_input_fname: str = 'lmp.in'):
 
+        self._read_data_from = read_data_from
+        self._read_restart_from = read_restart_from
         self._force_field = force_field
-        if isinstance(read_data_from, System):
-            self._read_data_from = read_data_from.data_fname
-            self._force_field = read_data_from.force_field
-        else:
-            self._read_data_from = read_data_from
-        if isinstance(read_restart_from, Lammps):
-            # TODO: implement this
-            # self._read_restart_from =
-            # read_restart_from.last_restart_fname
-            self._force_field = read_restart_from.force_field
-        else:
-            self._read_restart_from = read_restart_from
         self._atom_style = atom_style
         self._units = units
         self._timestep = timestep
@@ -101,6 +91,16 @@ class Lammps:
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
         self._procedures = procedures if procedures else []
+        
+        # reassign data source and force field if objects are provided
+        if isinstance(read_data_from, System):
+            self._read_data_from = read_data_from.data_fname
+            self._force_field = read_data_from.force_field
+        elif isinstance(read_restart_from, Lammps):
+            # TODO: implement this
+            # self._read_restart_from =
+            # read_restart_from.last_restart_fname
+            self._force_field = read_restart_from.force_field
 
         # Make sure only 1 data source option is given
         Util.validate_options(self, DATA_SOURCE_OPTIONS)
