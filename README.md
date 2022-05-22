@@ -27,7 +27,10 @@ Below is an example where we use PMD to generate LAMMPS data and input files for
 ```python
 import pmd
 
-for smiles in ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']:
+# A list of polymer SMILES strings to create simulations for
+smiles_list = ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']
+
+for smiles in smiles_list:
     # Define polymer and system specs
     syst = pmd.System(smiles=smiles, force_field=pmd.OPLS(), density=0.8,
                       natoms_total=5000, natoms_per_chain=150)
@@ -42,7 +45,7 @@ for smiles in ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']:
     job = pmd.Torque(run_lammps=lmp, jobname=smiles, project='Your-project-id',
                      nodes=2, ppn=24, walltime='48:00:00')
     
-    # Generate all necessary files
+    # Generate all necessary files at each SMILES folder
     run = pmd.Pmd(system=syst, lammps=lmp, job=job)
     run.create(output_dir=smiles, save_config=True)
 ```
