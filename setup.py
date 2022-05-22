@@ -3,10 +3,11 @@ from setuptools import setup, find_packages
 if __name__ == "__main__":
     setup(
         name='pmd',
-        version='0.1.0',
+        version='0.1.1',
         author='Kuan-Hsuan Shen',
         author_email='kshen64@gatech.edu',
-        description='Automated generation of LAMMPS data and input files for polymer molecular dynamics simulations',
+        description=
+        'Automated generation of LAMMPS data and input files for polymer molecular dynamics simulations',
         keywords=['LAMMPS', 'polymer', 'SMILES'],
         url='https://github.com/Ramprasad-Group/High-throughput-MD-simulations',
         packages=find_packages(),
