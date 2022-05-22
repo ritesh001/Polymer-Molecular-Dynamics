@@ -465,6 +465,12 @@ class TgMeasurement(Procedure):
                  dump_every: int = 10000,
                  dump_image: bool = False,
                  reset_timestep_before_run: bool = False):
+        if Tinit < Tfinal:
+            print('Tg measurement usually is done through a cooling process')
+            # TODO: add logging.warning
+        if (Tinit - Tfinal) % Tinterval != 0:
+            print('Your Tinterval is not a factor of Tinit-Tfinal')
+            # TODO: add logging.warning
         self._Tinit = Tinit
         self._Tfinal = Tfinal
         self._Tinterval = Tinterval
@@ -474,10 +480,15 @@ class TgMeasurement(Procedure):
         self._Pdamp = Pdamp
         self._result_fname = result_fname
 
-        duration = ((Tfinal - Tinit) / Tinterval + 1) * step_duration
+        # total duration of the procedure
+        duration = self._nsteps * step_duration
 
         super().__init__(duration, dump_fname, dump_every, dump_image,
                          reset_timestep_before_run)
+
+    @property
+    def _nsteps(self) -> int:
+        return int((self._Tinit - self._Tfinal) / self._Tinterval + 1)
 
     def write_lammps(self, f: TextIOWrapper):
         super().write_before_run(f)
@@ -491,8 +502,7 @@ class TgMeasurement(Procedure):
         f.write('\n')
 
         f.write(f'{"label":<15} loop\n')
-        f.write(f'{"variable":<15} a loop '
-                f'{int((self._Tinit - self._Tfinal) / self._Tinterval + 1)}\n')
+        f.write(f'{"variable":<15} a loop {self._nsteps}\n')
         f.write(f'{"variable":<15} b equal '
                 f'{self._Tinit}-{self._Tinterval}*($a-1)\n')
         f.write(f'{"fix":<15} fNPT all npt temp $b $b {self._Tdamp} iso '
