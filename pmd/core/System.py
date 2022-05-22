@@ -6,7 +6,7 @@ from typing import Optional
 from rdkit import Chem
 
 from pmd.core.ForceField import ForceField, GAFF2, OPLS
-from pmd.util import Util
+from pmd.util import Pmdlogging, HiddenPrints, validate_options
 
 CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
 
@@ -70,7 +70,7 @@ class System:
         self._data_fname = data_fname
 
         # Make sure only 1 chain length option is given
-        Util.validate_options(self, CHAIN_LENGTH_OPTIONS)
+        validate_options(self, CHAIN_LENGTH_OPTIONS)
 
         # Calculate system specs such as chain length, # of polymers
         self._calculate_system_spec()
@@ -112,11 +112,13 @@ class System:
         self._nchains = round(self._natoms_total /
                               (natoms_per_RU * self._length + 2))
 
-        print('-----------------------System Stats-----------------------')
-        print('SMILES:', self._smiles)
-        print('Natom_per_RU:', natoms_per_RU)
-        print('length:', self._length)
-        print('Nchains:', self._nchains)
+        Pmdlogging.info('System details generated\n\n'
+                        '--------Polymer Stats--------\n'
+                        f'SMILES: {self._smiles}\n'
+                        f'Natom_per_RU: {natoms_per_RU}\n'
+                        f'length: {self._length}\n'
+                        f'Nchains: {self._nchains}\n'
+                        '-----------------------------')
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
@@ -242,23 +244,25 @@ class SolventSystem(System):
         self._nsolvents = round(self._ru_nsolvent_ratio * self._length *
                                 self._nchains)
 
-        print('--------Polymer Stats--------')
-        print('Polymer SMILES:', self._smiles)
-        print('Polymer length:', self._length)
-        print('Polymer number:', self._nchains)
-        print('')
-        print('--------Solvent Stats--------')
-        print('Solvent SMILES:', self._solvent_smiles)
-        print('Solvent number:', self._nsolvents)
-        print('')
-        print('--------System Stats--------')
-        print('Target Nsolvents/Nrepeatunits', self._ru_nsolvent_ratio)
-        print('Final Nsolvents/Nrepeatunits',
-              self._nsolvents / (self._length * self._nchains))
-        print(
-            'Total number of atoms:', self._nsolvents * natoms_solvent +
-            (self._length * natoms_per_ru + 2) * self._nchains)
-        print('')
+        # Calculate extra stats for logging use
+        final_nsol_nRU_ratio = self._nsolvents / (self._length * self._nchains)
+        ntotal = self._nsolvents * natoms_solvent + (
+            self._length * natoms_per_ru + 2) * self._nchains
+
+        Pmdlogging.info(
+            'System details generated\n\n'
+            '--------Polymer Stats--------\n'
+            f'Polymer SMILES: {self._smiles}\n'
+            f'Polymer length: {self._length}\n'
+            f'Polymer Nchains: {self._nchains}\n\n'
+            '--------Solvent Stats--------\n'
+            f'Solvent SMILES: {self._solvent_smiles}\n'
+            f'Solvent number: {self._nsolvents}\n\n'
+            '--------System Stats---------\n'
+            f'Target Nsolvents/Nrepeatunits: {self._ru_nsolvent_ratio}\n'
+            f'Final Nsolvents/Nrepeatunits: {final_nsol_nRU_ratio}\n'
+            f'Total number of atoms: {ntotal}\n'
+            '-----------------------------')
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
         '''Method to make LAMMPS data file (which contains coordinates and force 
@@ -298,9 +302,9 @@ def _run_psp(input_data: dict, density: float, force_field: ForceField,
         raise ImportError('System\'s write_data function requires PSP to '
                           'function properly, please install PSP')
 
-    print('--------Creating the system, this may take a while--------')
+    Pmdlogging.info('Creating the system, this may take a while...')
     try:
-        with Util.HiddenPrints():
+        with HiddenPrints():
             amor = ab.Builder(pd.DataFrame(data=input_data),
                               density=density,
                               OutDir=output_dir)
@@ -320,7 +324,8 @@ def _run_psp(input_data: dict, density: float, force_field: ForceField,
                         'nt': 'n',
                         'nv': 'nh'
                     })
-        print('--------------- System successfully created---------------')
+        Pmdlogging.info(
+            f'System file - {data_fname} successfully created in {output_dir}')
     finally:
         if cleanup:
             import os, shutil

@@ -1,8 +1,8 @@
 import os
 from typing import Union
 
-from pmd.core.Lammps import Lammps
-from pmd.util import Util
+from pmd.core import Lammps
+from pmd.util import Pmdlogging, build_dir
 
 
 class Job():
@@ -19,6 +19,11 @@ class Job():
 
     def write_job(self, output_dir: str):
         raise NotImplementedError
+
+    def completion_log(self, output_dir: str):
+        Pmdlogging.info(
+            f'Job file - {self._job_fname} successfully created in {output_dir}'
+        )
 
 
 class Torque(Job):
@@ -51,7 +56,7 @@ class Torque(Job):
         self._walltime = walltime
         self._gpus = gpus
 
-    @Util.build_dir
+    @build_dir
     def write_job(self, output_dir: str = '.') -> None:
         '''Method to make the Torque job scheduler input file
 
@@ -89,7 +94,7 @@ class Torque(Job):
                 f.write(f'mpirun -np { self._nodes * self._ppn} '
                         f'lmp -in {self._run_lammps}')
 
-        print('-------------Job file successfully created------------')
+        super().completion_log(output_dir)
 
 
 class Slurm(Job):
@@ -119,7 +124,7 @@ class Slurm(Job):
         self._time = time
         self._gpus = gpus
 
-    @Util.build_dir
+    @build_dir
     def write_job(self, output_dir: str = '.') -> None:
         '''Method to make the Slurm job scheduler input file
 
@@ -148,4 +153,4 @@ class Slurm(Job):
                 f.write('module load intel/18.0.2 impi/18.0.2 lammps/9Jan20\n')
                 f.write(f'ibrun lmp -in {self._run_lammps}\n')
 
-        print('---------------Job file successfully created--------------')
+        super().completion_log(output_dir)

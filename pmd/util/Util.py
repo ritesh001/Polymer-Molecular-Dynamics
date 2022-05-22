@@ -1,20 +1,6 @@
-import logging
 import os
 import sys
 from typing import Callable, Tuple
-
-pmdlogger = logging.getLogger(__name__)
-
-
-def setup_pmd_logger():
-    formatter = logging.Formatter(
-        fmt='[%(levelname)s] %(asctime)s - %(message)s')
-
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-
-    pmdlogger.setLevel(logging.DEBUG)
-    pmdlogger.addHandler(handler)
 
 
 def validate_options(cls, options: Tuple[str]):

@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from pmd.util.Log import Pmdlogging
+
 
 def calculate_Tg(result_fname: str,
                  make_plot: bool = True,
@@ -54,7 +56,7 @@ def calculate_Tg(result_fname: str,
         plt.savefig('temp_vs_density.png', dpi=300)
 
     Tg = p[0]
-    print('Glass transition temperature of the system is', Tg)
+    Pmdlogging.info('Glass transition temperature:', Tg)
 
     return Tg
 

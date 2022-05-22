@@ -4,12 +4,8 @@ import inspect
 from typing import Any, Dict, List, Optional, Union
 
 import pmd.core
-from pmd.core.ForceField import ForceField
-from pmd.core.Job import Job
-from pmd.core.Lammps import Lammps
-from pmd.core.Procedure import Procedure
-from pmd.core.System import System
-from pmd.util import Util
+from pmd.core import ForceField, Job, Lammps, Procedure, System
+from pmd.util import Pmdlogging, build_dir
 
 PRIMITIVE_TYPES = (str, int, float, bool)
 SUPPORTED_YAML_EXTS = (".yml", ".yaml")
@@ -67,7 +63,8 @@ def instantiate_from_cls_name(class_name: str, prop_dict: dict):
         for k, v in prop_dict.items() if k in param_keys
     }
 
-    print(f'{class_name} object successfully loaded from the YAML file.')
+    Pmdlogging.info(
+        f'{class_name} object successfully loaded from the YAML file.')
     return the_class(**filtered_prop_dict)
 
 
@@ -121,7 +118,7 @@ class Pmd:
         self._lammps = lammps
         self._job = job
 
-    @Util.build_dir
+    @build_dir
     def create(self,
                output_dir: str = '.',
                save_config: bool = False,
@@ -154,7 +151,7 @@ class Pmd:
         if save_config:
             self.save_config(output_dir, config_fname)
 
-    @Util.build_dir
+    @build_dir
     def save_config(self, output_dir: str, config_fname: str = 'config.yaml'):
         '''Method to create a config file with all the details of the System,
         Lammps, or Job settings. This method only creates the config file.

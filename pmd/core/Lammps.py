@@ -1,10 +1,11 @@
 import os
 from typing import List, Optional, TypeVar, Union
 
+# These have to be written explicitly for typing
 from pmd.core.ForceField import ForceField
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
-from pmd.util import Util
+from pmd.util import Pmdlogging, validate_options, build_dir
 
 Lammps = TypeVar("Lammps", bound="Lammps")
 
@@ -71,7 +72,7 @@ class Lammps:
                  read_data_from: Optional[Union[System, str]] = None,
                  read_restart_from: Optional[Union[Lammps, str]] = None,
                  force_field: Optional[ForceField] = None,
-                 procedures: List[Procedure] = None,
+                 procedures: Optional[List[Procedure]] = None,
                  atom_style: str = 'full',
                  units: str = 'real',
                  timestep: int = 1,
@@ -91,7 +92,7 @@ class Lammps:
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
         self._procedures = procedures if procedures else []
-        
+
         # reassign data source and force field if objects are provided
         if isinstance(read_data_from, System):
             self._read_data_from = read_data_from.data_fname
@@ -103,7 +104,7 @@ class Lammps:
             self._force_field = read_restart_from.force_field
 
         # Make sure only 1 data source option is given
-        Util.validate_options(self, DATA_SOURCE_OPTIONS)
+        validate_options(self, DATA_SOURCE_OPTIONS)
 
     def __repr__(self) -> str:
         return type(self).__name__
@@ -133,7 +134,7 @@ class Lammps:
             self._procedures.append(p)
         return self
 
-    @Util.build_dir
+    @build_dir
     def write_lammps(self, output_dir: str = '.') -> None:
         '''Method to make LAMMPS input files
         Parameters:
@@ -183,4 +184,5 @@ class Lammps:
             for procedure in self._procedures:
                 procedure.write_lammps(f)
 
-        print('-----------Lammps input file successfully created---------')
+        Pmdlogging.info(f'Lammps input file - {self._lmp_input_fname} '
+                        f'successfully created in {output_dir}')

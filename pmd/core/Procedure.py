@@ -1,6 +1,8 @@
 from io import TextIOWrapper
 from typing import Optional
 
+from pmd.util.Log import Pmdlogging
+
 
 class Procedure():
 
@@ -466,10 +468,12 @@ class TgMeasurement(Procedure):
                  dump_image: bool = False,
                  reset_timestep_before_run: bool = False):
         if Tinit < Tfinal:
-            print('Tg measurement usually is done through a cooling process')
+            Pmdlogging.warning(
+                'Tg measurement usually is done through a cooling process')
             # TODO: add logging.warning
         if (Tinit - Tfinal) % Tinterval != 0:
-            print('Your Tinterval is not a factor of Tinit-Tfinal')
+            Pmdlogging.warning(
+                'Your Tinterval is not a factor of Tinit-Tfinal')
             # TODO: add logging.warning
         self._Tinit = Tinit
         self._Tfinal = Tfinal
