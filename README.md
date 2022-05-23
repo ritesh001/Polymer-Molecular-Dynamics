@@ -36,15 +36,15 @@ for smiles in smiles_list:
                       natoms_total=5000, natoms_per_chain=150)
 
     # Customize LAMMPS simulation
-    lmp = pmd.Lammps(read_data_from=syst, 
+    lmp = pmd.Lammps(read_data_from=syst,
                      procedures=[pmd.Minimization(min_style='cg'),
-                                 pmd.Equilibration(Teq=600, Tmax=800), 
+                                 pmd.Equilibration(Teq=600, Tmax=800),
                                  pmd.TgMeasurement(Tinit=600, Tfinal=200)])
 
     # Create job scheduler settings
     job = pmd.Torque(run_lammps=lmp, jobname=smiles, project='Your-project-id',
                      nodes=2, ppn=24, walltime='48:00:00')
-    
+
     # Generate all necessary files at each SMILES folder
     run = pmd.Pmd(system=syst, lammps=lmp, job=job)
     run.create(output_dir=smiles, save_config=True)

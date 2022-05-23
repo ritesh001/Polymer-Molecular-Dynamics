@@ -590,18 +590,18 @@ class Deformation(Procedure):
         # fix 2 all deform 1 x erate 1e-5 units box remap x
 
         f.write('\n')
-        f.write('variable tmp equal "lx"\n')
-        f.write('variable L0 equal ${tmp}\n')
-        f.write('variable strain equal "(lx - v_L0)/v_L0"\n')
-        f.write('variable p1 equal "v_strain"\n')
+        f.write(f'{"variable":<15} tmp equal "lx"\n')
+        f.write(f'{"variable":<15} L0 equal {"${tmp}"}\n')
+        f.write(f'{"variable":<15} strain equal "(lx - v_L0)/v_L0"\n')
+        f.write(f'{"variable":<15} p1 equal "v_strain"\n')
 
         # Output strain and stress info to file for units real,
         # pressure is in [atm] = 1/10000*1.01325 [GPa]
         # and p2, p3, p4 are in GPa
-        f.write('variable p2 equal "-pxx/10000*1.01325"\n')
-        f.write('variable p3 equal "-pyy/10000*1.01325"\n')
-        f.write('variable p4 equal "-pzz/10000*1.01325"\n')
-        f.write(f'fix fPRINT all print {self._print_every} '
+        f.write(f'{"variable":<15} p2 equal "-pxx/10000*1.01325"\n')
+        f.write(f'{"variable":<15} p3 equal "-pyy/10000*1.01325"\n')
+        f.write(f'{"variable":<15} p4 equal "-pzz/10000*1.01325"\n')
+        f.write(f'{"fix":<15} fPRINT all print {self._print_every} '
                 '"${p1} ${p2} ${p3} ${p4}" file '
                 f'{self._result_fname} screen no\n')
         # override the default thermo_style

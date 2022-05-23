@@ -190,6 +190,9 @@ class Pmd:
         with open(os.path.join(output_dir, config_fname), 'w') as yaml_file:
             yaml.safe_dump(config_dict, yaml_file, sort_keys=False)
 
+        Pmdlogging.info(f'Config file - {config_fname} successfully '
+                        f'saved to {output_dir}')
+
     @staticmethod
     def load_config(config_file: str, output_dir: str = '.'):
         '''Method to load a config file and create all the objects listed in 

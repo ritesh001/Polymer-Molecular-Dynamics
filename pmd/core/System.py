@@ -111,13 +111,15 @@ class System:
             self._length = self._ru_per_chain
         self._nchains = round(self._natoms_total /
                               (natoms_per_RU * self._length + 2))
+        ntotal = (self._length * natoms_per_RU + 2) * self._nchains
 
-        Pmdlogging.info('System details generated\n\n'
+        Pmdlogging.info('System stats generated\n'
                         '--------Polymer Stats--------\n'
                         f'SMILES: {self._smiles}\n'
                         f'Natom_per_RU: {natoms_per_RU}\n'
                         f'length: {self._length}\n'
                         f'Nchains: {self._nchains}\n'
+                        f'Total number of atoms: {ntotal}\n'
                         '-----------------------------')
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
@@ -222,9 +224,9 @@ class SolventSystem(System):
         # Get the number of atoms of a repeating unit and determine the polymer
         # chain length
         mol = Chem.MolFromSmiles(self._smiles)
-        natoms_per_ru = mol.GetNumAtoms(onlyExplicit=0) - 2
+        natoms_per_RU = mol.GetNumAtoms(onlyExplicit=0) - 2
         if self._natoms_per_chain:
-            self._length = round(self._natoms_per_chain / natoms_per_ru)
+            self._length = round(self._natoms_per_chain / natoms_per_RU)
         elif self._mw_per_chain:
             mw_per_ru = Chem.Descriptors.ExactMolWt(mol)
             self._length = round(self._mw_per_chain / mw_per_ru)
@@ -239,7 +241,7 @@ class SolventSystem(System):
         # number of atoms
         natoms_total_onechain = (self._ru_nsolvent_ratio * self._length *
                                  natoms_solvent) + (
-                                     self._length * natoms_per_ru + 2)
+                                     self._length * natoms_per_RU + 2)
         self._nchains = round(self._natoms_total / natoms_total_onechain)
         self._nsolvents = round(self._ru_nsolvent_ratio * self._length *
                                 self._nchains)
@@ -247,10 +249,10 @@ class SolventSystem(System):
         # Calculate extra stats for logging use
         final_nsol_nRU_ratio = self._nsolvents / (self._length * self._nchains)
         ntotal = self._nsolvents * natoms_solvent + (
-            self._length * natoms_per_ru + 2) * self._nchains
+            self._length * natoms_per_RU + 2) * self._nchains
 
         Pmdlogging.info(
-            'System details generated\n\n'
+            'System stats generated\n'
             '--------Polymer Stats--------\n'
             f'Polymer SMILES: {self._smiles}\n'
             f'Polymer length: {self._length}\n'

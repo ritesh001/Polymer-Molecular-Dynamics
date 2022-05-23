@@ -5,8 +5,8 @@ if __name__ == '__main__':
     system = pmd.System(smiles='*CC*',
                         density=0.5,
                         force_field=pmd.GAFF2(),
-                        natoms_total=2500,
-                        natoms_per_chain=150)
+                        natoms_total=10000,
+                        natoms_per_chain=600)
 
     # Equilibration + Uniaxial deformation
     lmp = pmd.Lammps(read_data_from=system)
