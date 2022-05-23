@@ -187,8 +187,8 @@ class Lammps:
                 procedure.write_before_run(f)
                 procedure.write_lammps(f)
                 procedure.write_after_run(f)
-                Pmdlogging.info(
-                    f'{procedure} procedure added to {self._lmp_input_fname}')
+                Pmdlogging.info(f'Adding procedure - {procedure} '
+                                f'to {self._lmp_input_fname}')
 
         Pmdlogging.info(f'Lammps input file - {self._lmp_input_fname} '
                         f'successfully created in {output_dir}')
