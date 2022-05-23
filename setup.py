@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 if __name__ == "__main__":
     setup(
         name='pmd',
-        version='0.1.1',
+        version='0.2.0',
         author='Kuan-Hsuan Shen',
         author_email='kshen64@gatech.edu',
         description=

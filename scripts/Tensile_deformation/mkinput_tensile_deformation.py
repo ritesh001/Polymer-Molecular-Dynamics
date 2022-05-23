@@ -8,17 +8,17 @@ if __name__ == '__main__':
                         natoms_total=10000,
                         natoms_per_chain=600)
 
-    # Equilibration + Uniaxial deformation
+    # Equilibration + Uniaxial tensile deformation
     lmp = pmd.Lammps(read_data_from=system)
     lmp.add_procedure(pmd.Minimization())
     lmp.add_procedure(
         pmd.Equilibration(Teq=300, Peq=1, Tmax=800, Pmax=49346.163))
     lmp.add_procedure(
-        pmd.Deformation(duration=10**7, erate=10**-5, Tinit=300, Tfinal=300))
+        pmd.TensileDeformation(duration=10**7, erate=10**-6, T=300, P=1))
 
     # Setup for the Torque scheduling system's job file
     job = pmd.Torque(run_lammps=lmp,
-                     jobname='PE_equilibration',
+                     jobname='PE_tensile_deformation',
                      project='GT-rramprasad3-CODA20',
                      nodes=2,
                      ppn=24,
@@ -26,4 +26,4 @@ if __name__ == '__main__':
 
     # Create all the files in the PE_equilibration folder
     run = pmd.Pmd(system=system, lammps=lmp, job=job)
-    run.create(output_dir='PE_deformation', save_config=True)
+    run.create(output_dir='PE_tensile_deformation', save_config=True)

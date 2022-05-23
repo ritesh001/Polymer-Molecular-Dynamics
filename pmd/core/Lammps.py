@@ -145,6 +145,8 @@ class Lammps:
             None
         '''
 
+        Pmdlogging.info('Creating Lammps input file...')
+
         # Write LAMMPS input file
         with open(os.path.join(output_dir, self._lmp_input_fname), 'w') as f:
 
@@ -183,6 +185,8 @@ class Lammps:
 
             for procedure in self._procedures:
                 procedure.write_lammps(f)
+                Pmdlogging.info(
+                    f'{procedure} procedure added to {self._lmp_input_fname}')
 
         Pmdlogging.info(f'Lammps input file - {self._lmp_input_fname} '
                         f'successfully created in {output_dir}')

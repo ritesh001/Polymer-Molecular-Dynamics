@@ -313,9 +313,7 @@ class MSDMeasurement(Procedure):
     Attributes:
         duration (int): Duration of this NVT procedure (timestep unit)
     
-        Tinit (float): Initial temperature
-        
-        Tfinal (float): Final temperature
+        T (float): Temperature
 
         group (str): The group of atoms that will be considered for MSD
                      calculation. This has to be a string that matches the
@@ -348,8 +346,7 @@ class MSDMeasurement(Procedure):
 
     def __init__(self,
                  duration: int,
-                 Tinit: float,
-                 Tfinal: float,
+                 T: float,
                  group: str,
                  create_block_every: Optional[int] = None,
                  result_folder_name: str = 'result',
@@ -363,8 +360,7 @@ class MSDMeasurement(Procedure):
             raise ValueError('The duration has to be divisible by the '
                              'create_block_every')
 
-        self._Tinit = Tinit
-        self._Tfinal = Tfinal
+        self._T = T
         self._group = group
         self._create_block_every = create_block_every
         self._Tdamp = Tdamp
@@ -376,8 +372,8 @@ class MSDMeasurement(Procedure):
     def write_lammps(self, f: TextIOWrapper):
         super().write_before_run(f)
 
-        f.write(f'{"fix":<15} fNVT all nvt temp {self._Tinit} '
-                f'{self._Tfinal} {self._Tdamp}\n')
+        f.write(f'{"fix":<15} fNVT all nvt '
+                f'temp {self._T} {self._T} {self._Tdamp}\n')
         f.write('\n')
 
         msd_group_id = 'msdgroup'
@@ -520,7 +516,7 @@ class TgMeasurement(Procedure):
         super().write_after_run(f)
 
 
-class Deformation(Procedure):
+class TensileDeformation(Procedure):
     '''Perform a uniaxial tensile deformation in the x direction. 
     This can be used to calculate modulus and tensile strengths.
        
@@ -530,18 +526,21 @@ class Deformation(Procedure):
         erate (float): Engineering strain rate. The units of the specified 
                        strain rate are 1/time
     
-        Tinit (float): Initial temperature
+        T (float): Temperature
         
-        Tfinal (float): Final temperature
+        P (float): Pressure
         
         Tdamp (str): Damping parameter for thermostats; default: 
+                     `"$(100.0*dt)"`
+        
+        Pdamp (str): Damping parameter for thermostats; default: 
                      `"$(100.0*dt)"`
         
         print_every (int): Print result to the result file every this many
                            timesteps; default: `1000`
         
         dump_fname (str): Name of the dump file; default: 
-                          `"deformation.lammpstrj"`
+                          `"tensile_deformation.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
         
@@ -558,19 +557,21 @@ class Deformation(Procedure):
     def __init__(self,
                  duration: int,
                  erate: float,
-                 Tinit: float,
-                 Tfinal: float,
+                 T: float,
+                 P: float,
                  Tdamp: str = '$(100.0*dt)',
+                 Pdamp: str = '$(100.0*dt)',
                  print_every: int = 1000,
                  result_fname: str = 'stress_vs_strain.txt',
-                 dump_fname: str = 'deformation.lammpstrj',
+                 dump_fname: str = 'tensile_deformation.lammpstrj',
                  dump_every: int = 10000,
                  dump_image: bool = False,
                  reset_timestep_before_run: bool = False):
         self._erate = erate
-        self._Tinit = Tinit
-        self._Tfinal = Tfinal
+        self._T = T
+        self._P = P
         self._Tdamp = Tdamp
+        self._Pdamp = Pdamp
         self._print_every = print_every
         self._result_fname = result_fname
 
@@ -580,14 +581,12 @@ class Deformation(Procedure):
     def write_lammps(self, f: TextIOWrapper):
         super().write_before_run(f)
 
-        f.write(f'{"fix":<15} fNVTSLLOD all nvt/sllod temp {self._Tinit} '
-                f'{self._Tfinal} {self._Tdamp}\n')
+        f.write(f'{"fix":<15} fNPT all npt '
+                f'temp {self._T} {self._T} {self._Tdamp} '
+                f'y {self._P} {self._P} {self._Pdamp} '
+                f'z {self._P} {self._P} {self._Pdamp}\n')
         f.write(f'{"fix":<15} fDEFORM all deform 1 x erate {self._erate} '
-                f'remap v\n')
-
-        # TODO: Check another setup:
-        # fix 1 all npt temp 100 100 50 y 0 0 1000 z 0 0 1000 drag 2
-        # fix 2 all deform 1 x erate 1e-5 units box remap x
+                f'units box remap x\n')
 
         f.write('\n')
         f.write(f'{"variable":<15} tmp equal "lx"\n')
@@ -595,12 +594,14 @@ class Deformation(Procedure):
         f.write(f'{"variable":<15} strain equal "(lx - v_L0)/v_L0"\n')
         f.write(f'{"variable":<15} p1 equal "v_strain"\n')
 
+        # TODO: this assume the LAMMPS units is real, make it more flexible
         # Output strain and stress info to file for units real,
-        # pressure is in [atm] = 1/10000*1.01325 [GPa]
-        # and p2, p3, p4 are in GPa
-        f.write(f'{"variable":<15} p2 equal "-pxx/10000*1.01325"\n')
-        f.write(f'{"variable":<15} p3 equal "-pyy/10000*1.01325"\n')
-        f.write(f'{"variable":<15} p4 equal "-pzz/10000*1.01325"\n')
+        # pressure is in [atm] = 0.101325 [MPa]
+        # and p2, p3, p4 are in MPa
+        f.write(f'{"variable":<15} p2 equal "-pxx*0.101325 '
+                '# convert stress unit from atm to MPa"\n')
+        f.write(f'{"variable":<15} p3 equal "-pyy*0.101325"\n')
+        f.write(f'{"variable":<15} p4 equal "-pzz*0.101325"\n')
         f.write(f'{"fix":<15} fPRINT all print {self._print_every} '
                 '"${p1} ${p2} ${p3} ${p4}" file '
                 f'{self._result_fname} screen no\n')
@@ -609,9 +610,100 @@ class Deformation(Procedure):
                 'v_p2 v_p3 v_p4 press ke pe\n')
         f.write(f'{"run":<15} {self._duration}\n')
         f.write('\n')
-        f.write(f'{"unfix":<15} fNVTSLLOD\n')
+        f.write(f'{"unfix":<15} fNPT\n')
         f.write(f'{"unfix":<15} fDEFORM\n')
         f.write(f'{"unfix":<15} fPRINT\n')
+        f.write('\n')
+
+        super().write_after_run(f)
+
+
+class ShearDeformation(Procedure):
+    '''Perform a shear deformation in the x-y plane. This can be used
+    to calculate shear viscosity.
+       
+    Attributes:
+        duration (int): Duration of the deformation procedure (timestep unit)
+        
+        erate (float): Engineering strain rate. The units of the specified 
+                       strain rate are 1/time
+    
+        T (float): Temperature
+        
+        Tdamp (str): Damping parameter for thermostats; default: 
+                     `"$(100.0*dt)"`
+        
+        print_every (int): Print result to the result file every this many
+                           timesteps; default: `1000`
+        
+        dump_fname (str): Name of the dump file; default: 
+                          `"shear_deformation.lammpstrj"`
+
+        dump_every (int): Dump every this many timesteps; default: `10000`
+        
+        dump_image (bool): Whether to dump a image file at the end of the run
+                           ; default: `False`
+        
+        reset_timestep_before_run (bool): Whether to reset timestep after the 
+                                          procedure; default: `False`
+        
+        result_fname (str): Name of the result file; default: 
+                            `"viscosity.txt"`
+    '''
+
+    def __init__(self,
+                 duration: int,
+                 erate: float,
+                 T: float,
+                 Tdamp: str = '$(100.0*dt)',
+                 calculate_every: int = 100000,
+                 result_fname: str = 'viscosity.txt',
+                 dump_fname: str = 'shear_deformation.lammpstrj',
+                 dump_every: int = 10000,
+                 dump_image: bool = False,
+                 reset_timestep_before_run: bool = False):
+        self._erate = erate
+        self._T = T
+        self._Tdamp = Tdamp
+        self._calculate_every = calculate_every
+        self._result_fname = result_fname
+
+        super().__init__(duration, dump_fname, dump_every, dump_image,
+                         reset_timestep_before_run)
+
+    def write_lammps(self, f: TextIOWrapper):
+        super().write_before_run(f)
+
+        f.write(f'{"fix":<15} fNVTSLLOD all nvt/sllod '
+                f'temp {self._T} {self._T} {self._Tdamp}\n')
+        f.write(f'{"fix":<15} fDEFORM all deform 1 xy erate {self._erate} '
+                f'remap v\n')
+        f.write('\n')
+
+        temp_deform_id = 'tdeform'
+        press_deform_id = 'pdeform'
+        f.write(f'{"compute":<15} {temp_deform_id} all temp/deform '
+                '# calculate temperautre by subtracting out a '
+                'streaming velocity induced by deformation\n')
+        f.write(f'{"compute":<15} {press_deform_id} all '
+                f'pressure {temp_deform_id}\n')
+        f.write(f'{"thermo_modify":<15} temp {temp_deform_id}\n')
+        f.write(f'{"thermo_modify":<15} press {press_deform_id}\n')
+        f.write(f'{"variable":<15} stress equal '
+                f'(-1)*c_{press_deform_id}[4] # -pxy\n')
+
+        # TODO: this assume the LAMMPS units is real, make it more flexible
+        # Caclulate shear viscosity [mPa s]
+        f.write(f'{"variable":<15} visc equal 1.01325e8*v_stress/(v_srate) '
+                '# shear viscosity [mPa s]; first term is unit converter\n')
+        f.write(f'{"fix":<15} fVISC all '
+                f'ave/time 100 1000 {self._calculate_every} v_visc '
+                f'ave one file {self._result_fname}\n')
+        f.write(f'{"run":<15} {self._duration}\n')
+        f.write('\n')
+        f.write(f'{"unfix":<15} fNVTSLLOD\n')
+        f.write(f'{"unfix":<15} fDEFORM\n')
+        f.write(f'{"unfix":<15} fVISC\n')
         f.write('\n')
 
         super().write_after_run(f)
