@@ -4,7 +4,12 @@ import inspect
 from typing import Any, Dict, List, Optional, Union
 
 import pmd.core
-from pmd.core import ForceField, Job, Lammps, Procedure, System
+# These have to be written explicitly for typing
+from pmd.core.ForceField import ForceField
+from pmd.core.Procedure import Procedure
+from pmd.core.System import System
+from pmd.core.Lammps import Lammps
+from pmd.core.Job import Job
 from pmd.util import Pmdlogging, build_dir
 
 PRIMITIVE_TYPES = (str, int, float, bool)

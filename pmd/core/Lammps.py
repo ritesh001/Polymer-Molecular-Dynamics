@@ -184,7 +184,9 @@ class Lammps:
             f.write('\n')
 
             for procedure in self._procedures:
+                procedure.write_before_run(f)
                 procedure.write_lammps(f)
+                procedure.write_after_run(f)
                 Pmdlogging.info(
                     f'{procedure} procedure added to {self._lmp_input_fname}')
 

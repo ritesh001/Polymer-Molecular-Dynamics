@@ -87,6 +87,12 @@ class Minimization(Procedure):
         f.write('\n')
         f.write('\n')
 
+    def write_before_run(self, f: TextIOWrapper):
+        pass
+
+    def write_after_run(self, f: TextIOWrapper):
+        pass
+
 
 class Equilibration(Procedure):
     '''Perform a 21-step amorphous polymer equilibration process. Ref: Abbott, 
@@ -172,8 +178,6 @@ class Equilibration(Procedure):
         ]
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         for n, i in enumerate(self._eq_steps):
             if i[0] == 'nvt':
                 f.write(f'{"fix":<15} step{n + 1} all nvt temp '
@@ -184,8 +188,6 @@ class Equilibration(Procedure):
             f.write(f'{"run":<15} {i[1]}\n')
             f.write(f'{"unfix":<15} step{n + 1}\n')
             f.write('\n')
-
-        super().write_after_run(f)
 
 
 class NPT(Procedure):
@@ -243,16 +245,12 @@ class NPT(Procedure):
                          reset_timestep_before_run)
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         f.write(
             f'{"fix":<15} fNPT all npt temp {self._Tinit} {self._Tfinal} '
             f'{self._Tdamp} iso {self._Pinit} {self._Pfinal} {self._Pdamp}\n')
         f.write(f'{"run":<15} {self._duration}\n')
         f.write(f'{"unfix":<15} fNPT\n')
         f.write('\n')
-
-        super().write_after_run(f)
 
 
 class NVT(Procedure):
@@ -296,15 +294,11 @@ class NVT(Procedure):
                          reset_timestep_before_run)
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         f.write(f'{"fix":<15} fNVT all nvt temp {self._Tinit} '
                 f'{self._Tfinal} {self._Tdamp}\n')
         f.write(f'{"run":<15} {self._duration}\n')
         f.write(f'{"unfix":<15} fNVT\n')
         f.write('\n')
-
-        super().write_after_run(f)
 
 
 class MSDMeasurement(Procedure):
@@ -370,8 +364,6 @@ class MSDMeasurement(Procedure):
                          reset_timestep_before_run)
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         f.write(f'{"fix":<15} fNVT all nvt '
                 f'temp {self._T} {self._T} {self._Tdamp}\n')
         f.write('\n')
@@ -409,8 +401,6 @@ class MSDMeasurement(Procedure):
         for block in range(nblock):
             f.write(f'{"unfix":<15} fMSD{block}\n')
         f.write('\n')
-
-        super().write_after_run(f)
 
 
 class TgMeasurement(Procedure):
@@ -490,8 +480,6 @@ class TgMeasurement(Procedure):
         return int((self._Tinit - self._Tfinal) / self._Tinterval + 1)
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         f.write(f'{"variable":<15} Rho equal density\n')
         f.write(f'{"variable":<15} Temp equal temp\n')
         f.write(
@@ -512,8 +500,6 @@ class TgMeasurement(Procedure):
         f.write(f'{"jump":<15} SELF loop\n')
         f.write(f'{"variable":<15} a delete\n')
         f.write('\n')
-
-        super().write_after_run(f)
 
 
 class TensileDeformation(Procedure):
@@ -579,8 +565,6 @@ class TensileDeformation(Procedure):
                          reset_timestep_before_run)
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         f.write(f'{"fix":<15} fNPT all npt '
                 f'temp {self._T} {self._T} {self._Tdamp} '
                 f'y {self._P} {self._P} {self._Pdamp} '
@@ -614,9 +598,6 @@ class TensileDeformation(Procedure):
         f.write(f'{"unfix":<15} fDEFORM\n')
         f.write(f'{"unfix":<15} fPRINT\n')
         f.write('\n')
-
-        super().write_after_run(f)
-
 
 class ShearDeformation(Procedure):
     '''Perform a shear deformation in the x-y plane. This can be used
@@ -672,8 +653,6 @@ class ShearDeformation(Procedure):
                          reset_timestep_before_run)
 
     def write_lammps(self, f: TextIOWrapper):
-        super().write_before_run(f)
-
         f.write(f'{"fix":<15} fNVTSLLOD all nvt/sllod '
                 f'temp {self._T} {self._T} {self._Tdamp}\n')
         f.write(f'{"fix":<15} fDEFORM all deform 1 xy erate {self._erate} '
@@ -705,5 +684,3 @@ class ShearDeformation(Procedure):
         f.write(f'{"unfix":<15} fDEFORM\n')
         f.write(f'{"unfix":<15} fVISC\n')
         f.write('\n')
-
-        super().write_after_run(f)
