@@ -24,7 +24,7 @@ Template Torque object to contain Torque job initialization settings
 ### write\_job
 
 ```python
-@Util.build_dir
+@build_dir
 def write_job(output_dir: str = '.') -> None
 ```
 
@@ -59,7 +59,7 @@ Template Slurm object to contain Slurm job initialization settings
 ### write\_job
 
 ```python
-@Util.build_dir
+@build_dir
 def write_job(output_dir: str = '.') -> None
 ```
 

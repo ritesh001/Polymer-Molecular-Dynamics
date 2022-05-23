@@ -469,12 +469,11 @@ class TgMeasurement(Procedure):
                  reset_timestep_before_run: bool = False):
         if Tinit < Tfinal:
             Pmdlogging.warning(
-                'Tg measurement usually is done through a cooling process')
-            # TODO: add logging.warning
+                f'Tg measurement usually is done through a cooling process,'
+                f' but your Tinit: {Tinit} is lower than Tfinal: {Tfinal}')
         if (Tinit - Tfinal) % Tinterval != 0:
             Pmdlogging.warning(
                 'Your Tinterval is not a factor of Tinit-Tfinal')
-            # TODO: add logging.warning
         self._Tinit = Tinit
         self._Tfinal = Tfinal
         self._Tinterval = Tinterval
@@ -522,30 +521,97 @@ class TgMeasurement(Procedure):
 
 
 class Deformation(Procedure):
+    '''Perform a uniaxial tensile deformation in the x direction. 
+    This can be used to calculate modulus and tensile strengths.
+       
+    Attributes:
+        duration (int): Duration of the deformation procedure (timestep unit)
+        
+        erate (float): Engineering strain rate. The units of the specified 
+                       strain rate are 1/time
+    
+        Tinit (float): Initial temperature
+        
+        Tfinal (float): Final temperature
+        
+        Tdamp (str): Damping parameter for thermostats; default: 
+                     `"$(100.0*dt)"`
+        
+        print_every (int): Print result to the result file every this many
+                           timesteps; default: `1000`
+        
+        dump_fname (str): Name of the dump file; default: 
+                          `"deformation.lammpstrj"`
 
-    def __init__(self, erate):
+        dump_every (int): Dump every this many timesteps; default: `10000`
+        
+        dump_image (bool): Whether to dump a image file at the end of the run
+                           ; default: `False`
+        
+        reset_timestep_before_run (bool): Whether to reset timestep after the 
+                                          procedure; default: `False`
+        
+        result_fname (str): Name of the result file; default: 
+                            `"stress_vs_strain.txt"`
+    '''
+
+    def __init__(self,
+                 duration: int,
+                 erate: float,
+                 Tinit: float,
+                 Tfinal: float,
+                 Tdamp: str = '$(100.0*dt)',
+                 print_every: int = 1000,
+                 result_fname: str = 'stress_vs_strain.txt',
+                 dump_fname: str = 'deformation.lammpstrj',
+                 dump_every: int = 10000,
+                 dump_image: bool = False,
+                 reset_timestep_before_run: bool = False):
         self._erate = erate
+        self._Tinit = Tinit
+        self._Tfinal = Tfinal
+        self._Tdamp = Tdamp
+        self._print_every = print_every
+        self._result_fname = result_fname
 
-    def write_lammps(self):
-        # fix		1 all nvt/sllod temp 300.0 300.0 $(100.0*dt)
-        # fix		2 all deform 1 x erate 0.01 remap v
+        super().__init__(duration, dump_fname, dump_every, dump_image,
+                         reset_timestep_before_run)
 
-        # variable tmp equal "lx"
-        # variable L0 equal ${tmp}
-        #  print "Initial Length, L0: ${L0}"
+    def write_lammps(self, f: TextIOWrapper):
+        super().write_before_run(f)
 
-        # Output strain and stress info to file for units metal,
-        # pressure is in [bars] = 100 [kPa] = 1/10000 [GPa]
+        f.write(f'{"fix":<15} fNVTSLLOD all nvt/sllod temp {self._Tinit} '
+                f'{self._Tfinal} {self._Tdamp}\n')
+        f.write(f'{"fix":<15} fDEFORM all deform 1 x erate {self._erate} '
+                f'remap v\n')
+
+        # TODO: Check another setup:
+        # fix 1 all npt temp 100 100 50 y 0 0 1000 z 0 0 1000 drag 2
+        # fix 2 all deform 1 x erate 1e-5 units box remap x
+
+        f.write('\n')
+        f.write('variable tmp equal "lx"\n')
+        f.write('variable L0 equal ${tmp}\n')
+        f.write('variable strain equal "(lx - v_L0)/v_L0"\n')
+        f.write('variable p1 equal "v_strain"\n')
+
+        # Output strain and stress info to file for units real,
+        # pressure is in [atm] = 1/10000*1.01325 [GPa]
         # and p2, p3, p4 are in GPa
+        f.write('variable p2 equal "-pxx/10000*1.01325"\n')
+        f.write('variable p3 equal "-pyy/10000*1.01325"\n')
+        f.write('variable p4 equal "-pzz/10000*1.01325"\n')
+        f.write(f'fix fPRINT all print {self._print_every} '
+                '"${p1} ${p2} ${p3} ${p4}" file '
+                f'{self._result_fname} screen no\n')
+        # override the default thermo_style
+        f.write(f'{"thermo_style":<15} custom step temp density vol v_strain '
+                'v_p2 v_p3 v_p4 press ke pe\n')
+        f.write(f'{"run":<15} {self._duration}\n')
+        f.write('\n')
+        f.write(f'{"unfix":<15} fNVTSLLOD\n')
+        f.write(f'{"unfix":<15} fDEFORM\n')
+        f.write(f'{"unfix":<15} fPRINT\n')
+        f.write('\n')
 
-        # variable strain equal "(lx - v_L0)/v_L0"
-        # variable p1 equal "v_strain"
-        # variable p2 equal "-pxx/10000"
-        # variable p3 equal "-pyy/10000"
-        # variable p4 equal "-pzz/10000"
-        # fix def1 all print 100 "${p1} ${p2} ${p3} ${p4}" file
-        # Al_comp_100.def1.txt screen no
-        # thermo  1000
-        # thermo_style custom step v_strain temp v_p2 v_p3 v_p4 ke pe press
-
-        print('#Not yet implemented')
+        super().write_after_run(f)

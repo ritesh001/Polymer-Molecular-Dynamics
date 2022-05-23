@@ -24,7 +24,7 @@ files, or config files)
 ### create
 
 ```python
-@Util.build_dir
+@build_dir
 def create(output_dir: str = '.',
            save_config: bool = False,
            config_fname: str = 'config.yaml') -> None
@@ -52,7 +52,7 @@ argument is set to True.
 ### save\_config
 
 ```python
-@Util.build_dir
+@build_dir
 def save_config(output_dir: str, config_fname: str = 'config.yaml')
 ```
 
@@ -75,7 +75,8 @@ Lammps, or Job settings. This method only creates the config file.
 ### load\_config
 
 ```python
-def load_config(config_file: str)
+@staticmethod
+def load_config(config_file: str, output_dir: str = '.')
 ```
 
 Method to load a config file and create all the objects listed in
@@ -84,6 +85,9 @@ the config file
 **Arguments**:
 
 - `config_file` _str_ - Config file to load
+  
+- `output_dir` _str_ - Directory for all the generated files; default:
+  `"."`
   
 
 **Returns**:

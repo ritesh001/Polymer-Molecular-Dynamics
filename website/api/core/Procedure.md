@@ -219,3 +219,43 @@ by iteratively cooling the system and equilibrate.
 - `result_fname` _str_ - Name of the result file; default:
   `"temp_vs_density.txt"`
 
+## Deformation Objects
+
+```python
+class Deformation(Procedure)
+```
+
+Perform a uniaxial tensile deformation in the x direction.
+This can be used to calculate modulus and tensile strengths.
+
+**Attributes**:
+
+- `duration` _int_ - Duration of the deformation procedure (timestep unit)
+  
+- `erate` _float_ - Engineering strain rate. The units of the specified
+  strain rate are 1/time
+  
+- `Tinit` _float_ - Initial temperature
+  
+- `Tfinal` _float_ - Final temperature
+  
+- `Tdamp` _str_ - Damping parameter for thermostats; default:
+  `"$(100.0*dt)"`
+  
+- `print_every` _int_ - Print result to the result file every this many
+  timesteps; default: `1000`
+  
+- `dump_fname` _str_ - Name of the dump file; default:
+  `"deformation.lammpstrj"`
+  
+- `dump_every` _int_ - Dump every this many timesteps; default: `10000`
+  
+- `dump_image` _bool_ - Whether to dump a image file at the end of the run
+  ; default: `False`
+  
+- `reset_timestep_before_run` _bool_ - Whether to reset timestep after the
+  procedure; default: `False`
+  
+- `result_fname` _str_ - Name of the result file; default:
+  `"stress_vs_strain.txt"`
+

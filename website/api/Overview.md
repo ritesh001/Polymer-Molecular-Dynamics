@@ -11,11 +11,13 @@ title: Overview
   - [add_procedure](/api/core/Lammps#add_procedure): Method to add simulation procedure
   - [write_input](/api/core/Lammps#write_input): Method to make LAMMPS input files
 - [**Procedure**](/api/core/Procedure): A group of objects that are simulation procedures that can be linked to a Lammps object
-  - [Minimization](/api/core/Procedure#minimization-objects): Procedure object that enables performing energy minimization of the system
-  - [Equilibrium](/api/core/Procedure#equilibration-objects): Procedure object that enables performing a 21-step equilibration process
-  - [NPT](/api/core/Procedure#npt-objects): Procedure object that enables performing a simulation under NPT ensemble
-  - [NVT](/api/core/Procedure#nvt-objects): Procedure object that enables performing a simulation under NVT ensemble
-  - [TgMeasurement](/api/core/Procedure#tgmeasurement-objects): Procedure object that enables performing a cooling simulation for Tg measurement
+  - [Minimization](/api/core/Procedure#minimization-objects): Procedure that enables performing energy minimization of the system
+  - [Equilibrium](/api/core/Procedure#equilibration-objects): Procedure that enables performing a 21-step equilibration process
+  - [NPT](/api/core/Procedure#npt-objects): Procedure that enables performing a simulation under NPT ensemble
+  - [NVT](/api/core/Procedure#nvt-objects): Procedure that enables performing a simulation under NVT ensemble
+  - [MSDMeasurement](/api/core/Procedure#msdmeasurement-objects): Procedure that enables performing NVT ensemble and keeps track of the mean square displacement of the specified molecular group (can be used with `GasSystem` or `SolventSystem` easily)
+  - [TgMeasurement](/api/core/Procedure#tgmeasurement-objects): Procedure that enables performing a cooling simulation for Tg measurement
+  - [Deformation](/api/core/Procedure#deformation-objects): Procedure that enables performing a uniaxial tensile deformation for mechanical property measurement
 - [**Job**](/api/core/Job): Objects related to creating job scheduler-relevant files for submitting jobs on supercomputers
   - [Torque](/api/core/Job#torque-objects): Objects to make the Torque job scheduler input file
   - [Slurm](/api/core/Job#slurm-objects): Objects to make the Slurm job scheduler input file

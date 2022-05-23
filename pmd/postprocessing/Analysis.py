@@ -21,7 +21,7 @@ def calculate_Tg(result_fname: str,
                                      ;default: `None`
 
     Returns:
-        Tg (int): Glass transition temperature of the system
+        Tg (float): Glass transition temperature of the system
     '''
 
     # TODO: implement append_result_to_yaml with dict structure like
