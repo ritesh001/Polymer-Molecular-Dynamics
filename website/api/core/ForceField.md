@@ -28,4 +28,3 @@ Template GAFF2 object to contain GAFF2 force field settings
 
 - `charge_method` _str_ - Charge method; has to be one of `"gasteiger"` or
   `"am1bcc"`; default: `"gasteiger"`
-

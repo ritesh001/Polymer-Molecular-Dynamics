@@ -47,23 +47,23 @@ class Procedure():
 
 class Minimization(Procedure):
     '''Perform an energy minimization of the system, by iteratively adjusting
-    atom coordinates. Iterations are terminated when one of the stopping 
+    atom coordinates. Iterations are terminated when one of the stopping
     criteria is satisfied. At that point the configuration will hopefully be in
     local potential energy minimum.
 
     Attributes:
-        min_style (str): Minimization algorithm, see 
+        min_style (str): Minimization algorithm, see
                          [here](https://docs.lammps.org/min_style.html) for all
-                         options; default: `"cg"`   
-                         
-        etol (float): Stopping tolerance for energy (unitless); default: 
+                         options; default: `"cg"`
+
+        etol (float): Stopping tolerance for energy (unitless); default:
                       `10**(-6)`
-        
-        ftol (float): Stopping tolerance for force (force units); default: 
+
+        ftol (float): Stopping tolerance for force (force units); default:
                       `10**(-8)`
-        
+
         maxiter (int): Max iterations of minimizer; default: `10**5`
-        
+
         maxeval (int): Max number of force/energy evaluations; default: `10**7`
     '''
 
@@ -95,34 +95,34 @@ class Minimization(Procedure):
 
 
 class Equilibration(Procedure):
-    '''Perform a 21-step amorphous polymer equilibration process. Ref: Abbott, 
+    '''Perform a 21-step amorphous polymer equilibration process. Ref: Abbott,
     Hart, and Colina, Theoretical Chemistry Accounts, 132(3), 1-19, 2013.
-       
+
     Attributes:
         Teq (float): Target equilibration temperature; default: `300`
-        
+
         Peq (float): Target equilibration pressure; default: `1`
-        
-        Tmax (float): Maximum temperature during the equilibration; default: 
+
+        Tmax (float): Maximum temperature during the equilibration; default:
                       `600`
-        
-        Pmax (float): Maximum pressure during the equilibration; default: 
+
+        Pmax (float): Maximum pressure during the equilibration; default:
                       `50000`
-        
-        Tdamp (str): Damping parameter for the thermostat; default: 
+
+        Tdamp (str): Damping parameter for the thermostat; default:
                      `"$(100.0*dt)"`
-        
-        Pdamp (str): Damping parameter for the barostat; default: 
+
+        Pdamp (str): Damping parameter for the barostat; default:
                      `"$(100.0*dt)"`
-        
+
         dump_fname (str): Name of the dump file; default: `"equil.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        reset_timestep_before_run (bool): Whether to reset timestep after the 
+
+        reset_timestep_before_run (bool): Whether to reset timestep after the
                                           procedure; default: `True`
     '''
 
@@ -193,32 +193,32 @@ class Equilibration(Procedure):
 class NPT(Procedure):
     '''Perform the simulation under NPT ensemble (via Nose-Hoover thermostat
     and barostat).
-       
+
     Attributes:
         duration (int): Duration of this NPT procedure (timestep unit)
-    
+
         Tinit (float): Initial temperature
-        
+
         Tfinal (float): Final temperature
-        
+
         Pinit (float): Initial pressure
-        
+
         Pfinal (float): Final pressure
-        
-        Tdamp (str): Damping parameter for the thermostat; default: 
+
+        Tdamp (str): Damping parameter for the thermostat; default:
                      `"$(100.0*dt)"`
-        
-        Pdamp (str): Damping parameter for the barostat; default: 
+
+        Pdamp (str): Damping parameter for the barostat; default:
                      `"$(100.0*dt)"`
-        
+
         dump_fname (str): Name of the dump file; default: `"npt.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        reset_timestep_before_run (bool): Whether to reset timestep after the 
+
+        reset_timestep_before_run (bool): Whether to reset timestep after the
                                           procedure; default: `False`
     '''
 
@@ -255,25 +255,25 @@ class NPT(Procedure):
 
 class NVT(Procedure):
     '''Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
-       
+
     Attributes:
         duration (int): Duration of this NVT procedure (timestep unit)
-    
+
         Tinit (float): Initial temperature
-        
+
         Tfinal (float): Final temperature
-        
-        Tdamp (str): Damping parameter for thermostats; default: 
+
+        Tdamp (str): Damping parameter for thermostats; default:
                      `"$(100.0*dt)"`
-        
+
         dump_fname (str): Name of the dump file; default: `"nvt.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        reset_timestep_before_run (bool): Whether to reset timestep after the 
+
+        reset_timestep_before_run (bool): Whether to reset timestep after the
                                           procedure; default: `False`
     '''
 
@@ -303,10 +303,10 @@ class NVT(Procedure):
 
 class MSDMeasurement(Procedure):
     '''Perform the simulation under NVT ensemble (via Nose-Hoover thermostat).
-       
+
     Attributes:
         duration (int): Duration of this NVT procedure (timestep unit)
-    
+
         T (float): Temperature
 
         group (str): The group of atoms that will be considered for MSD
@@ -323,18 +323,18 @@ class MSDMeasurement(Procedure):
 
         result_folder_name (str): The name of the folder that PMD creates and
                                   put result files in; default: `"result"`
-        
-        Tdamp (str): Damping parameter for thermostats; default: 
+
+        Tdamp (str): Damping parameter for thermostats; default:
                      `"$(100.0*dt)"`
-        
+
         dump_fname (str): Name of the dump file; default: `"nvt.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        reset_timestep_before_run (bool): Whether to reset timestep after the 
+
+        reset_timestep_before_run (bool): Whether to reset timestep after the
                                           procedure; default: `False`
     '''
 
@@ -404,39 +404,39 @@ class MSDMeasurement(Procedure):
 
 
 class TgMeasurement(Procedure):
-    '''Perform glass transition temperature measurement of the system, 
+    '''Perform glass transition temperature measurement of the system,
     by iteratively cooling the system and equilibrate.
-       
-    Attributes:    
-        Tinit (float): Initial temperature of the cooling process; default: 
+
+    Attributes:
+        Tinit (float): Initial temperature of the cooling process; default:
                        `500`
-        
-        Tfinal (float): Final temperature of the cooling process; default: 
+
+        Tfinal (float): Final temperature of the cooling process; default:
                         `100`
-        
+
         Tinterval (float): Temperature interval of the cooling process
                            ; default: `20`
-        
-        step_duration (int): Duration of each temperature step 
+
+        step_duration (int): Duration of each temperature step
                              (timestep unit); default: `1000000`
-        
+
         pressure (float): Pressure during the cooling process; default: `1`
-        
-        Tdamp (str): Damping parameter for the thermostat; default: 
+
+        Tdamp (str): Damping parameter for the thermostat; default:
                      `"$(100.0*dt)"`
-        
-        Pdamp (str): Damping parameter for the barostat; default: 
+
+        Pdamp (str): Damping parameter for the barostat; default:
                      `"$(100.0*dt)"`
-        
-        dump_fname (str): Name of the dump file; default: 
+
+        dump_fname (str): Name of the dump file; default:
                           `"Tg_measurement.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        result_fname (str): Name of the result file; default: 
+
+        result_fname (str): Name of the result file; default:
                             `"temp_vs_density.txt"`
     '''
 
@@ -503,40 +503,40 @@ class TgMeasurement(Procedure):
 
 
 class TensileDeformation(Procedure):
-    '''Perform a uniaxial tensile deformation in the x direction. 
+    '''Perform a uniaxial tensile deformation in the x direction.
     This can be used to calculate modulus and tensile strengths.
-       
+
     Attributes:
         duration (int): Duration of the deformation procedure (timestep unit)
-        
-        erate (float): Engineering strain rate. The units of the specified 
+
+        erate (float): Engineering strain rate. The units of the specified
                        strain rate are 1/time
-    
+
         T (float): Temperature
-        
+
         P (float): Pressure
-        
-        Tdamp (str): Damping parameter for thermostats; default: 
+
+        Tdamp (str): Damping parameter for thermostats; default:
                      `"$(100.0*dt)"`
-        
-        Pdamp (str): Damping parameter for thermostats; default: 
+
+        Pdamp (str): Damping parameter for thermostats; default:
                      `"$(100.0*dt)"`
-        
+
         print_every (int): Print result to the result file every this many
                            timesteps; default: `1000`
-        
-        dump_fname (str): Name of the dump file; default: 
+
+        dump_fname (str): Name of the dump file; default:
                           `"tensile_deformation.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        reset_timestep_before_run (bool): Whether to reset timestep after the 
+
+        reset_timestep_before_run (bool): Whether to reset timestep after the
                                           procedure; default: `False`
-        
-        result_fname (str): Name of the result file; default: 
+
+        result_fname (str): Name of the result file; default:
                             `"stress_vs_strain.txt"`
     '''
 
@@ -602,33 +602,33 @@ class TensileDeformation(Procedure):
 class ShearDeformation(Procedure):
     '''Perform a shear deformation in the x-y plane. This can be used
     to calculate shear viscosity.
-       
+
     Attributes:
         duration (int): Duration of the deformation procedure (timestep unit)
-        
-        erate (float): Engineering strain rate. The units of the specified 
+
+        erate (float): Engineering strain rate. The units of the specified
                        strain rate are 1/time
-    
+
         T (float): Temperature
-        
-        Tdamp (str): Damping parameter for thermostats; default: 
+
+        Tdamp (str): Damping parameter for thermostats; default:
                      `"$(100.0*dt)"`
-        
+
         print_every (int): Print result to the result file every this many
                            timesteps; default: `1000`
-        
-        dump_fname (str): Name of the dump file; default: 
+
+        dump_fname (str): Name of the dump file; default:
                           `"shear_deformation.lammpstrj"`
 
         dump_every (int): Dump every this many timesteps; default: `10000`
-        
+
         dump_image (bool): Whether to dump a image file at the end of the run
                            ; default: `False`
-        
-        reset_timestep_before_run (bool): Whether to reset timestep after the 
+
+        reset_timestep_before_run (bool): Whether to reset timestep after the
                                           procedure; default: `False`
-        
-        result_fname (str): Name of the result file; default: 
+
+        result_fname (str): Name of the result file; default:
                             `"viscosity.txt"`
     '''
 

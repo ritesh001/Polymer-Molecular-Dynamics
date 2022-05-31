@@ -5,7 +5,7 @@ from typing import List, Optional, TypeVar, Union
 from pmd.core.ForceField import ForceField
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
-from pmd.util import Pmdlogging, validate_options, build_dir
+from pmd.util import Pmdlogging, build_dir, validate_options
 
 Lammps = TypeVar("Lammps", bound="Lammps")
 
@@ -18,53 +18,53 @@ class Lammps:
     Attributes:
         read_data_from (System | str): System object that the data file will
                                  be read from. This can also be your data
-                                 file name string if you do not generate your 
-                                 system via PMD; one of this attribute and 
+                                 file name string if you do not generate your
+                                 system via PMD; one of this attribute and
                                  `read_restart_from` has to be provided but not
                                  both (providing both will result in an error)
                                  ; default: `None`
 
-        read_restart_from (Lammps | str): Lammps object that the last restart 
-                                    file created will be read from. This can 
-                                    also be your previous lammps file name 
+        read_restart_from (Lammps | str): Lammps object that the last restart
+                                    file created will be read from. This can
+                                    also be your previous lammps file name
                                     string if you do not have previous Lammps
-                                    object; one of this attribute and 
+                                    object; one of this attribute and
                                     `read_data_from` has to be provided but
                                     not both (providing both will result in an
                                     error); default: `None`
-        
+
         force_foeld (ForceField): Only needed if `read_data_from` or
-                                  `read_restart_from` is provided as a file 
+                                  `read_restart_from` is provided as a file
                                   name string. This is needed for specifying
                                   potential form for LAMMPS input file
                                   ; default: `None`
 
-        atom_style (str): LAMMPS 
+        atom_style (str): LAMMPS
                           [atom_style](https://docs.lammps.org/atom_style.html)
                           to use during simulation; default: `"full"`
 
         units (str): LAMMPS [units](https://docs.lammps.org/units.html) to use
                      during simulation; default: `"real"`
 
-        timestep (float): LAMMPS 
+        timestep (float): LAMMPS
                           [timestep](https://docs.lammps.org/timestep.html) to
                           use during simulation; default: `1.0` (in unit of fs
                           if `units` is `"real"`)
 
-        neighbor_skin (float): LAMMPS 
+        neighbor_skin (float): LAMMPS
                             [neighbor](https://docs.lammps.org/neighbor.html)
-                            skin size to use during the simulation; default: 
+                            skin size to use during the simulation; default:
                             `2.0 Angstrom`
 
-        neighbor_every (int): LAMMPS 
-                            [neighbor](https://docs.lammps.org/neighbor.html) 
+        neighbor_every (int): LAMMPS
+                            [neighbor](https://docs.lammps.org/neighbor.html)
                             list checking frequency to use during the
                             simulation; default: `1`
 
-        thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html) 
+        thermo (int): LAMMPS [thermo](https://docs.lammps.org/thermo.html)
                       to use during simulation; default: `1000 timestep`
 
-        lmp_input_fname (str): Name of the LAMMPS input file; default: 
+        lmp_input_fname (str): Name of the LAMMPS input file; default:
                                `"lmp.in"`
     '''
 
@@ -121,7 +121,7 @@ class Lammps:
                                              List[Procedure]]) -> Lammps:
         '''Method to add simulation procedure
         Parameters:
-            procedure (Procedure): One of `Minimization`, `Equilibration`, 
+            procedure (Procedure): One of `Minimization`, `Equilibration`,
             `NPT`, `NVT`, `MSDMeasurement`, `TgMeasurement`, and `Deformation`
 
         Returns:

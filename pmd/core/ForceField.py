@@ -27,7 +27,7 @@ class OPLS(ForceField):
     '''Template OPLS object to contain OPLS force field settings
 
     Attributes:
-        charge_method (str): Charge method; has to be one of `"cm1a-lbcc"` or 
+        charge_method (str): Charge method; has to be one of `"cm1a-lbcc"` or
                              `"cm1a"`; default: `"cm1a-lbcc"`
     '''
 
@@ -53,7 +53,7 @@ class GAFF2(ForceField):
     '''Template GAFF2 object to contain GAFF2 force field settings
 
     Attributes:
-        charge_method (str): Charge method; has to be one of `"gasteiger"` or 
+        charge_method (str): Charge method; has to be one of `"gasteiger"` or
                              `"am1bcc"`; default: `"gasteiger"`
     '''
 

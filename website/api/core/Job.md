@@ -33,7 +33,7 @@ Method to make the Torque job scheduler input file
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the Torque input file; default: `"."`
-  
+
 
 **Returns**:
 
@@ -68,9 +68,8 @@ Method to make the Slurm job scheduler input file
 **Arguments**:
 
 - `output_dir` _str_ - Directory for the Slurm input file; default: `.`
-  
+
 
 **Returns**:
 
   None
-

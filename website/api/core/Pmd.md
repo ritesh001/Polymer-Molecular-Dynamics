@@ -16,9 +16,9 @@ files, or config files)
 **Attributes**:
 
 - `system` _System_ - a System object
-  
+
 - `lammps` _Lammps or list[Lammps]_ - one or a list of Lammps objects
-  
+
 - `job` _Job or list[Job]_ - one or a list of Job objects
 
 ### create
@@ -38,12 +38,12 @@ argument is set to True.
 
 - `output_dir` _str_ - Directory for all the generated files; default:
   `"."`
-  
+
 - `save_config` _bool_ - Whether to save a config file; default: `False`
-  
+
 - `config_fname` _str_ - Name of the config file; default:
   `"config.yaml"`
-  
+
 
 **Returns**:
 
@@ -63,10 +63,10 @@ Lammps, or Job settings. This method only creates the config file.
 
 - `output_dir` _str_ - Directory for all the generated files; default:
   `"."`
-  
+
 - `config_fname` _str_ - Name of the config file; default:
   `"config.yaml"`
-  
+
 
 **Returns**:
 
@@ -85,12 +85,11 @@ the config file
 **Arguments**:
 
 - `config_file` _str_ - Config file to load
-  
+
 - `output_dir` _str_ - Directory for all the generated files; default:
   `"."`
-  
+
 
 **Returns**:
 
   None
-

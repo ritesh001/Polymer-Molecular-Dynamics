@@ -1,5 +1,6 @@
-import numpy as np
 import sys
+
+import numpy as np
 
 
 def _read_header(f):
@@ -31,8 +32,8 @@ def read_lammpstrj(fname,
                    skip_beginning=0,
                    skip_between=0):
     '''Method to read in a lammps trajectory
-    NOTE: assumes that the number of atoms in the simulation is fixed; 
-    NOTE: also assumes that the coordinates are wrapped, so x or xs type 
+    NOTE: assumes that the number of atoms in the simulation is fixed;
+    NOTE: also assumes that the coordinates are wrapped, so x or xs type
           coordinates are allowed but not xu or xsu
 
     Parameters:
@@ -48,7 +49,7 @@ def read_lammpstrj(fname,
         skip_between (int): skip this many frames between saved frames
 
     Returns:
-        r: num_frames by num_atoms+1 by 3 array of wrapped and unscaled 
+        r: num_frames by num_atoms+1 by 3 array of wrapped and unscaled
                       coordinates (indexed by frame number then atom id)
 
         ir: num_frames by num_atoms+1 by 3 array of image flags
@@ -58,10 +59,10 @@ def read_lammpstrj(fname,
         box_bounds: 3D array to store boundaries of the box, indexed by frame,
                     x/y/z, then lower/upper
 
-        id2type: num_atoms+1 length arrays to map atom id to type id 
+        id2type: num_atoms+1 length arrays to map atom id to type id
                  (if available, may be None)
 
-        id2mol: num_atoms+1 length arrays to map atom id to molecule id 
+        id2mol: num_atoms+1 length arrays to map atom id to molecule id
                   (if available, may be None)
 
         mol2ids: num_mols+1 length list of atom id arrays corresponding to the
@@ -308,7 +309,7 @@ def read_lammpstrj_by_type(fname,
         fname (str): filename string or 'stdin' (or a value that evaluates
                      to false) for reading from standard in
 
-        types (int[]): types of atom to be read in; defaults to all types 
+        types (int[]): types of atom to be read in; defaults to all types
                        of beads
 
         num_frames (int): optional number of frames to read before stopping,
@@ -320,7 +321,7 @@ def read_lammpstrj_by_type(fname,
         skip_between (int): skip this many frames between saved frames
 
     Returns:
-        r: num_frames by num_atoms+1 by 3 array of wrapped and unscaled 
+        r: num_frames by num_atoms+1 by 3 array of wrapped and unscaled
                       coordinates (indexed by frame number then atom id)
 
         ir: num_frames by num_atoms+1 by 3 array of image flags
@@ -330,10 +331,10 @@ def read_lammpstrj_by_type(fname,
         box_bounds: 3D array to store boundaries of the box, indexed by frame,
                     x/y/z, then lower/upper
 
-        id2type: num_atoms+1 length arrays to map atom id to type id 
+        id2type: num_atoms+1 length arrays to map atom id to type id
                  (if available, may be None)
 
-        id2index: num_atoms+1 length arrays to map atom id to index id 
+        id2index: num_atoms+1 length arrays to map atom id to index id
                   (if available, may be None)
     '''
 
@@ -385,10 +386,10 @@ def read_lammpstrj_by_type(fname,
     line = f.readline()
     line = line.split()
     id_index = line.index("id") - 2
-    if "mol" in line:
-        mol_index = line.index("mol") - 2
-    else:
-        mol_index = None
+    # if "mol" in line:
+    #     mol_index = line.index("mol") - 2
+    # else:
+    #     mol_index = None
     if "type" in line:
         type_index = line.index("type") - 2
     else:

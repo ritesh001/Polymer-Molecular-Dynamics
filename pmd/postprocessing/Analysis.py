@@ -1,8 +1,9 @@
 from typing import Optional
-from scipy import optimize
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from scipy import optimize
 
 from pmd.util.Log import Pmdlogging
 
@@ -14,7 +15,7 @@ def calculate_Tg(result_fname: str,
     result file obtained from TgMeasurement Procedure
 
     Parameters:
-        result_fname (str): Name of the result file from TgMeasurement 
+        result_fname (str): Name of the result file from TgMeasurement
                             Procedure
         make_plot (bool): Whether to make a plot to visualize the fitting
         append_result_to_yaml (str): YAML file name to append result value to
@@ -67,7 +68,7 @@ def calculate_MSD(r, ir, box_bounds, id2type=[]):
     for all beads; does not account for changes in box size
 
     Parameters:
-        r: unscaled (but wrapped) coordinates (format as read in from 
+        r: unscaled (but wrapped) coordinates (format as read in from
            `read_lammpstrj`)
 
         ir: image flags (format as read in from `read_lammpstrj`)
@@ -77,7 +78,7 @@ def calculate_MSD(r, ir, box_bounds, id2type=[]):
 
         id2type: array that maps atom id to type (format as read in from
                  `read_lammpstrj`)
-        
+
     Returns:
         msd_dict: dict of the calculated MSDs for each type
     '''

@@ -27,7 +27,7 @@ class CustomFormatter(logging.Formatter):
 
 class Pmdlogging():
     '''Pmd's custom logging class
-    
+
         Attributes:
             None
     '''

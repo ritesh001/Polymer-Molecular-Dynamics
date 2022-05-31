@@ -1,11 +1,10 @@
-from .core import (Lammps, Pmd, Torque, Slurm, System, SolventSystem, OPLS,
-                   GAFF2, Minimization, Equilibration, TgMeasurement,
-                   MSDMeasurement, TensileDeformation, ShearDeformation, NVT,
-                   NPT)
+import sys
+
+from .core import (GAFF2, NPT, NVT, OPLS, Equilibration, Lammps, Minimization,
+                   MSDMeasurement, Pmd, ShearDeformation, Slurm, SolventSystem,
+                   System, TensileDeformation, TgMeasurement, Torque)
 from .postprocessing import (calculate_Tg, read_lammpstrj,
                              read_lammpstrj_by_type)
-
-import sys
 
 if sys.version_info[:2] >= (3, 8):
     from importlib.metadata import PackageNotFoundError, version

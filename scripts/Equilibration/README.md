@@ -9,10 +9,10 @@ Run: `python mkinput.py`
 
 The `mkinput.py` defines the `System`, `Lammps`, and `Job` objects as well as creates all the required data and input files for LAMMPS equilibration simulation.
 
-This should generate a folder called `PE_equilibration` with all the necessary files for running MD simulation on your cluster. 
+This should generate a folder called `PE_equilibration` with all the necessary files for running MD simulation on your cluster.
 
 ## Run the simulation
-For Ramprasad group users, simply upload the folder on PACE and `cd` to the directory and do 
+For Ramprasad group users, simply upload the folder on PACE and `cd` to the directory and do
 ```bash
 $ qsub job.pbs
 ```

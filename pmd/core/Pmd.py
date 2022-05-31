@@ -1,15 +1,16 @@
-import os
-import yaml
 import inspect
+import os
 from typing import Any, Dict, List, Optional, Union
+
+import yaml
 
 import pmd.core
 # These have to be written explicitly for typing
 from pmd.core.ForceField import ForceField
+from pmd.core.Job import Job
+from pmd.core.Lammps import Lammps
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
-from pmd.core.Lammps import Lammps
-from pmd.core.Job import Job
 from pmd.util import Pmdlogging, build_dir
 
 PRIMITIVE_TYPES = (str, int, float, bool)
@@ -96,7 +97,7 @@ def custom_class_yaml_loader(v: Any) -> Any:
 
 
 class Pmd:
-    '''Template object to perform tasks for Systems, Lammps, and Jobs 
+    '''Template object to perform tasks for Systems, Lammps, and Jobs
        altogether (e.g. create data files, lammps input files, job scheduler
        files, or config files)
 
@@ -129,16 +130,16 @@ class Pmd:
                save_config: bool = False,
                config_fname: str = 'config.yaml') -> None:
         '''Method to create files from all the pmd objects. This method can
-        can also automatically generate a config file if `save_config` input 
+        can also automatically generate a config file if `save_config` input
         argument is set to True.
 
         Parameters:
             output_dir (str): Directory for all the generated files; default:
                               `"."`
-        
+
             save_config (bool): Whether to save a config file; default: `False`
-            
-            config_fname (str): Name of the config file; default: 
+
+            config_fname (str): Name of the config file; default:
                                 `"config.yaml"`
 
         Returns:
@@ -164,8 +165,8 @@ class Pmd:
         Parameters:
             output_dir (str): Directory for all the generated files; default:
                               `"."`
-            
-            config_fname (str): Name of the config file; default: 
+
+            config_fname (str): Name of the config file; default:
                                 `"config.yaml"`
 
         Returns:
@@ -200,15 +201,15 @@ class Pmd:
 
     @staticmethod
     def load_config(config_file: str, output_dir: str = '.'):
-        '''Method to load a config file and create all the objects listed in 
+        '''Method to load a config file and create all the objects listed in
         the config file
 
-        Parameters:            
+        Parameters:
             config_file (str): Config file to load
 
             output_dir (str): Directory for all the generated files; default:
                               `"."`
-            
+
         Returns:
             None
         '''

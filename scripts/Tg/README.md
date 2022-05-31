@@ -13,4 +13,3 @@ This should generate a folder with polymer id as the name with all the necessary
 <p align="center">
     <img src='./img/temp_vs_density.png' width="70%"/>
 </p>
-

@@ -1,12 +1,14 @@
+import os
 import re
+import shutil
+from typing import Optional
+
 import numpy as np
 import pandas as pd
-
-from typing import Optional
 from rdkit import Chem
 
-from pmd.core.ForceField import ForceField, GAFF2, OPLS
-from pmd.util import Pmdlogging, HiddenPrints, validate_options
+from pmd.core.ForceField import GAFF2, OPLS, ForceField
+from pmd.util import HiddenPrints, Pmdlogging, validate_options
 
 CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
 
@@ -28,19 +30,19 @@ class System:
                                 has to be provided but not both (providing both
                                 will result in an error); default: `None`
 
-        mw_per_chain (int): Molecular weight of the polymer, one of this 
+        mw_per_chain (int): Molecular weight of the polymer, one of this
                             attribute, `natoms_per_chain`, and `ru_per_chain`
-                            has to be provided but not both (providing both 
+                            has to be provided but not both (providing both
                             will result in an error); default: `None`
 
         ru_per_chain (int): Number of repeating unit per polymer chain, one of
-                            this attribute, `natoms_per_chain`, and 
+                            this attribute, `natoms_per_chain`, and
                             `mw_per_chain` has to be provided but not both
                             (providing both will result in an error); default:
                             `None`
 
-        data_fname (str): File name of the output data file, which will be read in by 
-                          LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
+        data_fname (str): File name of the output data file, which will be read in by
+                          LAMMPS [read_data](https://docs.lammps.org/read_data.html)
                           command; default: `"data.lmps"`
     '''
 
@@ -123,16 +125,16 @@ class System:
                         '-----------------------------')
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
-        '''Method to make LAMMPS data file (which contains coordinates and force 
+        '''Method to make LAMMPS data file (which contains coordinates and force
         field parameters)
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
                           ; default: `"."`
 
-        cleanup (bool): Whether to clean up files other than the LAMMPS data 
+        cleanup (bool): Whether to clean up files other than the LAMMPS data
                         file PSP generated
-        
+
         Returns:
             None
         '''
@@ -159,7 +161,7 @@ class SolventSystem(System):
         smiles (str): SMILES string of the polymer (use * as connecting point)
 
         solvent_smiles (str): SMILES string of the solvent
-        
+
         ru_nsolvent_ratio (float): The ratio of total number of repeating units
                                    in the system and total number of solvent
                                    molecules
@@ -175,19 +177,19 @@ class SolventSystem(System):
                                 has to be provided but not both (providing both
                                 will result in an error); default: `None`
 
-        mw_per_chain (int): Molecular weight of the polymer, one of this 
+        mw_per_chain (int): Molecular weight of the polymer, one of this
                             attribute, `natoms_per_chain`, and `ru_per_chain`
-                            has to be provided but not both (providing both 
+                            has to be provided but not both (providing both
                             will result in an error); default: `None`
 
         ru_per_chain (int): Number of repeating unit per polymer chain, one of
-                            this attribute, `natoms_per_chain`, and 
+                            this attribute, `natoms_per_chain`, and
                             `mw_per_chain` has to be provided but not both
                             (providing both will result in an error); default:
                             `None`
 
-        data_fname (str): File name of the output data file, which will be read in by 
-                          LAMMPS [read_data](https://docs.lammps.org/read_data.html) 
+        data_fname (str): File name of the output data file, which will be read in by
+                          LAMMPS [read_data](https://docs.lammps.org/read_data.html)
                           command; default: `"data.lmps"`
     '''
 
@@ -267,16 +269,16 @@ class SolventSystem(System):
             '-----------------------------')
 
     def write_data(self, output_dir: str = '.', cleanup: bool = True) -> None:
-        '''Method to make LAMMPS data file (which contains coordinates and force 
+        '''Method to make LAMMPS data file (which contains coordinates and force
         field parameters)
 
         Parameters:
         output_dir (str): Directory for the generated LAMMPS data file
                           ; default: `"."`
 
-        cleanup (bool): Whether to clean up files other than the LAMMPS data 
+        cleanup (bool): Whether to clean up files other than the LAMMPS data
                         file PSP generated
-        
+
         Returns:
             None
         '''
@@ -330,7 +332,6 @@ def _run_psp(input_data: dict, density: float, force_field: ForceField,
             f'System file - {data_fname} successfully created in {output_dir}')
     finally:
         if cleanup:
-            import os, shutil
             force_field_dname = ['ligpargen'] if isinstance(
                 force_field, OPLS) else ['pysimm']
             dnames = ['molecules', 'packmol'] + force_field_dname

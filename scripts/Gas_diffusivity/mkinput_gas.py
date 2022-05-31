@@ -1,6 +1,8 @@
-import pandas as pd
 import os
 import sys
+
+import pandas as pd
+
 
 def get_smiles(csv_file, index):
     print('ID:', index)
@@ -10,7 +12,7 @@ def get_smiles(csv_file, index):
 
 def mk_csv(smiles, natoms_per_chain, nchains, output_fname):
     from rdkit import Chem
-    
+
     mol = Chem.MolFromSmiles(smiles)
     natoms = mol.GetNumAtoms(onlyExplicit=0)-2
     length = round(natoms_per_chain/natoms)
