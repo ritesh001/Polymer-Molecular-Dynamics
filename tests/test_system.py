@@ -15,4 +15,4 @@ def test_system_update():
     new_force_field = OPLS()
     syst.smiles = new_smiles
     assert syst.smiles == new_smiles
-    assert syst.force_field == new_smiles
+    assert syst.force_field == new_force_field
