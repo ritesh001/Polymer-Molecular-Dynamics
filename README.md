@@ -1,4 +1,4 @@
-# High Throughput Polymer MD Simulations [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+# Polymer Molecular Dynamics [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
 
 Python toolkit and guides for molecular dynamics prediction of polymer properties.
 
@@ -12,10 +12,10 @@ You can calculate various polymer properties from MD simulations with this packa
 - Glass transition temperature (Tg) - [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/glass-transition-temperature)] [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Tg)]
 - Gas diffusivity - [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/gas-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Gas_diffusivity)]
 - Solvent diffusivity - [[Guide](http://high-throughput-pmd.netlify.app/docs/guides/solvent-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/scripts/Solvent_diffusivity)]
+- Viscosity - [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Shear_deformation)]
+- Mechanical properties (Young's modulus, tensile strengths) - [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tensile_deformationy)]
 - Thermal conductivity - In-progress
-- Mechanical properties - In-progress
 - Solubility - Planned
-- Viscosity - Planned
 - Melting temperature (Tm) - Planned
 
 ## Example
