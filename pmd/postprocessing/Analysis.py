@@ -56,7 +56,7 @@ def calculate_Tg(result_fname: str,
         plt.savefig('temp_vs_density.png', dpi=300)
 
     Tg = p[0]
-    Pmdlogging.info('Glass transition temperature:', Tg)
+    Pmdlogging.info(f'Glass transition temperature: {Tg}')
 
     return Tg
 
