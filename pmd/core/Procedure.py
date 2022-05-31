@@ -345,7 +345,7 @@ class MSDMeasurement(Procedure):
                  create_block_every: Optional[int] = None,
                  result_folder_name: str = 'result',
                  Tdamp: str = '$(100.0*dt)',
-                 dump_fname: str = f'MSD_measurement.lammpstrj',
+                 dump_fname: str = 'MSD_measurement.lammpstrj',
                  dump_every: int = 10000,
                  dump_image: bool = False,
                  reset_timestep_before_run: bool = False):
@@ -598,6 +598,7 @@ class TensileDeformation(Procedure):
         f.write(f'{"unfix":<15} fDEFORM\n')
         f.write(f'{"unfix":<15} fPRINT\n')
         f.write('\n')
+
 
 class ShearDeformation(Procedure):
     '''Perform a shear deformation in the x-y plane. This can be used

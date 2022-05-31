@@ -38,7 +38,7 @@ def calculate_Tg(result_fname: str,
     df = pd.read_csv(
         result_fname,
         header=1,
-        usecols=[1, 2],  #TODO: relax hard-coded col index
+        usecols=[1, 2],  # TODO: relax hard-coded col index
         names=['Temp', 'Rho'],
         delim_whitespace=True)
     x = np.array(df['Temp'])

@@ -14,8 +14,8 @@ def mk_csv(smiles, natoms_per_chain, nchains, output_fname):
     from rdkit import Chem
 
     mol = Chem.MolFromSmiles(smiles)
-    natoms = mol.GetNumAtoms(onlyExplicit=0)-2
-    length = round(natoms_per_chain/natoms)
+    natoms = mol.GetNumAtoms(onlyExplicit=0) - 2
+    length = round(natoms_per_chain / natoms)
 
     print('SMILES:', smiles)
     print('Natom_per_RU:', natoms)
@@ -23,29 +23,34 @@ def mk_csv(smiles, natoms_per_chain, nchains, output_fname):
 
     with open(output_fname, 'w') as f:
         f.write('ID,smiles,Len,Num,NumConf,Loop,LeftCap,RightCap\n')
-        f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(smiles, length, nchains))
+        f.write('Poly,{},{},{},1,False,[*][H],[*][H]'.format(
+            smiles, length, nchains))
 
 
 def run_psp(output_fname, density):
     import psp.AmorphousBuilder as ab
 
     input_df = pd.read_csv(output_fname, low_memory=False)
-    amor = ab.Builder(
-        input_df,
-        ID_col='ID',
-        SMILES_col='smiles',
-        Length='Len',
-        NumConf='NumConf',
-        LeftCap = 'LeftCap',
-        RightCap = 'RightCap',
-        Loop='Loop',
-        density=density,
-        box_type='c',
-        BondInfo=False
-    )
+    amor = ab.Builder(input_df,
+                      ID_col='ID',
+                      SMILES_col='smiles',
+                      Length='Len',
+                      NumConf='NumConf',
+                      LeftCap='LeftCap',
+                      RightCap='RightCap',
+                      Loop='Loop',
+                      density=density,
+                      box_type='c',
+                      BondInfo=False)
     amor.Build()
     # amor.get_gaff2()
-    amor.get_gaff2(output_fname='amor_gaff2.lmps', atom_typing='antechamber', swap_dict={'ns': 'n', 'nt': 'n', 'nv': 'nh'})
+    amor.get_gaff2(output_fname='amor_gaff2.lmps',
+                   atom_typing='antechamber',
+                   swap_dict={
+                       'ns': 'n',
+                       'nt': 'n',
+                       'nv': 'nh'
+                   })
 
 
 def build_dir(output_dir):

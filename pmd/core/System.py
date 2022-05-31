@@ -41,8 +41,9 @@ class System:
                             (providing both will result in an error); default:
                             `None`
 
-        data_fname (str): File name of the output data file, which will be read in by
-                          LAMMPS [read_data](https://docs.lammps.org/read_data.html)
+        data_fname (str): File name of the output data file, which will be
+                          read in by LAMMPS
+                          [read_data](https://docs.lammps.org/read_data.html)
                           command; default: `"data.lmps"`
     '''
 
@@ -188,8 +189,9 @@ class SolventSystem(System):
                             (providing both will result in an error); default:
                             `None`
 
-        data_fname (str): File name of the output data file, which will be read in by
-                          LAMMPS [read_data](https://docs.lammps.org/read_data.html)
+        data_fname (str): File name of the output data file, which will be
+                          read in by LAMMPS
+                          [read_data](https://docs.lammps.org/read_data.html)
                           command; default: `"data.lmps"`
     '''
 

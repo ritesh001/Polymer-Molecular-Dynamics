@@ -21,9 +21,8 @@ class Job():
         raise NotImplementedError
 
     def completion_log(self, output_dir: str):
-        Pmdlogging.info(
-            f'Job file - {self._job_fname} successfully created in {output_dir}'
-        )
+        Pmdlogging.info(f'Job file - {self._job_fname} '
+                        f'successfully created in {output_dir}')
 
 
 class Torque(Job):
@@ -61,7 +60,8 @@ class Torque(Job):
         '''Method to make the Torque job scheduler input file
 
         Parameters:
-            output_dir (str): Directory for the Torque input file; default: `"."`
+            output_dir (str): Directory for the Torque input file; default:
+            `"."`
 
         Returns:
             None

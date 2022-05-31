@@ -69,7 +69,7 @@ def read_lammpstrj(fname,
                  molecules (if available, may be None)
     '''
 
-    #allow reading from standard input
+    # allow reading from standard input
     if not fname or fname == 'stdin':
         f = sys.stdin
     else:
@@ -224,9 +224,9 @@ def read_lammpstrj(fname,
 
         # try to read in a new header
         try:
-            my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo, my_zhi = _read_header(
-                f)
-        except:
+            (my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo,
+             my_zhi) = _read_header(f)
+        except Exception:
             print("WARNING: hit end of file when reading in {} at frame {}".
                   format(fname, skip_beginning + frame_attempt),
                   file=sys.stderr)
@@ -338,7 +338,7 @@ def read_lammpstrj_by_type(fname,
                   (if available, may be None)
     '''
 
-    #allow reading from standard input
+    # allow reading from standard input
     if not fname or fname == 'stdin':
         f = sys.stdin
     else:
@@ -517,9 +517,9 @@ def read_lammpstrj_by_type(fname,
 
         # try to read in a new header
         try:
-            my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo, my_zhi = _read_header(
-                f)
-        except:
+            (my_timestep, my_num_atoms, my_xlo, my_xhi, my_ylo, my_yhi, my_zlo,
+             my_zhi) = _read_header(f)
+        except Exception:
             print("WARNING: hit end of file when reading in {} at frame {}".
                   format(fname, skip_beginning + frame_attempt),
                   file=sys.stderr)
