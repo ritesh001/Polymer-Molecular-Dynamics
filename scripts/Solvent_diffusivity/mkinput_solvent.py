@@ -51,8 +51,7 @@ if __name__ == '__main__':
                 duration=10000000,
                 reset_timestep_before_run=True))
     lmp.add_procedure(
-        pmd.MSDMeasurement(Tinit=300,
-                           Tfinal=300,
+        pmd.MSDMeasurement(T=300,
                            group=system.solvent_group,
                            create_block_every=10000000,
                            duration=200000000,
