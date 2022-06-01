@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/raw/main/website/static/img/logo-with-text.svg" alt="PMD" width="50%"></a>
+  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/raw/main/website/static/img/logo-with-text.svg" alt="PMD" width="450rem"></a>
 </p>
 <p align="center">
     <em>Polymer Molecular Dynamics toolkit, easy to learn, fast to code, ready for polymer property production</em>
@@ -37,7 +37,7 @@ The key properties are:
 - **Gas diffusivity** - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/gas-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Gas_diffusivity)]
 - **Solvent diffusivity** - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/solvent-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Solvent_diffusivity)]
 - **Viscosity** - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/viscosity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Shear_deformation)]
-- **Young's modulus** and **tensile strengths** - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/mechanical-properties)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tensile_deformationy)]
+- **Young's modulus** and **tensile strengths** - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/mechanical-properties)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tensile_deformation)]
 - **Thermal conductivity** - In-progress
 - **Solubility** - Planned
 - **Melting temperature (Tm)** - Planned
