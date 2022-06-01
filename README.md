@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://user-images.githubusercontent.com/11501902/171326650-3121cbc2-1fa7-424d-801a-a403d8b6dfa8.png" alt="FastAPI"></a>
+  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/raw/main/website/static/img/logo-with-text.svg" alt="PMD"></a>
 </p>
 <p align="center">
     <em>Polymer Molecular Dynamics toolkit, easy to learn, fast to code, ready for polymer property production</em>
@@ -11,14 +11,14 @@
 <a href="https://coveralls.io/github/Ramprasad-Group/Polymer-Molecular-Dynamics" target="_blank">
     <img src="https://coveralls.io/repos/github/Ramprasad-Group/Polymer-Molecular-Dynamics/badge.svg" alt="Coverage">
 </a>
-<a href="https://img.shields.io/pypi/dd/pmd" target="_blank">
-    <img src="https://img.shields.io/pypi/dd/pmd" alt="Package version">
-</a>
 <a href="https://pypi.python.org/pypi/pmd" target="_blank">
     <img src="http://img.shields.io/pypi/v/pmd.svg" alt="Package version">
 </a>
 <a href="https://pypi.org/project/pmd" target="_blank">
     <img src="https://img.shields.io/pypi/pyversions/pmd" alt="Supported Python versions">
+</a>
+<a href="https://pepy.tech/project/pmd" target="_blank">
+    <img src="https://pepy.tech/badge/pmd" alt="Package download">
 </a>
 </p>
 
