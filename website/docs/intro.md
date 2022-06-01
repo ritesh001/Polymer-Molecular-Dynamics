@@ -23,5 +23,5 @@ Get started by **building a simple test system of polyethlyenes (PE) and equilib
 
 ### What you'll need
 
-- [PMD](https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations) and [PSP](https://github.com/Ramprasad-Group/PSP) packages:
+- [PMD](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics) and [PSP](https://github.com/Ramprasad-Group/PSP) packages:
   - When installing these packages, you are recommended to check all checkboxes related to dependencies.
