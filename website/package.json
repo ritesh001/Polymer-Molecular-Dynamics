@@ -1,6 +1,6 @@
 {
-  "name": "high-throughput-md",
-  "version": "0.1.0",
+  "name": "polymer-molecular-dynamics",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
