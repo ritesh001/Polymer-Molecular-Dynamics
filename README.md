@@ -1,4 +1,9 @@
-# Polymer Molecular Dynamics [![License](https://img.shields.io/badge/license-MIT-blue.svg)](http://opensource.org/licenses/MIT)
+# Polymer Molecular Dynamics 
+![GitHub Workflow](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/actions/workflows/main.yml/badge.svg?event=push)
+[![Coverage Status](https://coveralls.io/repos/github/Ramprasad-Group/Polymer-Molecular-Dynamics/badge.svg)](https://coveralls.io/github/Ramprasad-Group/Polymer-Molecular-Dynamics)
+![PyPI - Downloads](https://img.shields.io/pypi/dd/pmd)
+[![PyPI Version](http://img.shields.io/pypi/v/pmd.svg)](https://pypi.python.org/pypi/pmd)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pmd)
 
 Python toolkit and guides for molecular dynamics prediction of polymer properties.
 
