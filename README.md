@@ -1,28 +1,46 @@
-# Polymer Molecular Dynamics
+<p align="center">
+  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://user-images.githubusercontent.com/11501902/171326650-3121cbc2-1fa7-424d-801a-a403d8b6dfa8.png" alt="FastAPI"></a>
+</p>
+<p align="center">
+    <em>Polymer Molecular Dynamics toolkit, easy to learn, fast to code, ready for polymer property production</em>
+</p>
+<p align="center">
+<a href="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/actions/workflows/main.yml/badge.svg?event=push" target="_blank">
+    <img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/actions/workflows/main.yml/badge.svg?event=push" alt="GitHub Workflow">
+</a>
+<a href="https://coveralls.io/github/Ramprasad-Group/Polymer-Molecular-Dynamics" target="_blank">
+    <img src="https://coveralls.io/repos/github/Ramprasad-Group/Polymer-Molecular-Dynamics/badge.svg" alt="Coverage">
+</a>
+<a href="https://img.shields.io/pypi/dd/pmd" target="_blank">
+    <img src="https://img.shields.io/pypi/dd/pmd" alt="Package version">
+</a>
+<a href="https://pypi.python.org/pypi/pmd" target="_blank">
+    <img src="http://img.shields.io/pypi/v/pmd.svg" alt="Package version">
+</a>
+<a href="https://pypi.org/project/pmd" target="_blank">
+    <img src="https://img.shields.io/pypi/pyversions/pmd" alt="Supported Python versions">
+</a>
+</p>
 
-![GitHub Workflow](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/actions/workflows/main.yml/badge.svg?event=push)
-[![Coverage Status](https://coveralls.io/repos/github/Ramprasad-Group/Polymer-Molecular-Dynamics/badge.svg)](https://coveralls.io/github/Ramprasad-Group/Polymer-Molecular-Dynamics)
-![PyPI - Downloads](https://img.shields.io/pypi/dd/pmd)
-[![PyPI Version](http://img.shields.io/pypi/v/pmd.svg)](https://pypi.python.org/pypi/pmd)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pmd)
+---
 
-Python toolkit and guides for molecular dynamics prediction of polymer properties.
+**Documentation**: <a href="https://polymer-molecular-dynamics.netlify.app" target="_blank">https://polymer-molecular-dynamics.netlify.app</a>
 
-- Quick overview - Check out the [Introduction page](https://polymer-molecular-dynamics.netlify.app/docs/intro)
-- Documentation - You can find it [on the website](https://polymer-molecular-dynamics.netlify.app/api/overview).
+**Source Code**: <a href="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics" target="_blank">https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics</a>
 
-## Guides and scripts
+---
+PMD is a modern, fast, python framework for building LAMMPS input and data files for predicting polymer properties
 
-You can calculate various polymer properties from MD simulations with this package, including:
+The key properties are:
 
-- Glass transition temperature (Tg) - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/glass-transition-temperature)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tg)]
-- Gas diffusivity - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/gas-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Gas_diffusivity)]
-- Solvent diffusivity - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/solvent-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Solvent_diffusivity)]
-- Viscosity - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/viscosity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Shear_deformation)]
-- Mechanical properties (Young's modulus, tensile strengths) - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/mechanical-properties)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tensile_deformationy)]
-- Thermal conductivity - In-progress
-- Solubility - Planned
-- Melting temperature (Tm) - Planned
+- **Glass transition temperature (Tg)** - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/glass-transition-temperature)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tg)]
+- **Gas diffusivity** - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/gas-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Gas_diffusivity)]
+- **Solvent diffusivity** - [[Guide](http://polymer-molecular-dynamics.netlify.app/docs/guides/solvent-diffusivity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Solvent_diffusivity)]
+- **Viscosity** - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/viscosity)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Shear_deformation)]
+- **Young's modulus** and **tensile strengths** - [[Guide](https://polymer-molecular-dynamics.netlify.app/docs/guides/mechanical-properties)] [[Scripts](https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/scripts/Tensile_deformationy)]
+- **Thermal conductivity** - In-progress
+- **Solubility** - Planned
+- **Melting temperature (Tm)** - Planned
 
 ## Example
 
