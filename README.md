@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/raw/main/website/static/img/logo-with-text.svg" alt="PMD"></a>
+  <a href="https://polymer-molecular-dynamics.netlify.app/"><img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/raw/main/website/static/img/logo-with-text.svg" alt="PMD" width="50%"></a>
 </p>
 <p align="center">
     <em>Polymer Molecular Dynamics toolkit, easy to learn, fast to code, ready for polymer property production</em>
