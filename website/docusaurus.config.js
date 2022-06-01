@@ -9,7 +9,7 @@ const config = {
   title: "High-Throughput Polymer MD Simulations",
   tagline:
     "Python toolkit and guides for molecular dynamics prediction of polymer properties",
-  url: "https://high-throughput-pmd.netlify.app/",
+  url: "https://polymer-molecular-dynamics.netlify.app/",
   baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
@@ -30,12 +30,12 @@ const config = {
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
           editUrl:
-            "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/website",
+            "https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/website",
         },
         // blog: {
         //   showReadingTime: true,
         //   editUrl:
-        //     "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/website",
+        //     "https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/website",
         // },
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
@@ -53,7 +53,7 @@ const config = {
         path: "api",
         routeBasePath: "api",
         editUrl:
-          "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations/tree/main/website",
+          "https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/tree/main/website",
         editCurrentVersion: true,
         sidebarPath: require.resolve("./sidebars.js"),
         sidebarCollapsed: false,
@@ -66,7 +66,7 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/metaImg.png',
+      image: "img/metaImg.png",
       navbar: {
         title: "High Throughput Polymer MD Simulations",
         logo: {
@@ -87,7 +87,7 @@ const config = {
             position: "left",
           },
           {
-            href: "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations",
+            href: "https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics",
             position: "right",
             className: "header-github-link",
             "aria-label": "GitHub repository",
@@ -128,7 +128,7 @@ const config = {
               },
               {
                 label: "GitHub",
-                href: "https://github.com/Ramprasad-Group/High-Throughput-Polymer-MD-Simulations",
+                href: "https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics",
               },
             ],
           },
