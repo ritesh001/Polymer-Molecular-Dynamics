@@ -6,7 +6,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: "High-Throughput Polymer MD Simulations",
+  title: "Polymer Molecular Dynamics",
   tagline:
     "Python toolkit and guides for molecular dynamics prediction of polymer properties",
   url: "https://polymer-molecular-dynamics.netlify.app/",
@@ -15,7 +15,7 @@ const config = {
   onBrokenMarkdownLinks: "warn",
   favicon: "img/favicon.ico",
   organizationName: "Ramprasad Group",
-  projectName: "High-Throughput Polymer MD Simulations",
+  projectName: "Polymer Molecular Dynamics",
 
   presets: [
     [
@@ -68,7 +68,7 @@ const config = {
     ({
       image: "img/metaImg.png",
       navbar: {
-        title: "High Throughput Polymer MD Simulations",
+        title: "Polymer Molecular Dynamics",
         logo: {
           alt: "Logo",
           src: "img/logo.svg",
