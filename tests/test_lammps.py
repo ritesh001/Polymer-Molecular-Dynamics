@@ -3,9 +3,9 @@ import shutil
 
 import pytest
 
-from pmd.core import (GAFF2, Lammps, Minimization, Equilibration,
-                      TgMeasurement, MSDMeasurement, TensileDeformation,
-                      ShearDeformation)
+from pmd.core import (GAFF2, Equilibration, Lammps, Minimization,
+                      MSDMeasurement, ShearDeformation, TensileDeformation,
+                      TgMeasurement)
 
 
 @pytest.fixture
