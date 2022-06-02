@@ -1,5 +1,6 @@
 import os
 import shutil
+
 import pytest
 
 from pmd.core import GAFF2, Lammps
