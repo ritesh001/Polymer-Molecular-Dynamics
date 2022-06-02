@@ -96,10 +96,10 @@ def read_lammpstrj(fname,
         alloc = 1
         inf_frames = True
     # 1D array of timesteps
-    timestep = np.zeros(alloc, np.int)
+    timestep = np.zeros(alloc, int)
     # 3D array to store boundaries of the box, indexed by frame, x/y/z, then
     # lower/upper
-    box_bounds = np.zeros([alloc, 3, 2], np.float)
+    box_bounds = np.zeros([alloc, 3, 2], float)
 
     timestep[frame] = init_timestep
     box_bounds[frame][0][0] = xlo
@@ -112,16 +112,16 @@ def read_lammpstrj(fname,
     # NOTE: using num_atoms+1 here so that the arrays are indexed by their
     # LAMMPS atom id
     # 3D array of x, y, z coordinates, r[frame][id][coordinate]
-    r = np.zeros([alloc, num_atoms + 1, 3], np.float)
+    r = np.zeros([alloc, num_atoms + 1, 3], float)
     # 3D array of x, y, z image flags, r[frame][id][coordinate]
-    ir = np.zeros([alloc, num_atoms + 1, 3], np.int)
+    ir = np.zeros([alloc, num_atoms + 1, 3], int)
 
     # array to map from atom id to molecule id, builds this from the first
     # frame, if available
-    id2mol = np.zeros(num_atoms + 1, np.int)
+    id2mol = np.zeros(num_atoms + 1, int)
     # array to map from atom id to type, builds this from the first frame,
     # if available
-    id2type = np.zeros(num_atoms + 1, np.int)
+    id2type = np.zeros(num_atoms + 1, int)
 
     # separately do the first ATOMS section so that we can initialize things,
     # build the id2mol and id2type arrays, and so that the main loop starts
@@ -245,12 +245,11 @@ def read_lammpstrj(fname,
         if inf_frames:
             timestep = np.append(timestep, 0)
 
-            box_bounds = np.concatenate(
-                (box_bounds, np.zeros([1, 3, 2], np.float)))
+            box_bounds = np.concatenate((box_bounds, np.zeros([1, 3, 2],
+                                                              float)))
 
-            r = np.concatenate((r, np.zeros([1, num_atoms + 1, 3], np.float)))
-            ir = np.concatenate((ir, np.zeros([1, num_atoms + 1, 3],
-                                              np.float)))
+            r = np.concatenate((r, np.zeros([1, num_atoms + 1, 3], float)))
+            ir = np.concatenate((ir, np.zeros([1, num_atoms + 1, 3], float)))
 
         # update the timestep and box size arrays
         timestep[frame] = my_timestep
@@ -367,10 +366,10 @@ def read_lammpstrj_by_type(fname,
         inf_frames = True
 
     # 1D array of timesteps
-    timestep = np.zeros(alloc, np.int)
+    timestep = np.zeros(alloc, int)
     # 3D array to store boundaries of the box, indexed by frame, x/y/z,
     # then lower/upper
-    box_bounds = np.zeros([alloc, 3, 2], np.float)
+    box_bounds = np.zeros([alloc, 3, 2], float)
 
     timestep[frame] = init_timestep
     box_bounds[frame][0][0] = xlo
@@ -421,16 +420,16 @@ def read_lammpstrj_by_type(fname,
     # NOTE: using num_atoms+1 here so that the arrays are indexed by their
     # LAMMPS atom id
     # 3D array of x, y, z coordinates, r[frame][id][coordinate]
-    r_temp = np.zeros([num_atoms + 1, 3], np.float)
+    r_temp = np.zeros([num_atoms + 1, 3], float)
     # 3D array of x, y, z image flags, r[frame][id][coordinate]
-    ir_temp = np.zeros([num_atoms + 1, 3], np.int)
+    ir_temp = np.zeros([num_atoms + 1, 3], int)
 
     # array to map from atom id to type, builds this from the first frame,
     # if available
-    index2type = np.zeros(num_atoms + 1, np.int)
+    index2type = np.zeros(num_atoms + 1, int)
     # array to map from atom id to index, builds this from the first frame,
     # if available
-    index2id = np.zeros(num_atoms + 1, np.int)
+    index2id = np.zeros(num_atoms + 1, int)
 
     num_types = 0
     # loop over the atoms lines for the first frame separately, the rest of the
@@ -473,16 +472,16 @@ def read_lammpstrj_by_type(fname,
     # NOTE: using num_types+1 here so that the arrays are indexed by their
     # LAMMPS atom id
     # 3D array of x, y, z coordinates, r[frame][id][coordinate]
-    r = np.zeros([alloc, num_types + 1, 3], np.float)
+    r = np.zeros([alloc, num_types + 1, 3], float)
     # 3D array of x, y, z image flags, r[frame][id][coordinate]
-    ir = np.zeros([alloc, num_types + 1, 3], np.int)
+    ir = np.zeros([alloc, num_types + 1, 3], int)
 
     # array to map from atom id to type, builds this from the first frame,
     # if available
-    id2type = np.zeros(num_types + 1, np.int)
+    id2type = np.zeros(num_types + 1, int)
     # array to map from atom id to index, builds this from the first frame,
     # if available
-    id2index = np.zeros(num_types + 1, np.int)
+    id2index = np.zeros(num_types + 1, int)
 
     # store the temporary data into real arrays
     my_id = 0
@@ -538,12 +537,11 @@ def read_lammpstrj_by_type(fname,
         if inf_frames:
             timestep = np.append(timestep, 0)
 
-            box_bounds = np.concatenate(
-                (box_bounds, np.zeros([1, 3, 2], np.float)))
+            box_bounds = np.concatenate((box_bounds, np.zeros([1, 3, 2],
+                                                              float)))
 
-            r = np.concatenate((r, np.zeros([1, num_types + 1, 3], np.float)))
-            ir = np.concatenate((ir, np.zeros([1, num_types + 1, 3],
-                                              np.float)))
+            r = np.concatenate((r, np.zeros([1, num_types + 1, 3], float)))
+            ir = np.concatenate((ir, np.zeros([1, num_types + 1, 3], float)))
 
         # update the timestep and box size arrays
         timestep[frame] = my_timestep
