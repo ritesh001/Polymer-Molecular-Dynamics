@@ -137,8 +137,8 @@ class Slurm(Job):
         with open(os.path.join(output_dir, self._job_fname), 'w') as f:
             f.write('#!/bin/bash')
             f.write(f'#SBATCH --job-name={self._jobname}\n')
-            f.write('#SBATCH -o out.o%j \n')
-            f.write('#SBATCH -e err.e%j \n')
+            f.write('#SBATCH -o out.o%j\n')
+            f.write('#SBATCH -e err.e%j\n')
             f.write(f'#SBATCH --nodes={self._nodes}\n')
             if self._gpus:
                 f.write(f'#SBATCH --gpus={self._gpus}\n')
