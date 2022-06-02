@@ -41,8 +41,6 @@ class Procedure():
         f.write(f'{"undump":<15} dump_{self}\n')
         if self._dump_image:
             f.write(f'{"undump":<15} dump_image\n')
-        f.write('\n')
-        f.write('\n')
 
 
 class Minimization(Procedure):
@@ -84,8 +82,6 @@ class Minimization(Procedure):
         f.write(f'{"min_style":<15} {self._min_style}\n')
         f.write(f'{"minimize":<15} {self._etol} {self._ftol} '
                 f'{self._maxiter} {self._maxeval}\n')
-        f.write('\n')
-        f.write('\n')
 
     def write_before_run(self, f: TextIOWrapper):
         pass

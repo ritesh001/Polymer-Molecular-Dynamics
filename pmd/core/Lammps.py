@@ -180,10 +180,10 @@ class Lammps:
                 f'pe ebond evdwl ecoul elong\n')
             f.write(f'{"thermo":<15} {self._thermo}\n')
             f.write(f'{"timestep":<15} {self._timestep}\n')
-            f.write('\n')
-            f.write('\n')
 
             for procedure in self._procedures:
+                f.write('\n')
+                f.write('\n')
                 procedure.write_before_run(f)
                 procedure.write_lammps(f)
                 procedure.write_after_run(f)
