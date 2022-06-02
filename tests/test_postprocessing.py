@@ -1,4 +1,5 @@
-from pmd.postprocessing.TrajectoryReader import read_lammpstrj, read_lammpstrj_by_type
+from pmd.postprocessing.TrajectoryReader import (read_lammpstrj,
+                                                 read_lammpstrj_by_type)
 
 
 def test_read_lammpstrj(data_path):
