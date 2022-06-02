@@ -1,4 +1,5 @@
-from pmd.core import Pmd, System, GAFF2, Lammps, Minimization, Equilibration, Torque
+from pmd.core import (GAFF2, Equilibration, Lammps, Minimization, Pmd, System,
+                      Torque)
 
 
 def test_pmd_create(data_path, tmp_path):

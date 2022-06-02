@@ -1,5 +1,6 @@
 import pytest
-from pmd.core import GAFF2, OPLS, System, SolventSystem
+
+from pmd.core import GAFF2, OPLS, SolventSystem, System
 
 # TODO: put into a pytest.mark.parametrize
 test_force_field = GAFF2()
