@@ -9,7 +9,8 @@ def main(args=None):
     # TODO: setup a nice dict with all property options and
     # corresponding functions
     if args.property == 'Tg':
-        calculate_Tg(args.result)
+        Tg = calculate_Tg(args.result)
+    return Tg
 
 
 def parse_command_line(args=None):
