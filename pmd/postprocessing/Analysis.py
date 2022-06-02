@@ -93,12 +93,12 @@ def calculate_MSD(r, ir, box_bounds, id2type=[]):
 
     # allocate an array for the box center of mass which needs to be
     # subtracted off
-    box_com = np.zeros([frames, 3], np.float)
+    box_com = np.zeros([frames, 3], float)
 
     # preallocate msd vectors
     msd_dict = {}
     for type_id in set(id2type):
-        msd_dict[type_id] = np.zeros(frames, np.float)
+        msd_dict[type_id] = np.zeros(frames, float)
 
     # loop over frames
     for t in range(frames):

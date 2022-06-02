@@ -1,10 +1,21 @@
+import pytest
+
+from pmd.postprocessing.Analysis import calculate_MSD, calculate_Tg
 from pmd.postprocessing.TrajectoryReader import (read_lammpstrj,
                                                  read_lammpstrj_by_type)
 
 
-def test_read_lammpstrj(data_path):
-    f = data_path / 'equil.lammpstrj'
-    r, ir, timestep, box_bounds, id2type, id2mol, mol2ids = read_lammpstrj(f)
+@pytest.fixture
+def test_data(data_path):
+    return {
+        'trajectory_file': data_path / 'equil.lammpstrj',
+        'Tg_result_file': data_path / 'temp_vs_density.txt'
+    }
+
+
+def test_read_lammpstrj(test_data):
+    (r, ir, timestep, box_bounds, id2type, id2mol,
+     mol2ids) = read_lammpstrj(test_data['trajectory_file'])
 
     assert len(r) == 2  # 2 timestep
     assert len(r[0][1:]) == 1248  # 1248 atoms
@@ -25,10 +36,10 @@ def test_read_lammpstrj(data_path):
     assert len(mol2ids[1:]) == 12  # 12 polymer chains
 
 
-def test_read_lammpstrj_by_type(data_path):
-    f = data_path / 'equil.lammpstrj'
+def test_read_lammpstrj_by_type(test_data):
     (r, ir, timestep, box_bounds, id2type,
-     id2nidex) = read_lammpstrj_by_type(f, types=[1, 2])
+     id2nidex) = read_lammpstrj_by_type(test_data['trajectory_file'],
+                                        types=[1, 2])
 
     assert len(r) == 2  # 2 timestep
     assert len(r[0][1:]) == 1248  # 1248 atoms
@@ -46,3 +57,18 @@ def test_read_lammpstrj_by_type(data_path):
 
     assert len(id2type[1:]) == 1248  # 1248 atoms
     assert len(id2nidex[1:]) == 1248  # 1248 atoms
+
+
+def test_calculate_msd(test_data):
+    (r, ir, timestep, box_bounds, id2type, id2mol,
+     mol2ids) = read_lammpstrj(test_data['trajectory_file'])
+    msd_dict = calculate_MSD(r, ir, box_bounds, id2type)
+
+    assert len(msd_dict) == 2  # 2 atom types
+    assert len(msd_dict[1]) == 2  # 2 time frames
+
+
+def test_calculate_Tg(test_data):
+    Tg = calculate_Tg(test_data['Tg_result_file'])
+
+    assert round(Tg, 1) == 295.2

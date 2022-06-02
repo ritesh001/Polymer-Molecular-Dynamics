@@ -1,6 +1,6 @@
 import pytest
 
-from pmd.core import Torque
+from pmd.core import Slurm, Torque
 
 
 @pytest.mark.parametrize(
@@ -12,6 +12,11 @@ from pmd.core import Torque
                 nodes=1,
                 ppn=24,
                 walltime='24:00:00'), 'job.pbs'),
+        (Slurm(run_lammps='lmp.in',
+               jobname='PE_equilibration',
+               nodes=1,
+               ntasks_per_node=24,
+               time='24:00:00'), 'job.sh'),
     ],
 )
 def test_job_write(data_path, tmp_path, job, job_fname):
