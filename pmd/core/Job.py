@@ -92,7 +92,7 @@ class Torque(Job):
                 f.write(
                     'module load intel/19.0.5 mvapich2/2.3.4 lammps/09Jan20\n')
                 f.write(f'mpirun -np { self._nodes * self._ppn} '
-                        f'lmp -in {self._run_lammps}')
+                        f'lmp -in {self._run_lammps}\n')
 
         super().completion_log(output_dir)
 

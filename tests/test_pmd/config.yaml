@@ -1,0 +1,39 @@
+pmd.Lammps:
+  read_data_from: data.lmps
+  force_field:
+    pmd.GAFF2:
+      charge_method: gasteiger
+  atom_style: full
+  units: real
+  timestep: 1
+  neighbor_skin: 2.0
+  neighbor_every: 1
+  thermo: 1000
+  lmp_input_fname: lmp.in
+  procedures:
+  - pmd.Minimization:
+      min_style: cg
+      etol: 1.0e-06
+      ftol: 1.0e-08
+      maxiter: 100000
+      maxeval: 10000000
+  - pmd.Equilibration:
+      Teq: 300
+      Peq: 1
+      Tmax: 800
+      Pmax: 49346.163
+      Tdamp: $(100.0*dt)
+      Pdamp: $(100.0*dt)
+      duration: 1560000
+      dump_fname: equil.lammpstrj
+      dump_every: 10000
+      dump_image: false
+      reset_timestep_before_run: true
+pmd.Torque:
+  run_lammps: lmp.in
+  jobname: PE_equilibration
+  job_fname: job.pbs
+  project: GT-rramprasad3-CODA20
+  nodes: 1
+  ppn: 24
+  walltime: '24:00:00'

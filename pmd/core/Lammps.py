@@ -72,7 +72,8 @@ class Lammps:
                  read_data_from: Optional[Union[System, str]] = None,
                  read_restart_from: Optional[Union[Lammps, str]] = None,
                  force_field: Optional[ForceField] = None,
-                 procedures: Optional[List[Procedure]] = None,
+                 procedures: Optional[Union[Procedure,
+                                            List[Procedure]]] = None,
                  atom_style: str = 'full',
                  units: str = 'real',
                  timestep: int = 1,
@@ -91,7 +92,11 @@ class Lammps:
         self._neighbor_every = neighbor_every
         self._thermo = thermo
         self._lmp_input_fname = lmp_input_fname
-        self._procedures = procedures if procedures else []
+        if not procedures:
+            procedures = []
+        elif isinstance(procedures, Procedure):
+            procedures = [procedures]
+        self._procedures = procedures
 
         # reassign data source and force field if objects are provided
         if isinstance(read_data_from, System):
@@ -180,10 +185,10 @@ class Lammps:
                 f'pe ebond evdwl ecoul elong\n')
             f.write(f'{"thermo":<15} {self._thermo}\n')
             f.write(f'{"timestep":<15} {self._timestep}\n')
-            f.write('\n')
-            f.write('\n')
 
             for procedure in self._procedures:
+                f.write('\n')
+                f.write('\n')
                 procedure.write_before_run(f)
                 procedure.write_lammps(f)
                 procedure.write_after_run(f)
