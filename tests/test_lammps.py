@@ -1,7 +1,10 @@
 from __future__ import unicode_literals
-from distutils import dir_util
-from pytest import fixture
+
 import os
+from distutils import dir_util
+
+from pytest import fixture
+
 from pmd.core import GAFF2, Lammps
 from pmd.core.Procedure import Equilibration, Minimization
 

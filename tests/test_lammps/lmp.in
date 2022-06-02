@@ -119,5 +119,3 @@ run             800000
 unfix           step21
 
 undump          dump_Equilibration
-
-
