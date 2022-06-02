@@ -17,6 +17,18 @@ pmd.Lammps:
       ftol: 1.0e-08
       maxiter: 100000
       maxeval: 10000000
+  - pmd.Equilibration:
+      Teq: 300
+      Peq: 1
+      Tmax: 800
+      Pmax: 49346.163
+      Tdamp: $(100.0*dt)
+      Pdamp: $(100.0*dt)
+      duration: 1560000
+      dump_fname: equil.lammpstrj
+      dump_every: 10000
+      dump_image: false
+      reset_timestep_before_run: true
 pmd.Torque:
   run_lammps: lmp.in
   jobname: PE_equilibration
