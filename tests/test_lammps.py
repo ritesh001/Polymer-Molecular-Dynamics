@@ -61,3 +61,17 @@ def test_lammps_write(data_path, tmp_path, procedures, lmp_input_fname):
     lmp.write_lammps(d)
 
     assert actual_output.read_text() == expected_output.read_text()
+
+
+def test_lammps_add_procedure(data_path, tmp_path):
+    d = tmp_path / "result"
+    expected_output = data_path / 'lmp_Minimization.in'
+    actual_output = d / 'lmp_Minimization.in'
+
+    lmp = Lammps(read_data_from='data.lmps',
+                 force_field=GAFF2(),
+                 lmp_input_fname='lmp_Minimization.in')
+    lmp.add_procedure(Minimization())
+    lmp.write_lammps(d)
+
+    assert actual_output.read_text() == expected_output.read_text()
