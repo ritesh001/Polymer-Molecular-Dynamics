@@ -1,5 +1,6 @@
 import pytest
 
+from pmd.entry import analyze
 from pmd.postprocessing.Analysis import calculate_MSD, calculate_Tg
 from pmd.postprocessing.TrajectoryReader import (read_lammpstrj,
                                                  read_lammpstrj_by_type)
@@ -71,4 +72,11 @@ def test_calculate_msd(test_data):
 def test_calculate_Tg(test_data):
     Tg = calculate_Tg(test_data['Tg_result_file'])
 
+    assert round(Tg, 1) == 295.2
+
+
+def test_calculate_Tg_cli(caplog, test_data):
+    Tg = analyze.main([str(test_data['Tg_result_file']), '-p', 'Tg'])
+
+    assert 'Glass transition temperature' in caplog.text
     assert round(Tg, 1) == 295.2
