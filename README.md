@@ -9,7 +9,7 @@
     <img src="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics/actions/workflows/main.yml/badge.svg?event=push" alt="GitHub Workflow">
 </a>
 <a href="https://coveralls.io/github/Ramprasad-Group/Polymer-Molecular-Dynamics" target="_blank">
-    <img src="https://coveralls.io/repos/github/Ramprasad-Group/Polymer-Molecular-Dynamics/badge.svg" alt="Coverage">
+    <img src="https://coveralls.io/repos/github/Ramprasad-Group/Polymer-Molecular-Dynamics/badge.svg?service=github" alt="Coverage">
 </a>
 <a href="https://pypi.python.org/pypi/pmd" target="_blank">
     <img src="http://img.shields.io/pypi/v/pmd.svg" alt="Package version">
