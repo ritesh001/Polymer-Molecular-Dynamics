@@ -29,6 +29,7 @@
 **Source Code**: <a href="https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics" target="_blank">https://github.com/Ramprasad-Group/Polymer-Molecular-Dynamics</a>
 
 ---
+
 PMD is a modern, fast, python framework for building LAMMPS input and data files for predicting polymer properties
 
 The key properties are:
@@ -54,22 +55,31 @@ Below is an example where we use PMD to generate LAMMPS data and input files for
 import pmd
 
 # A list of polymer SMILES strings to create simulations for
-smiles_list = ['*CC*', '*CC(*)CC', '*CC(*)CCCC','*CC(*)c1ccccc1']
+smiles_list = ['*CC*', '*CC(*)CC', '*CC(*)CCCC', '*CC(*)c1ccccc1']
 
 for smiles in smiles_list:
     # Define polymer and system specs
-    syst = pmd.System(smiles=smiles, force_field=pmd.OPLS(), density=0.8,
-                      natoms_total=5000, natoms_per_chain=150)
+    syst = pmd.System(smiles=smiles,
+                      density=0.8,
+                      natoms_total=5000,
+                      natoms_per_chain=150,
+                      builder=pmd.EMC(force_field='pcff'))
 
     # Customize LAMMPS simulation
     lmp = pmd.Lammps(read_data_from=syst,
-                     procedures=[pmd.Minimization(min_style='cg'),
-                                 pmd.Equilibration(Teq=600, Tmax=800),
-                                 pmd.TgMeasurement(Tinit=600, Tfinal=200)])
+                     procedures=[
+                         pmd.Minimization(min_style='cg'),
+                         pmd.Equilibration(Teq=600, Tmax=800),
+                         pmd.TgMeasurement(Tinit=600, Tfinal=200)
+                     ])
 
     # Create job scheduler settings
-    job = pmd.Torque(run_lammps=lmp, jobname=smiles, project='Your-project-id',
-                     nodes=2, ppn=24, walltime='48:00:00')
+    job = pmd.Torque(run_lammps=lmp,
+                     jobname=smiles,
+                     project='Your-project-id',
+                     nodes=2,
+                     ppn=24,
+                     walltime='48:00:00')
 
     # Generate all necessary files at each SMILES folder
     run = pmd.Pmd(system=syst, lammps=lmp, job=job)
@@ -90,13 +100,17 @@ $ pmd-load config.yaml [-o output_dir]
 pmd.System:
   smiles: "*CC*"
   density: 0.8
-  force_field: pmd.OPLS
+  builder:
+    pmd.EMC:
+      force_field: pcff
   natoms_total: 5000
   natoms_per_chain: 150
   data_fname: data.lmps
 pmd.Lammps:
-  read_data: data.lmps # Has to match data_fname if build from a yaml file
-  lmp_input_fname: lmp.in
+  read_data: data.lmps # This file name has to match data_fname if build from a yaml file
+  get_functional_form_from: # A PMD Builder has to be provided if build from a yaml file
+    pmd.EMC:
+      force_field: pcff
   procedures:
     - pmd.Minimization:
         min_style: cg
@@ -106,8 +120,9 @@ pmd.Lammps:
     - pmd.TgMeasurement:
         Tinit: 600
         Tfinal: 200
+  lmp_input_fname: lmp.in
 pmd.Torque:
-  run_lammps: lmp.in # Has to match lmp_input_fname if build from a yaml file
+  run_lammps: lmp.in # This file name has to match the above lmp_input_fname if build from a yaml file
   jobname: "*CC*"
   project: Your-project-id
   nodes: 2

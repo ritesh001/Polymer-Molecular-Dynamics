@@ -59,15 +59,17 @@ function HomepageHeader() {
                 "\n" +
                 "for smiles in ['*CC*', '*CC(*)CC','*CC(*)c1ccccc1']:\n" +
                 "    # Define polymer and system specs\n" +
-                "    syst = pmd.System(smiles=smiles, force_field=pmd.OPLS(),\n" +
-                "                      density=0.8, natoms_total=10000,\n" +
-                "                      natoms_per_chain=150)\n" +
+                "    syst = pmd.System(smiles=smiles, density=0.8,\n" +
+                "                      natoms_total=5000, natoms_per_chain=150,\n" +
+                "                      builder=pmd.EMC(force_field='pcff'))\n" +
                 "    \n" +
                 "    # Customize LAMMPS simulation\n" +
-                "    lmp = pmd.Lammps(read_data_from=syst, procedures=[\n" +
-                "                     pmd.Minimization(min_style='cg'),\n" +
-                "                     pmd.Equilibration(Teq=600, Tmax=800),\n" +
-                "                     pmd.TgMeasurement(Tinit=600, Tfinal=200)])\n" +
+                "    lmp = pmd.Lammps(read_data_from=syst,\n" +
+                "                     procedures=[\n" +
+                "                         pmd.Minimization(min_style='cg'),\n" +
+                "                         pmd.Equilibration(Teq=600, Tmax=800),\n" +
+                "                         pmd.TgMeasurement(Tinit=600, Tfinal=200),\n" +
+                "                     ])\n" +
                 "    \n" +
                 "    # Create job scheduler settings\n" +
                 "    job = pmd.Torque(run_lammps=lmp, jobname=smiles,\n" +

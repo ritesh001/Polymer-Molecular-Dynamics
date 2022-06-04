@@ -37,6 +37,29 @@ def test_read_lammpstrj(test_data):
     assert len(mol2ids[1:]) == 12  # 12 polymer chains
 
 
+def test_read_lammpstrj_skip_beginning(test_data):
+    (r, ir, timestep, box_bounds, id2type, id2mol,
+     mol2ids) = read_lammpstrj(test_data['trajectory_file'], skip_beginning=1)
+
+    assert len(r) == 1  # 1 timestep
+    assert len(r[0][1:]) == 1248  # 1248 atoms
+    assert len(r[0][0]) == 3  # x, y, z
+
+    assert len(ir) == 1  # 1 timestep
+    assert len(ir[0][1:]) == 1248  # 1248 atoms
+    assert len(ir[0][0]) == 3  # x, y, z
+
+    assert len(timestep) == 1  # 1 timestep
+
+    assert len(box_bounds) == 1  # 1 timestep
+    assert len(box_bounds[0]) == 3  # x, y, z
+    assert len(box_bounds[0][0]) == 2  # lower, upper
+
+    assert len(id2type[1:]) == 1248  # 1248 atoms
+    assert len(id2mol[1:]) == 1248  # 1248 atoms
+    assert len(mol2ids[1:]) == 12  # 12 polymer chains
+
+
 def test_read_lammpstrj_by_type(test_data):
     (r, ir, timestep, box_bounds, id2type,
      id2nidex) = read_lammpstrj_by_type(test_data['trajectory_file'],
@@ -53,6 +76,30 @@ def test_read_lammpstrj_by_type(test_data):
     assert len(timestep) == 2  # 2 timestep
 
     assert len(box_bounds) == 2  # 2 timestep
+    assert len(box_bounds[0]) == 3  # x, y, z
+    assert len(box_bounds[0][0]) == 2  # lower, upper
+
+    assert len(id2type[1:]) == 1248  # 1248 atoms
+    assert len(id2nidex[1:]) == 1248  # 1248 atoms
+
+
+def test_read_lammpstrj_by_type_skip_beginning(test_data):
+    (r, ir, timestep, box_bounds, id2type,
+     id2nidex) = read_lammpstrj_by_type(test_data['trajectory_file'],
+                                        types=[1, 2],
+                                        skip_beginning=1)
+
+    assert len(r) == 1  # 1 timestep
+    assert len(r[0][1:]) == 1248  # 1248 atoms
+    assert len(r[0][0]) == 3  # x, y, z
+
+    assert len(ir) == 1  # 1 timestep
+    assert len(ir[0][1:]) == 1248  # 1248 atoms
+    assert len(ir[0][0]) == 3  # x, y, z
+
+    assert len(timestep) == 1  # 1 timestep
+
+    assert len(box_bounds) == 1  # 1 timestep
     assert len(box_bounds[0]) == 3  # x, y, z
     assert len(box_bounds[0][0]) == 2  # lower, upper
 
