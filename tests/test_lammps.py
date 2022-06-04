@@ -1,8 +1,7 @@
 import pytest
 
-from pmd.core import (GAFF2, Equilibration, Lammps, Minimization,
-                      MSDMeasurement, ShearDeformation, TensileDeformation,
-                      TgMeasurement)
+from pmd.core import (PSP, Equilibration, Lammps, Minimization, MSDMeasurement,
+                      ShearDeformation, TensileDeformation, TgMeasurement)
 
 
 @pytest.mark.parametrize(
@@ -56,7 +55,7 @@ def test_lammps_write(data_path, tmp_path, procedures, lmp_input_fname):
 
     # procedures provided through the constructor
     lmp = Lammps(read_data_from='data.lmps',
-                 force_field=GAFF2(),
+                 get_functional_form_from=PSP('gaff2-gasteiger'),
                  procedures=procedures,
                  lmp_input_fname=lmp_input_fname)
     lmp.write_lammps(d)
@@ -65,7 +64,7 @@ def test_lammps_write(data_path, tmp_path, procedures, lmp_input_fname):
 
     # procedures provided through the add_procedure function
     lmp = Lammps(read_data_from='data.lmps',
-                 force_field=GAFF2(),
+                 get_functional_form_from=PSP('gaff2-gasteiger'),
                  lmp_input_fname=lmp_input_fname)
     lmp.add_procedure(procedures)
     lmp.write_lammps(d)

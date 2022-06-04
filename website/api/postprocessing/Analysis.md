@@ -20,8 +20,8 @@ result file obtained from TgMeasurement Procedure
   Procedure
 - `make_plot` _bool_ - Whether to make a plot to visualize the fitting
 - `append_result_to_yaml` _str_ - YAML file name to append result value to
-- `;default` - `None`
-
+  ; default: `None`
+  
 
 **Returns**:
 
@@ -41,16 +41,17 @@ for all beads; does not account for changes in box size
 
 - `r` - unscaled (but wrapped) coordinates (format as read in from
   `read_lammpstrj`)
-
+  
 - `ir` - image flags (format as read in from `read_lammpstrj`)
-
+  
 - `box_bounds` - boundaries of the box (format as read in from
   `read_lammpstrj`)
-
+  
 - `id2type` - array that maps atom id to type (format as read in from
   `read_lammpstrj`)
-
+  
 
 **Returns**:
 
 - `msd_dict` - dict of the calculated MSDs for each type
+

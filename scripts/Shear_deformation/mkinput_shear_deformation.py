@@ -3,10 +3,10 @@ import pmd
 if __name__ == '__main__':
     # Build a Polyethlyene system
     system = pmd.System(smiles='*CC*',
-                        density=0.5,
-                        force_field=pmd.GAFF2(),
+                        density=0.8,
                         natoms_total=10000,
-                        natoms_per_chain=600)
+                        natoms_per_chain=600,
+                        builder=pmd.EMC(force_field='pcff'))
 
     # Equilibration + Shear deformation
     lmp = pmd.Lammps(read_data_from=system)

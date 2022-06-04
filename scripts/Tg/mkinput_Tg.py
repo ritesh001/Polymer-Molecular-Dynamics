@@ -22,9 +22,9 @@ if __name__ == '__main__':
 
     system = pmd.System(smiles=smiles,
                         density=0.8,
-                        force_field=pmd.OPLS(),
                         natoms_total=5000,
-                        natoms_per_chain=150)
+                        natoms_per_chain=500,
+                        builder=pmd.EMC(force_field='pcff'))
     system.write_data(output_dir=system_id)
 
     lmp = pmd.Lammps(read_data_from=system)

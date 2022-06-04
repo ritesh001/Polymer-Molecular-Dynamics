@@ -1,6 +1,6 @@
 import sys
 
-from .core import (GAFF2, NPT, NVT, OPLS, Equilibration, Lammps, Minimization,
+from .core import (EMC, NPT, NVT, PSP, Equilibration, Lammps, Minimization,
                    MSDMeasurement, Pmd, ShearDeformation, Slurm, SolventSystem,
                    System, TensileDeformation, TgMeasurement, Torque)
 from .postprocessing import (calculate_Tg, read_lammpstrj,
@@ -20,8 +20,8 @@ finally:
     del version, PackageNotFoundError
 
 __all__ = [
-    Lammps, Pmd, Torque, Slurm, System, SolventSystem, OPLS, GAFF2,
-    Minimization, Equilibration, TgMeasurement, MSDMeasurement,
-    TensileDeformation, ShearDeformation, NVT, NPT, calculate_Tg,
-    read_lammpstrj, read_lammpstrj_by_type
+    Lammps, Pmd, Torque, Slurm, System, SolventSystem, EMC, PSP, Minimization,
+    Equilibration, TgMeasurement, MSDMeasurement, TensileDeformation,
+    ShearDeformation, NVT, NPT, calculate_Tg, read_lammpstrj,
+    read_lammpstrj_by_type
 ]

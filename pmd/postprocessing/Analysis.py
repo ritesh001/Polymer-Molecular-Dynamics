@@ -19,7 +19,7 @@ def calculate_Tg(result_fname: str,
                             Procedure
         make_plot (bool): Whether to make a plot to visualize the fitting
         append_result_to_yaml (str): YAML file name to append result value to
-                                     ;default: `None`
+                                     ; default: `None`
 
     Returns:
         Tg (float): Glass transition temperature of the system
