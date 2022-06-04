@@ -2,7 +2,7 @@ import os
 from typing import List, Optional, TypeVar, Union
 
 # These have to be written explicitly for typing
-from pmd.core.ForceField import ForceField
+from pmd.core.Builder import Builder
 from pmd.core.Procedure import Procedure
 from pmd.core.System import System
 from pmd.util import Pmdlogging, build_dir, validate_options
@@ -33,10 +33,10 @@ class Lammps:
                                     not both (providing both will result in an
                                     error); default: `None`
 
-        force_foeld (ForceField): Only needed if `read_data_from` or
+        get_functional_form_from (Builder): Only needed if `read_data_from` or
                                   `read_restart_from` is provided as a file
                                   name string. This is needed for specifying
-                                  potential form for LAMMPS input file
+                                  potential styles for LAMMPS input file
                                   ; default: `None`
 
         atom_style (str): LAMMPS
@@ -71,7 +71,7 @@ class Lammps:
     def __init__(self,
                  read_data_from: Optional[Union[System, str]] = None,
                  read_restart_from: Optional[Union[Lammps, str]] = None,
-                 force_field: Optional[ForceField] = None,
+                 get_functional_form_from: Optional[Builder] = None,
                  procedures: Optional[Union[Procedure,
                                             List[Procedure]]] = None,
                  atom_style: str = 'full',
@@ -84,7 +84,7 @@ class Lammps:
 
         self._read_data_from = read_data_from
         self._read_restart_from = read_restart_from
-        self._force_field = force_field
+        self._get_functional_form_from = get_functional_form_from
         self._atom_style = atom_style
         self._units = units
         self._timestep = timestep
@@ -99,14 +99,14 @@ class Lammps:
         self._procedures = procedures
 
         # reassign data source and force field if objects are provided
-        if isinstance(read_data_from, System):
-            self._read_data_from = read_data_from.data_fname
-            self._force_field = read_data_from.force_field
-        elif isinstance(read_restart_from, Lammps):
-            # TODO: implement this
-            # self._read_restart_from =
-            # read_restart_from.last_restart_fname
-            self._force_field = read_restart_from.force_field
+        # if isinstance(read_data_from, System):
+        #     self._read_data_from = read_data_from.data_fname
+        #     self._force_field = read_data_from.force_field
+        # elif isinstance(read_restart_from, Lammps):
+        #     # TODO: implement this
+        #     # self._read_restart_from =
+        #     # read_restart_from.last_restart_fname
+        #     self._force_field = read_restart_from.force_field
 
         # Make sure only 1 data source option is given
         validate_options(self, DATA_SOURCE_OPTIONS)
@@ -119,8 +119,14 @@ class Lammps:
         return self._lmp_input_fname
 
     @property
-    def force_field(self) -> Optional[ForceField]:
-        return self._force_field
+    def get_functional_form_from(self) -> Builder:
+        if isinstance(self._read_data_from, System):
+            builder = self._read_data_from.builder
+        elif isinstance(self._read_restart_from, Lammps):
+            builder = self._read_restart_from.get_functional_form_from
+        else:
+            builder = self._get_functional_form_from
+        return builder
 
     def add_procedure(self, procedure: Union[Procedure,
                                              List[Procedure]]) -> Lammps:
@@ -163,8 +169,7 @@ class Lammps:
             f.write(f'{"units":<15} {self._units}\n')
             f.write('\n')
 
-            if self._force_field:
-                self._force_field.write_settings(f)
+            self.get_functional_form_from.write_functional_form(f)
             f.write('\n')
 
             if self._read_data_from:

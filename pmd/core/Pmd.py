@@ -6,7 +6,7 @@ import yaml
 
 import pmd.core
 # These have to be written explicitly for typing
-from pmd.core.ForceField import ForceField
+from pmd.core.Builder import Builder
 from pmd.core.Job import Job
 from pmd.core.Lammps import Lammps
 from pmd.core.Procedure import Procedure
@@ -19,8 +19,7 @@ OBJECT_PRFIX = 'pmd.'
 
 
 # Custom yaml config file dictionary constructor
-def to_yaml_dict(
-        cls: Union[System, ForceField, Lammps, Procedure, Job]) -> Dict:
+def to_yaml_dict(cls: Union[System, Builder, Lammps, Procedure, Job]) -> Dict:
     return {
         # strip off the front underscore and only add to dict
         # if value is not None

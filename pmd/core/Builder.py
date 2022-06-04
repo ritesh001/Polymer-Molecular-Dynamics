@@ -1,4 +1,5 @@
 import glob
+from io import TextIOWrapper
 import os
 import shutil
 from typing import Tuple
@@ -31,6 +32,9 @@ class Builder:
                              f'{", ".join(options)}')
 
     def write_data(self) -> None:
+        raise NotImplementedError
+
+    def write_functional_form(self) -> None:
         raise NotImplementedError
 
 
@@ -90,6 +94,18 @@ class EMC(Builder):
                     print(f'problem removing {fname} during cleanup')
 
         os.chdir(previous_dir)
+
+    def write_functional_form(self, f: TextIOWrapper) -> None:
+        if self._force_field == 'pcff':
+            pass
+        elif self._force_field == 'opls-aa':
+            pass
+        elif self._force_field == 'opls-ua':
+            pass
+        elif self._force_field == 'trappe':
+            pass
+        elif self._force_field == 'charmm':
+            pass
 
 
 class PSP(Builder):
@@ -190,3 +206,25 @@ class PSP(Builder):
             'RightCap': [np.nan, '[*][H]']
         }
         self._run_psp(input_data, density, data_fname, output_dir, cleanup)
+
+    def write_functional_form(self, f: TextIOWrapper) -> None:
+
+        if self._force_field.startswith('opls'):
+            f.write(f'{"pair_style":<15} lj/cut/coul/long 9.0\n')
+            f.write(f'{"pair_modify":<15} mix geometric tail yes\n')
+            f.write(f'{"kspace_style":<15} pppm 1e-4\n')
+            f.write(f'{"bond_style":<15} harmonic\n')
+            f.write(f'{"angle_style":<15} harmonic\n')
+            f.write(f'{"dihedral_style":<15} opls\n')
+            f.write(f'{"improper_style":<15} cvff\n')
+            f.write(f'{"special_bonds":<15} lj/coul 0.0 0.0 0.5\n')
+
+        elif self._force_field.startswith('gaff2'):
+            f.write(f'{"pair_style":<15} lj/cut/coul/long 12.0 12.0\n')
+            f.write(f'{"pair_modify":<15} mix arithmetic\n')
+            f.write(f'{"kspace_style":<15} pppm 1e-4\n')
+            f.write(f'{"bond_style":<15} harmonic\n')
+            f.write(f'{"angle_style":<15} harmonic\n')
+            f.write(f'{"dihedral_style":<15} fourier\n')
+            f.write(f'{"improper_style":<15} cvff\n')
+            f.write(f'{"special_bonds":<15} amber\n')
