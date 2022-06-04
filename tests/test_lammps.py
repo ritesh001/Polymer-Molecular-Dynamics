@@ -1,6 +1,6 @@
 import pytest
 
-from pmd.core import (Equilibration, Lammps, Minimization, MSDMeasurement, PSP,
+from pmd.core import (PSP, Equilibration, Lammps, Minimization, MSDMeasurement,
                       ShearDeformation, TensileDeformation, TgMeasurement)
 
 

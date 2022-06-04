@@ -1,16 +1,14 @@
-import glob
-from io import TextIOWrapper
 import os
 import re
 import shutil
+from io import TextIOWrapper
 from typing import Tuple
+
 import numpy as np
-
 import pandas as pd
-
 import pyemc
 
-from pmd.util import build_dir, Pmdlogging, HiddenPrints
+from pmd.util import HiddenPrints, Pmdlogging, build_dir
 
 EMC_FORCE_FIELD_OPTIONS = ('pcff', 'opls-aa')
 PSP_FORCE_FIELD_OPTIONS = ('opls-lbcc', 'opls-cm1a', 'gaff2-gasteiger',
@@ -43,7 +41,7 @@ class Builder:
 class EMC(Builder):
     '''Object to perform system structure generation using
     (EMC)[http://montecarlo.sourceforge.net/]: Enhanced Monte Carlo package.
-    This object should be used as input argument of `System` or `Lammps` 
+    This object should be used as input argument of `System` or `Lammps`
     objects
 
     Attributes:
@@ -180,11 +178,11 @@ class EMC(Builder):
 class PSP(Builder):
     '''Object to perform system structure generation using
     (PSP)[https://github.com/Ramprasad-Group/PSP]: Polymer Structure Predictor
-    package. This object should be used as input argument of `System` or 
+    package. This object should be used as input argument of `System` or
     `Lammps` objects
 
     Attributes:
-        force_field (str): Force field, options are `"opls-lbcc"`, 
+        force_field (str): Force field, options are `"opls-lbcc"`,
         `"opls-cm1a"`, `"gaff2-gasteiger"`, `"gaff2-am1bcc"`
     '''
 
