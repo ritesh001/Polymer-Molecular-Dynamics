@@ -1,14 +1,10 @@
-import os
 import re
-import shutil
 from typing import Optional
 
-import numpy as np
-import pandas as pd
 from rdkit import Chem
 
-from pmd.core.ForceField import GAFF2, OPLS, ForceField
-from pmd.util import HiddenPrints, Pmdlogging, validate_options
+from pmd.core.Builder import EMC, Builder
+from pmd.util import Pmdlogging, validate_options
 
 CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
 
@@ -21,9 +17,9 @@ class System:
 
         density (float): Density of the system
 
-        force_field (ForceField): Force field (One of `GAFF2` and `OPLS`)
-
         natoms_total (int): Total number of atoms of the system
+
+        builder (Builder): Builder (One of `EMC` or `PSP`)
 
         natoms_per_chain (int): Number of atoms per polymer chain, one of this
                                 attribute, `mw_per_chain`, and `ru_per_chain`
@@ -49,19 +45,23 @@ class System:
 
     def __init__(self,
                  smiles: str,
-                 force_field: ForceField,
                  density: float,
                  natoms_total: int,
+                 builder: Builder,
                  *,
                  natoms_per_chain: Optional[int] = None,
                  mw_per_chain: Optional[int] = None,
                  ru_per_chain: Optional[int] = None,
                  data_fname: str = 'data.lmps'):
 
+        if not isinstance(builder, Builder):
+            raise ValueError('Invalid builder value, please provide '
+                             'either a EMC or PSP object')
+
         self._smiles = smiles
         self._density = density
-        self._force_field = force_field
         self._natoms_total = natoms_total
+        self._builder = builder
         self._mw_per_chain = mw_per_chain
         self._natoms_per_chain = natoms_per_chain
         self._ru_per_chain = ru_per_chain
@@ -88,8 +88,8 @@ class System:
         return self._data_fname
 
     @property
-    def force_field(self) -> ForceField:
-        return self._force_field
+    def builder(self) -> Builder:
+        return self._builder
 
     @smiles.setter
     def smiles(self, smiles: str):
@@ -97,9 +97,9 @@ class System:
         self._convert_asterisk()
         self._calculate_system_spec()
 
-    @force_field.setter
-    def force_field(self, force_field: str):
-        self._force_field = force_field
+    @builder.setter
+    def builder(self, builder: str):
+        self._builder = builder
 
     def _convert_asterisk(self):
         stars_no_bracket = re.findall(r'(?<!\[)\*(?!\])', self._smiles)
@@ -144,19 +144,9 @@ class System:
             None
         '''
 
-        psp_input_data = {
-            'ID': ['Poly'],
-            'smiles': [self._smiles],
-            'Len': [self._length],
-            'Num': [self._nchains],
-            'NumConf': [1],
-            'Loop': [False],
-            'LeftCap': ['[*][H]'],
-            'RightCap': ['[*][H]']
-        }
-
-        _run_psp(psp_input_data, self._density, self._force_field,
-                 self._data_fname, output_dir, cleanup)
+        self._builder.write_data(output_dir, self._smiles, self._density,
+                                 self._natoms_total, self._length,
+                                 self._nchains, self._data_fname, cleanup)
 
 
 class SolventSystem(System):
@@ -173,9 +163,9 @@ class SolventSystem(System):
 
         density (float): Density of the system
 
-        force_field (Force Field): Force field (One of `GAFF2` and `OPLS`)
-
         natoms_total (int): Total number of atoms of the system
+
+        builder (Builder): Builder (One of `EMC` or `PSP`)
 
         natoms_per_chain (int): Number of atoms per polymer chain, one of this
                                 attribute, `mw_per_chain`, and `ru_per_chain`
@@ -203,9 +193,9 @@ class SolventSystem(System):
                  smiles: str,
                  solvent_smiles: str,
                  ru_nsolvent_ratio: float,
-                 force_field: ForceField,
                  density: float,
                  natoms_total: int,
+                 builder: Builder,
                  *,
                  natoms_per_chain: Optional[int] = None,
                  mw_per_chain: Optional[int] = None,
@@ -215,10 +205,14 @@ class SolventSystem(System):
         self._solvent_smiles = solvent_smiles
         self._ru_nsolvent_ratio = ru_nsolvent_ratio
 
+        if not isinstance(builder, EMC):
+            raise ValueError('SolventSystem currently only accepts '
+                             'PSP builder')
+
         super().__init__(smiles,
-                         force_field,
                          density,
                          natoms_total,
+                         builder,
                          natoms_per_chain=natoms_per_chain,
                          mw_per_chain=mw_per_chain,
                          ru_per_chain=ru_per_chain,
@@ -289,74 +283,8 @@ class SolventSystem(System):
             None
         '''
 
-        psp_input_data = {
-            'ID': ['Sol', 'Poly'],
-            'smiles': [self._solvent_smiles, self._smiles],
-            'Len': [1, self._length],
-            'Num': [self._nsolvents, self._nchains],
-            'NumConf': [1, 1],
-            'Loop': [False, False],
-            'LeftCap': [np.nan, '[*][H]'],
-            'RightCap': [np.nan, '[*][H]']
-        }
-
-        _run_psp(psp_input_data, self._density, self._force_field,
-                 self._data_fname, output_dir, cleanup)
-
-
-def _run_psp(input_data: dict, density: float, force_field: ForceField,
-             data_fname: str, output_dir: str, cleanup: bool) -> None:
-    try:
-        import psp.AmorphousBuilder as ab
-    except ImportError:
-        raise ImportError('System\'s write_data function requires PSP to '
-                          'function properly, please install PSP')
-
-    Pmdlogging.info('Creating the system, this may take a while...')
-    try:
-        with HiddenPrints():
-            amor = ab.Builder(pd.DataFrame(data=input_data),
-                              density=density,
-                              OutDir=output_dir)
-            amor.Build()
-
-            if isinstance(force_field, OPLS):
-                amor.get_opls(
-                    output_fname=data_fname,
-                    lbcc_charges=force_field.charge_method == 'cm1a-lbcc')
-            elif isinstance(force_field, GAFF2):
-                amor.get_gaff2(
-                    output_fname=data_fname,
-                    atom_typing='antechamber',
-                    am1bcc_charges=force_field.charge_method == 'am1bcc',
-                    swap_dict={
-                        'ns': 'n',
-                        'nt': 'n',
-                        'nv': 'nh'
-                    })
-        Pmdlogging.info(
-            f'System file - {data_fname} successfully created in {output_dir}')
-    finally:
-        if cleanup:
-            force_field_dname = ['ligpargen'] if isinstance(
-                force_field, OPLS) else ['pysimm']
-            dnames = ['molecules', 'packmol'] + force_field_dname
-            for dir in dnames:
-                try:
-                    shutil.rmtree(os.path.join(output_dir, dir))
-                except FileNotFoundError:
-                    pass
-
-            fnames = ['amor_model.data', 'amor_model.vasp']
-            for file in fnames:
-                try:
-                    os.remove(os.path.join(output_dir, file))
-                except FileNotFoundError:
-                    pass
-
-            fnames = ['output_MB.csv', 'molecules.csv']
-            for file in fnames:
-                try:
-                    os.remove(file)
-                except FileNotFoundError:
-                    pass
+        self._builder.write_solvent_data(output_dir, self._smiles,
+                                         self._solvent_smiles, self._density,
+                                         self._natoms_total, self._length,
+                                         self._nsolvents, self._nchains,
+                                         self._data_fname, cleanup)
