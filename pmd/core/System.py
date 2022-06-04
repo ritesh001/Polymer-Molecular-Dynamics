@@ -2,7 +2,7 @@ from typing import Optional
 
 from rdkit import Chem
 
-from pmd.core.Builder import EMC, Builder
+from pmd.core.Builder import PSP, Builder
 from pmd.util import Pmdlogging, validate_options
 
 CHAIN_LENGTH_OPTIONS = ('natoms_per_chain', 'mw_per_chain', 'ru_per_chain')
@@ -195,7 +195,7 @@ class SolventSystem(System):
         self._solvent_smiles = solvent_smiles
         self._ru_nsolvent_ratio = ru_nsolvent_ratio
 
-        if not isinstance(builder, EMC):
+        if not isinstance(builder, PSP):
             raise ValueError('SolventSystem currently only accepts '
                              'PSP builder')
 

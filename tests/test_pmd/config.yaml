@@ -1,8 +1,19 @@
+pmd.System:
+  smiles: '*CC(*)c1ccccc1'
+  density: 0.5
+  natoms_total: 500
+  builder:
+    pmd.EMC:
+      force_field: pcff
+  natoms_per_chain: 100
+  data_fname: data.lmps
+  length: 6
+  nchains: 5
 pmd.Lammps:
   read_data_from: data.lmps
-  force_field:
-    pmd.GAFF2:
-      charge_method: gasteiger
+  get_functional_form_from:
+    pmd.EMC:
+      force_field: pcff
   atom_style: full
   units: real
   timestep: 1

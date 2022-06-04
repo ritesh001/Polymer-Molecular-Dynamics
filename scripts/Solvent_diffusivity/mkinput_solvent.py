@@ -34,10 +34,10 @@ if __name__ == '__main__':
     system = pmd.SolventSystem(smiles=smiles,
                                solvent_smiles=solvent,
                                ru_nsolvent_ratio=ratio,
-                               force_field=pmd.GAFF2(charge_method='am1bcc'),
                                density=0.8,
                                natoms_total=5000,
-                               natoms_per_chain=150)
+                               natoms_per_chain=150,
+                               builder=pmd.PSP(force_field='gaff2-am1bcc'))
 
     lmp = pmd.Lammps(read_data_from=system)
     lmp.add_procedure(pmd.Minimization())

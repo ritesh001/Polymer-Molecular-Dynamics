@@ -1,12 +1,12 @@
 import pmd
 
 if __name__ == '__main__':
-    # Build a Polyethlyene system
+    # Build a Polystyrene system
     system = pmd.System(smiles='*CC(*)c1ccccc1',
                         density=0.5,
-                        natoms_total=5000,
-                        natoms_per_chain=250,
-                        builder=pmd.EMC(force_field='opls-aa'))
+                        natoms_total=500,
+                        natoms_per_chain=100,
+                        builder=pmd.EMC(force_field='pcff'))
 
     # Equilibrate the system
     lmp = pmd.Lammps(read_data_from=system)
