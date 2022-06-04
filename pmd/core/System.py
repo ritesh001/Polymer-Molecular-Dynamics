@@ -1,4 +1,3 @@
-import re
 from typing import Optional
 
 from rdkit import Chem
@@ -70,9 +69,6 @@ class System:
         # Make sure only 1 chain length option is given
         validate_options(self, CHAIN_LENGTH_OPTIONS)
 
-        # convert * to [*]
-        self._convert_asterisk()
-
         # Calculate system specs such as chain length, # of polymers
         self._calculate_system_spec()
 
@@ -94,17 +90,11 @@ class System:
     @smiles.setter
     def smiles(self, smiles: str):
         self._smiles = smiles
-        self._convert_asterisk()
         self._calculate_system_spec()
 
     @builder.setter
     def builder(self, builder: str):
         self._builder = builder
-
-    def _convert_asterisk(self):
-        stars_no_bracket = re.findall(r'(?<!\[)\*(?!\])', self._smiles)
-        if len(stars_no_bracket) == 2:
-            self._smiles = self._smiles.replace('*', '[*]')
 
     def _calculate_system_spec(self):
         mol = Chem.MolFromSmiles(self._smiles)

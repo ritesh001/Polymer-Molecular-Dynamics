@@ -2,11 +2,11 @@ import pmd
 
 if __name__ == '__main__':
     # Build a Polyethlyene system
-    system = pmd.System(smiles='*CC*',
+    system = pmd.System(smiles='*CC(*)c1ccccc1',
                         density=0.5,
-                        force_field=pmd.GAFF2(),
-                        natoms_total=2500,
-                        natoms_per_chain=150)
+                        natoms_total=5000,
+                        natoms_per_chain=250,
+                        builder=pmd.EMC(force_field='opls-aa'))
 
     # Equilibrate the system
     lmp = pmd.Lammps(read_data_from=system)

@@ -99,14 +99,15 @@ class Lammps:
         self._procedures = procedures
 
         # reassign data source and force field if objects are provided
-        # if isinstance(read_data_from, System):
-        #     self._read_data_from = read_data_from.data_fname
-        #     self._force_field = read_data_from.force_field
-        # elif isinstance(read_restart_from, Lammps):
-        #     # TODO: implement this
-        #     # self._read_restart_from =
-        #     # read_restart_from.last_restart_fname
-        #     self._force_field = read_restart_from.force_field
+        if isinstance(read_data_from, System):
+            self._read_data_from = read_data_from.data_fname
+            self._get_functional_form_from = read_data_from.builder
+        elif isinstance(read_restart_from, Lammps):
+            # TODO: implement this
+            # self._read_restart_from =
+            # read_restart_from.last_restart_fname
+            self._get_functional_form_from = \
+                read_restart_from.get_functional_form_from
 
         # Make sure only 1 data source option is given
         validate_options(self, DATA_SOURCE_OPTIONS)
@@ -120,13 +121,7 @@ class Lammps:
 
     @property
     def get_functional_form_from(self) -> Builder:
-        if isinstance(self._read_data_from, System):
-            builder = self._read_data_from.builder
-        elif isinstance(self._read_restart_from, Lammps):
-            builder = self._read_restart_from.get_functional_form_from
-        else:
-            builder = self._get_functional_form_from
-        return builder
+        return self._get_functional_form_from
 
     def add_procedure(self, procedure: Union[Procedure,
                                              List[Procedure]]) -> Lammps:
@@ -169,15 +164,14 @@ class Lammps:
             f.write(f'{"units":<15} {self._units}\n')
             f.write('\n')
 
-            self.get_functional_form_from.write_functional_form(f)
+            self._get_functional_form_from.write_functional_form(f)
             f.write('\n')
 
             if self._read_data_from:
                 f.write(f'{"read_data":<15} {self._read_data_from}\n')
-            # TODO: add last_restart_fname
-            # elif self._read_restart_from:
-            #   f.write(f'{"read_restart":<15} '
-            #           f'{self._read_restart_from.last_restart_fname}\n')
+            elif self._read_restart_from:
+                f.write(f'{"read_restart":<15} {self._read_restart_from}\n')
+
             f.write('\n')
 
             f.write(f'{"neighbor":<15} {self._neighbor_skin} bin\n')
