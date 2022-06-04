@@ -123,6 +123,9 @@ class EMC(Builder):
                     else:
                         final_file_after_coeffs.append(line)
 
+            # There are double empty lines at the end of EMC data file
+            final_file_after_coeffs = final_file_after_coeffs[:-1]
+
             # combine data and parameters into the final data file
             with open(data_fname, 'w') as f:
                 for line in final_file_before_coeffs:
