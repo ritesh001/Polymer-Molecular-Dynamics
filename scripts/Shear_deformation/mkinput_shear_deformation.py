@@ -3,7 +3,7 @@ import pmd
 if __name__ == '__main__':
     # Build a Polyethlyene system
     system = pmd.System(smiles='*CC*',
-                        density=0.5,
+                        density=0.8,
                         natoms_total=10000,
                         natoms_per_chain=600,
                         builder=pmd.EMC(force_field='pcff'))

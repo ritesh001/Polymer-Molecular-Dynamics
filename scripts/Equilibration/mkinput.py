@@ -4,8 +4,8 @@ if __name__ == '__main__':
     # Build a Polystyrene system
     system = pmd.System(smiles='*CC(*)c1ccccc1',
                         density=0.5,
-                        natoms_total=500,
-                        natoms_per_chain=100,
+                        natoms_total=2500,
+                        natoms_per_chain=150,
                         builder=pmd.EMC(force_field='pcff'))
 
     # Equilibrate the system

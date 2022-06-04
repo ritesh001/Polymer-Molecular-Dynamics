@@ -10,10 +10,12 @@ import pyemc
 
 from pmd.util import HiddenPrints, Pmdlogging, build_dir
 
-EMC_FORCE_FIELD_OPTIONS = ('pcff', 'opls-aa')
 PSP_FORCE_FIELD_OPTIONS = ('opls-lbcc', 'opls-cm1a', 'gaff2-gasteiger',
                            'gaff2-am1bcc')
+EMC_FORCE_FIELD_OPTIONS = ('pcff', 'opls-aa')
+
 EMC_EXTS = ('esh', 'data', 'in', 'params', 'vmd', 'emc.gz', 'pdb.gz', 'psf.gz')
+EMC_COEFF_EXCLUSIONS = ('bb', 'ba', 'mbt', 'ebt', 'at', 'aat', 'bb13', 'aa')
 
 
 class Builder:
@@ -134,6 +136,8 @@ class EMC(Builder):
                     f.write(param)
                     f.write('\n')
                     for line in param_lines:
+                        for coeff in EMC_COEFF_EXCLUSIONS:
+                            line = line.replace(f' {coeff} ', ' ')
                         f.write(line)
                     f.write('\n')
                 for line in final_file_after_coeffs:
