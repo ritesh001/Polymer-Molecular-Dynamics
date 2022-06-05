@@ -4,6 +4,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import yaml
 
+import pmd
 import pmd.core
 # These have to be written explicitly for typing
 from pmd.core.Builder import Builder
@@ -172,7 +173,7 @@ class Pmd:
             None
         '''
 
-        config_dict = {}
+        config_dict = {'pmd.version': pmd.__version__}
 
         if self._system:
             config_dict[f'{OBJECT_PRFIX}{self._system}'] = to_yaml_dict(
@@ -221,6 +222,12 @@ class Pmd:
         with open(config_file) as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
             for k, v in yaml_dict.items():
+                # do not instantiate an object if it is the version item
+                if k == 'pmd.version':
+                    if v != pmd.__version__:
+                        Pmdlogging.warning('Config file version does not '
+                                           'match your current PMD version')
+                    continue
                 obj = instantiate_from_cls_name(k, v)
                 if isinstance(obj, System):
                     obj.write_data(output_dir)

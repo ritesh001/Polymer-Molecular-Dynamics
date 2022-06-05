@@ -1,7 +1,8 @@
 import pytest
 
-from pmd.core import (PSP, Equilibration, Lammps, Minimization, MSDMeasurement,
-                      ShearDeformation, TensileDeformation, TgMeasurement)
+from pmd.core import (PSP, Equilibration, Lammps, NPT, NVT, Minimization,
+                      MSDMeasurement, ShearDeformation, TensileDeformation,
+                      TgMeasurement)
 
 
 @pytest.mark.parametrize(
@@ -46,6 +47,12 @@ from pmd.core import (PSP, Equilibration, Lammps, Minimization, MSDMeasurement,
                              T=300,
                              reset_timestep_before_run=True)
         ], 'lmp_ShearDeformation.in'),
+        ([
+            Minimization(),
+            Equilibration(Teq=300, Peq=1, Tmax=800, Pmax=49346.163),
+            NPT(Tinit=300, Tfinal=300, Pinit=1, Pfinal=1, duration=10**7),
+            NVT(Tinit=300, Tfinal=300, duration=10**8)
+        ], 'lmp_NPT_NVT.in'),
     ],
 )
 def test_lammps_write(data_path, tmp_path, procedures, lmp_input_fname):
