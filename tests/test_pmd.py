@@ -1,9 +1,9 @@
 import pytest
 
+from pmd import __version__
 from pmd.core import (EMC, Equilibration, Lammps, Minimization, Pmd, System,
                       Torque)
 from pmd.entry import load
-from pmd import __version__
 
 
 @pytest.fixture
