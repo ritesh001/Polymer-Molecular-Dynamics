@@ -43,6 +43,12 @@ The key properties are:
 - **Solubility** - Planned
 - **Melting temperature (Tm)** - Planned
 
+## Installation
+
+```bash
+pip install pmd
+```
+
 ## Example
 
 Below is an example where we use PMD to generate LAMMPS data and input files for Tg measurement with a list of SMILES strings.
@@ -130,16 +136,3 @@ pmd.Torque:
   walltime: "48:00:00"
   job_fname: job.pbs
 ```
-
-## Installation
-
-```bash
-pip install pmd
-```
-
-### Prerequisites
-
-- [PSP](https://github.com/Ramprasad-Group/PSP) - for generating polymer topology
-- [RDKit](https://www.rdkit.org/) - for getting molecule info such as molecular weight
-
-PSP and RDKit are required to be installed for the package to fully function.
