@@ -42,7 +42,7 @@ class Builder:
 
 class EMC(Builder):
     '''Object to perform system structure generation using
-    (EMC)[http://montecarlo.sourceforge.net/]: Enhanced Monte Carlo package.
+    [EMC](http://montecarlo.sourceforge.net/): Enhanced Monte Carlo package.
     This object should be used as input argument of `System` or `Lammps`
     objects
 
@@ -104,23 +104,23 @@ class EMC(Builder):
             with open(f'{tmp_file_prefilx}.params', 'r') as lines:
                 for line in lines:
                     parts = line.split()
-                    fw = parts[0] if len(parts) > 0 else ''
+                    first_word = parts[0] if len(parts) > 0 else ''
                     # put an empty list when reaching a Coeffs section
                     if line.startswith('#') and line.endswith('Coeffs\n'):
                         key = line.lstrip('# ')
                         params[key] = []
-                    elif '_coeff' in fw and key:
-                        params[key].append(line.lstrip(fw))
+                    elif '_coeff' in first_word and key:
+                        params[key].append(line.lstrip(first_word))
 
             # store data from .data file
             final_file_before_coeffs = []
             final_file_after_coeffs = []
-            before = True
+            before_coeffs = True
             with open(f'{tmp_file_prefilx}.data', 'r') as lines:
                 for line in lines:
                     if line == 'Atoms\n':
-                        before = False
-                    if before:
+                        before_coeffs = False
+                    if before_coeffs:
                         final_file_before_coeffs.append(line)
                     else:
                         final_file_after_coeffs.append(line)
@@ -184,13 +184,13 @@ class EMC(Builder):
 
 class PSP(Builder):
     '''Object to perform system structure generation using
-    (PSP)[https://github.com/Ramprasad-Group/PSP]: Polymer Structure Predictor
+    [PSP](https://github.com/Ramprasad-Group/PSP): Polymer Structure Predictor
     package. This object should be used as input argument of `System` or
     `Lammps` objects
 
     Attributes:
         force_field (str): Force field, options are `"opls-lbcc"`,
-        `"opls-cm1a"`, `"gaff2-gasteiger"`, `"gaff2-am1bcc"`
+        `"opls-cm1a"`, `"gaff2-gasteiger"`, and `"gaff2-am1bcc"`
     '''
 
     def __init__(self, force_field: str) -> None:

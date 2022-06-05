@@ -5,7 +5,7 @@ title: Installation
 
 The main package used here is the **Polymer Molecular Dynamics (PMD) package**, which can build LAMMPS input files, PBS/Slurm job files, and analyze results for various MD calculations.
 
-However, to run MD simulations, we also need the initial configuration and force field parameters of the system. The System objects in PMD utilizes the **Polymer Structure Predictor (PSP) package** to prepare those.
+However, to run MD simulations, we also need the initial configuration and force field parameters of the system. The System objects in PMD utilizes either the **Enhanced Monte Carlo (EMC) package** or the **Polymer Structure Predictor (PSP) package** to prepare those.
 
 Belows are the installation instruction on these two packages:
 
@@ -17,10 +17,14 @@ To install PMD, simply do
 $ pip install pmd
 ```
 
+## EMC
+
+EMC is automatically installed with PMD as one of the dependencies via [emc-pypi](https://github.com/kevinshen56714/emc-pypi).
+
 ## PSP
 
 :::tip Tip
-If you're using PMD only for creating LAMMPS input files or PBS/Slurm job files, PSP is not required.
+PSP is not required if (1) you use EMC as the `System`'s builder, or (2) you only want to create LAMMPS input files or PBS/Slurm job files.
 :::
 
 ### For general users

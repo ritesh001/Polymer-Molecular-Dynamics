@@ -1,5 +1,6 @@
 import pytest
 
+from pmd import __version__
 from pmd.core import (EMC, Equilibration, Lammps, Minimization, Pmd, System,
                       Torque)
 from pmd.entry import load
@@ -43,7 +44,10 @@ def test_pmd_create(tmp_path, test_data):
     run = Pmd(system=system, lammps=lmp, job=job)
     run.create(output_dir=d, save_config=True)
 
-    assert actual_output.read_text() == test_data['config_file'].read_text()
+    actual_output_no_version = actual_output.read_text().replace(
+        f'pmd.version: {__version__}\n', '')
+
+    assert actual_output_no_version == test_data['config_file'].read_text()
 
 
 def test_pmd_load(tmp_path, test_data):
