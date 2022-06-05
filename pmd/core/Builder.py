@@ -158,7 +158,7 @@ class EMC(Builder):
                     try:
                         os.remove(fname)
                     except Exception:
-                        print(f'problem removing {fname} during cleanup')
+                        pass
 
             os.chdir(previous_dir)
 
