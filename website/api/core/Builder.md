@@ -16,7 +16,8 @@ objects
 
 **Attributes**:
 
-- `force_field` _str_ - Force field, options are `"pcff"` and `"opls-aa"`
+- `force_field` _str_ - Force field, options are `"pcff"`, `"opls-aa"`,
+  `"opls-ua"`, and `"trappe"`
 
 ## PSP Objects
 

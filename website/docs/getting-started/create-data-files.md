@@ -55,12 +55,12 @@ s = pmd.System(smiles=smiles,
                builder=pmd.PSP(force_field='gaff2-gasteiger'))
 ```
 
-The **`EMC`** builder has `force_field` options of **`pcff`** and **`opls-aa`**.
+The `EMC` builder has `force_field` options of **`pcff`**, **`opls-aa`**, **`opls-ua`**, and **`trappe`**.
 
-And the **`PSP`** builder has `force_field` options of **`opls-cm1a`**, **`opls-lbcc`**, **`gaff2-gasteiger`**, and **`gaff2-am1bcc`**.
+And the `PSP` builder has `force_field` options of **`opls-cm1a`**, **`opls-lbcc`**, **`gaff2-gasteiger`**, and **`gaff2-am1bcc`**.
 
-:::danger Notes on using PSP
-If you want to use PSP as the builder, PSP and its dependencies have to be installed manually.
+:::caution
+If you want to use `PSP` as the builder, [PSP](https://github.com/Ramprasad-Group/PSP) and its dependencies have to be installed manually.
 :::
 
 ## Generate LAMMPS data file

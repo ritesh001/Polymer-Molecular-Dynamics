@@ -12,9 +12,10 @@ from pmd.util import HiddenPrints, Pmdlogging, build_dir
 
 PSP_FORCE_FIELD_OPTIONS = ('opls-lbcc', 'opls-cm1a', 'gaff2-gasteiger',
                            'gaff2-am1bcc')
-EMC_FORCE_FIELD_OPTIONS = ('pcff', 'opls-aa')
+EMC_FORCE_FIELD_OPTIONS = ('pcff', 'opls-aa', 'opls-ua', 'trappe')
 
-EMC_EXTS = ('esh', 'data', 'in', 'params', 'vmd', 'emc.gz', 'pdb.gz', 'psf.gz')
+EMC_EXTS = ('esh', 'data', 'in', 'params', 'vmd', 'emc.gz', 'pdb.gz', 'psf.gz',
+            'cmap')
 EMC_COEFF_EXCLUSIONS = ('bb', 'ba', 'mbt', 'ebt', 'at', 'aat', 'bb13', 'aa')
 
 
@@ -47,7 +48,8 @@ class EMC(Builder):
     objects
 
     Attributes:
-        force_field (str): Force field, options are `"pcff"` and `"opls-aa"`
+        force_field (str): Force field, options are `"pcff"`, `"opls-aa"`,
+        `"opls-ua"`, and `"trappe"`
     '''
 
     def __init__(self, force_field: str) -> None:
@@ -81,7 +83,7 @@ class EMC(Builder):
             f.write('\n')
             f.write('ITEM GROUPS\n')
             f.write(f'RU {smiles},1,RU:2\n')
-            f.write('terminator *[H],1,RU:1,1,RU:2\n')
+            f.write('terminator *C,1,RU:1,1,RU:2\n')
             f.write('ITEM END\n')
             f.write('\n')
             f.write('ITEM CLUSTERS\n')
@@ -156,12 +158,22 @@ class EMC(Builder):
                     try:
                         os.remove(fname)
                     except Exception:
-                        print(f'problem removing {fname} during cleanup')
+                        pass
 
             os.chdir(previous_dir)
 
     def write_functional_form(self, f: TextIOWrapper) -> None:
-        if self._force_field == 'pcff':
+        if self._force_field.startswith('opls'):
+            f.write(f'{"pair_style":<15} lj/cut/coul/long 9.5 9.5\n')
+            f.write(f'{"pair_modify":<15} mix geometric tail yes\n')
+            f.write(f'{"kspace_style":<15} pppm/cg 1e-4\n')
+            f.write(f'{"bond_style":<15} harmonic\n')
+            f.write(f'{"angle_style":<15} harmonic\n')
+            f.write(f'{"dihedral_style":<15} multi/harmonic\n')
+            f.write(f'{"improper_style":<15} harmonic\n')
+            f.write(f'{"special_bonds":<15} lj/coul 0.0 0.0 0.5\n')
+
+        elif self._force_field == 'pcff':
             f.write(f'{"pair_style":<15} lj/class2/coul/long 9.5 9.5\n')
             f.write(f'{"pair_modify":<15} mix sixthpower tail yes\n')
             f.write(f'{"kspace_style":<15} pppm/cg 1e-4\n')
@@ -171,15 +183,15 @@ class EMC(Builder):
             f.write(f'{"improper_style":<15} class2\n')
             f.write(f'{"special_bonds":<15} lj/coul 0 0 1\n')
 
-        elif self._force_field == 'opls-aa':
-            f.write(f'{"pair_style":<15} lj/cut/coul/long 9.5 9.5\n')
-            f.write(f'{"pair_modify":<15} mix geometric tail yes\n')
+        if self._force_field == 'trappe':
+            f.write(f'{"pair_style":<15} lj/cut/coul/long 14.0\n')
+            f.write(f'{"pair_modify":<15} mix arithmetic tail yes\n')
             f.write(f'{"kspace_style":<15} pppm/cg 1e-4\n')
             f.write(f'{"bond_style":<15} harmonic\n')
             f.write(f'{"angle_style":<15} harmonic\n')
             f.write(f'{"dihedral_style":<15} multi/harmonic\n')
             f.write(f'{"improper_style":<15} harmonic\n')
-            f.write(f'{"special_bonds":<15} lj/coul 0.0 0.0 0.5\n')
+            f.write(f'{"special_bonds":<15} lj 0 0 0 coul 0 0 0.5\n')
 
 
 class PSP(Builder):
