@@ -62,6 +62,20 @@ def calculate_Tg(result_fname: str,
     return Tg
 
 
+def calculate_diffusivity(result_folder: str):
+    '''Method to calculate diffusivity based on the files in the
+    result folder obtained from MSDMeasurement Procedure
+
+    Parameters:
+        result_folder (str): Name of the result folder from MSDMeasurement
+                             Procedure
+
+    Returns:
+        D (float): Diffusivity of the system
+    '''
+    pass
+
+
 def calculate_MSD(r, ir, box_bounds, id2type=[]):
     '''Method to calculate mean squared displacement for each type as given in
     `id2type`; NOTE: does NOT do any sort of block averaging; assumes mass = 1

@@ -1,9 +1,10 @@
 import argparse
+from typing import Optional, Sequence
 
 from pmd.core.Pmd import Pmd
 
 
-def main(args=None):
+def main(args: Optional[Sequence[str]] = None):
     args = parse_command_line(args)
     output_dir = '.'
     if args.output_dir:
@@ -11,7 +12,7 @@ def main(args=None):
     Pmd.load_config(args.config, output_dir)
 
 
-def parse_command_line(args=None):
+def parse_command_line(args: Optional[Sequence[str]] = None):
     parser = argparse.ArgumentParser(
         description='Create simulation files from Pmd config files.')
     parser.add_argument('config', help='configuration file')
