@@ -73,6 +73,7 @@ def calculate_diffusivity(result_folder: str):
     Returns:
         D (float): Diffusivity of the system
     '''
+    #test
     pass
 
 
