@@ -1,7 +1,7 @@
 import argparse
 from typing import Optional, Sequence
 
-from pmd.postprocessing import calculate_Tg, calculate_diffusivity
+from pmd.postprocessing import calculate_diffusivity, calculate_Tg
 
 
 def main(args: Optional[Sequence[str]] = None):
