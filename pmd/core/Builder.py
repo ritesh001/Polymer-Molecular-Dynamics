@@ -20,6 +20,7 @@ EMC_COEFF_EXCLUSIONS = ('bb', 'ba', 'mbt', 'ebt', 'at', 'aat', 'bb13', 'aa')
 
 
 class Builder:
+
     def __init__(self, force_field: str,
                  force_field_options: Tuple[str]) -> None:
         self._force_field = force_field
@@ -50,6 +51,7 @@ class EMC(Builder):
         force_field (str): Force field, options are `"pcff"`, `"opls-aa"`,
         `"opls-ua"`, and `"trappe"`
     '''
+
     def __init__(self, force_field: str) -> None:
         super().__init__(force_field, EMC_FORCE_FIELD_OPTIONS)
 
@@ -202,6 +204,7 @@ class PSP(Builder):
         force_field (str): Force field, options are `"opls-lbcc"`,
         `"opls-cm1a"`, `"gaff2-gasteiger"`, and `"gaff2-am1bcc"`
     '''
+
     def __init__(self, force_field: str) -> None:
         super().__init__(force_field, PSP_FORCE_FIELD_OPTIONS)
 
