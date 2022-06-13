@@ -231,7 +231,7 @@ class PSP(Builder):
             with HiddenPrints():
                 amor = ab.Builder(pd.DataFrame(data=input_data),
                                   density=density,
-                                  OutDir=output_dir)
+                                  outdir=output_dir)
                 amor.Build()
 
                 if self._is_opls_force_field:
