@@ -234,10 +234,10 @@ class PSP(Builder):
                                   outdir=output_dir)
                 amor.Build()
 
-                if self._is_opls_force_field:
+                if self._is_opls_force_field():
                     amor.get_opls(
                         output_fname=data_fname,
-                        lbcc_charges=self._force_field.endswith('opls-lbcc'))
+                        lbcc_charges=self._force_field.endswith('lbcc'))
                 else:
                     amor.get_gaff2(
                         output_fname=data_fname,
@@ -255,8 +255,8 @@ class PSP(Builder):
             if cleanup:
                 force_field_dname = [
                     'ligpargen'
-                ] if self._is_opls_force_field else ['pysimm']
-                dnames = ['molecules', 'packmol'] + force_field_dname
+                ] if self._is_opls_force_field() else ['pysimm']
+                dnames = ['chain_models', 'packmol'] + force_field_dname
                 for dir in dnames:
                     try:
                         shutil.rmtree(os.path.join(output_dir, dir))
@@ -285,12 +285,11 @@ class PSP(Builder):
         input_data = {
             'ID': ['Poly'],
             'smiles': [smiles],
-            'Len': [length],
+            'Tunits': [length],
             'Num': [nchains],
-            'NumConf': [1],
             'Loop': [False],
-            'LeftCap': ['[*][H]'],
-            'RightCap': ['[*][H]']
+            'LeftCap': ['[*]C'],
+            'RightCap': ['[*]C']
         }
         self._run_psp(input_data, density, data_fname, output_dir, cleanup)
 
@@ -302,12 +301,11 @@ class PSP(Builder):
         input_data = {
             'ID': ['Sol', 'Poly'],
             'smiles': [solvent_smiles, smiles],
-            'Len': [1, length],
+            'Tunits': [1, length],
             'Num': [nsolvents, nchains],
-            'NumConf': [1, 1],
             'Loop': [False, False],
-            'LeftCap': [np.nan, '[*][H]'],
-            'RightCap': [np.nan, '[*][H]']
+            'LeftCap': [np.nan, '[*]C'],
+            'RightCap': [np.nan, '[*]C']
         }
         self._run_psp(input_data, density, data_fname, output_dir, cleanup)
 
