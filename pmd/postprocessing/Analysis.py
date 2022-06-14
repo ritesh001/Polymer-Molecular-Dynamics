@@ -1,4 +1,10 @@
-from typing import Optional
+import csv
+import itertools
+import math
+import operator
+import os
+import warnings
+from typing import List, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7,16 +13,9 @@ from scipy import optimize
 
 from pmd.util.Log import Pmdlogging
 
-import csv
-import itertools
-import operator
-import os
-import math
-from typing import List
-import warnings
 warnings.filterwarnings("ignore")
-from sklearn.linear_model import LinearRegression
 from scipy.optimize import curve_fit
+from sklearn.linear_model import LinearRegression
 
 
 def calculate_Tg(result_fname: str,
@@ -216,8 +215,8 @@ def calculate_diffusivity(result_folder: str):
 # if __name__ == '__main__':
 #     main()
 
-  
-  
+
+
     '''Method to calculate diffusivity based on the files in the
     result folder obtained from MSDMeasurement Procedure
 
@@ -228,7 +227,7 @@ def calculate_diffusivity(result_folder: str):
     Returns:
         D (float): Diffusivity of the system
     '''
-  
+
 
 
 
