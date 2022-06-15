@@ -6,14 +6,9 @@ if __name__ == '__main__':
         # graph and use_scm_version
         setup(name='pmd',
               install_requires=[
-                  'importlib-metadata',
-                  'pyyaml>=5.0',
-                  'numpy>=1.0',
-                  'pandas>=1.0',
-                  'matplotlib>=3.0',
-                  'scipy>=1.0',
-                  'rdkit-pypi>=2022.3.2',
-                  'emc-pypi>=1.0.0',
+                  'importlib-metadata', 'pyyaml>=5.0', 'numpy>=1.0',
+                  'pandas>=1.0', 'matplotlib>=3.0', 'scipy>=1.0',
+                  'rdkit-pypi>=2022.3.2', 'emc-pypi>=1.0.0',
                   'scikit-learn>=1.0'
               ],
               extras_require={
