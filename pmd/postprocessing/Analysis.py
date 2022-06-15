@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import optimize
-
-from pmd.util.Log import Pmdlogging
 from scipy.optimize import curve_fit
 from sklearn.linear_model import LinearRegression
+
+from pmd.util.Log import Pmdlogging
 
 warnings.filterwarnings("ignore")
 
@@ -88,6 +88,7 @@ def calculate_diffusivity(result_folder: str = 'result',
     Returns:
         D (float): Diffusivity of the system
     '''
+
     def read_files(dir: str, block_list: List[int]):
         process_dict = {}
         block_dict = {}
