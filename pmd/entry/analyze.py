@@ -10,13 +10,13 @@ def main(args: Optional[Sequence[str]] = None):
     # TODO: setup a nice dict with all property options and
     # corresponding functions
     if args.property == 'Tg':
-        calculate_Tg(args.result)
+        property_result = calculate_Tg(args.result)
     elif args.property == 'D':
         if 'result' in args.keys():
-            calculate_diffusivity(args.result)
+            property_result = calculate_diffusivity(args.result)
         else:
-            calculate_diffusivity()
-
+            property_result = calculate_diffusivity()
+    return property_result
 
 def parse_command_line(args: Optional[Sequence[str]] = None):
     parser = argparse.ArgumentParser(description=(
