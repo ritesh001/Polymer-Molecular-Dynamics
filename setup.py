@@ -14,6 +14,7 @@ if __name__ == '__main__':
                   'scipy>=1.0',
                   'rdkit-pypi>=2022.3.2',
                   'emc-pypi>=1.0.0',
+                  'scikit-learn>=1.0'
               ],
               extras_require={
                   'testing': ['setuptools', 'pytest', 'pytest-cov'],
