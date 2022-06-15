@@ -1,11 +1,18 @@
-from typing import Optional
+import math
+import os
+import warnings
+from typing import List, Optional
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import optimize
+from scipy.optimize import curve_fit
+from sklearn.linear_model import LinearRegression
 
 from pmd.util.Log import Pmdlogging
+
+warnings.filterwarnings("ignore")
 
 
 def calculate_Tg(result_fname: str,
@@ -60,6 +67,165 @@ def calculate_Tg(result_fname: str,
     Pmdlogging.info(f'Glass transition temperature: {Tg}')
 
     return Tg
+
+
+def calculate_diffusivity(result_folder: str = 'result',
+                          block_list: List[int] = [1, 2, 4, 5, 10, 20],
+                          time_array: List[int] = [
+                              5000000, 10000000, 20000000, 50000000, 100000000,
+                              200000000
+                          ]):
+    '''Method to calculate diffusivity based on the files in the
+    result folder obtained from MSDMeasurement Procedure
+
+    Parameters:
+        result_folder (str): Name of the result folder from MSDMeasurement
+                             Procedure
+        block_list (list): A list of number of blocks to use
+        time_array (list): A list of time as the start and end points of
+                        fitting region
+
+    Returns:
+        D (float): Diffusivity of the system
+    '''
+
+    def read_files(dir: str, block_list: List[int]):
+        process_dict = {}
+        block_dict = {}
+        file_counter = 0
+        for root, dirs, files in os.walk(dir):
+            for file in files:
+                parts = file.split('.')[0].split('_')
+                if file.endswith(".txt") and len(parts) == 3:
+                    file_counter += 1
+                    # read file and add to process_dict with starting times
+                    # as keys and dfs as values
+                    df = pd.read_csv(os.path.join(dir, file),
+                                     header=1,
+                                     usecols=[0, 1],
+                                     delim_whitespace=True,
+                                     names=['time', 'msd'])
+
+                    process_dict[int(parts[1])] = df
+
+        duration = int(parts[2])
+        # validate all blocks
+        for block in block_list:
+            if file_counter % block != 0:
+                Pmdlogging.warning(f'block numbers in the block list should '
+                                   f'be a factor of {file_counter}')
+                continue
+
+            for b in range(block):
+                start_time = int(duration / block * b)
+                final_time = int(duration / block * (b + 1))
+                df_block = process_dict[start_time].copy()
+                df_block.columns = ['time', f'block{b}']
+                final_index = df_block.index[df_block['time'] ==
+                                             final_time].to_list()[0]
+
+                df_block_sliced = df_block.loc[:final_index]
+                df_block_sliced['time'] = df_block_sliced['time'] - \
+                    df_block_sliced['time'][0]
+
+                if b == 0:
+                    df_final = df_block_sliced
+                else:
+                    df_final = df_final.merge(df_block_sliced, on='time')
+
+            block_dict[block] = df_final
+        return block_dict
+
+    def find_nearest(array, value):
+        array = np.asarray(array)
+        nearest_index = (np.abs(array - value)).argmin()
+        if array[nearest_index] > value:
+            nearest_index -= 1
+        return nearest_index
+
+    def main_calculation(block_dict, t1, t2):
+        dif_mean = np.zeros(len(block_dict))
+        msd_slope_log_mean = np.zeros(len(block_dict))
+        dif_std = np.zeros(len(block_dict))
+        msd_slope_log_std = np.zeros(len(block_dict))
+        block_list = np.zeros(len(block_dict))
+
+        for index, num_blocks in enumerate(sorted(block_dict)):
+            time = list(block_dict[num_blocks]['time'])
+
+            cut_point = find_nearest(time, t1)
+            cut_point2 = find_nearest(time, t2)
+
+            if cut_point == cut_point2:
+                cut_point = cut_point2 - 5
+
+            dif = np.zeros(num_blocks)
+            msd_slope_log = np.zeros(num_blocks)
+            msd_slope_linear = np.zeros(num_blocks)
+
+            for n in range(num_blocks):
+                x = np.log10(
+                    block_dict[num_blocks]['time'].loc[cut_point:cut_point2])
+                y = np.log10(block_dict[num_blocks]
+                             [f'block{n}'].loc[cut_point:cut_point2])
+                x_sklearn = block_dict[num_blocks][[
+                    'time'
+                ]].loc[cut_point:cut_point2]
+                y_sklearn = block_dict[num_blocks][f'block{n}'].loc[
+                    cut_point:cut_point2]
+
+                def fit_func(x, a, b):
+                    return a * x + b
+
+                msd_slope_log[n] = curve_fit(fit_func, x, y)[0][0]
+
+                msd_slope_linear[n] = LinearRegression().fit(
+                    x_sklearn, y_sklearn).coef_
+
+                # 0.1 is for A^2/fs to cm^2/s and 6 is for 3 dimensions
+                dif[n] = np.log10(msd_slope_linear[n] / 6 * 0.1)
+
+            dif_mean[index] = dif.mean()
+            msd_slope_log_mean[index] = msd_slope_log.mean()
+            dif_std[index] = dif.std()
+            msd_slope_log_std[index] = msd_slope_log.std()
+            block_list[index] = num_blocks
+
+        best_index = np.argmin(np.abs(msd_slope_log_mean - 1))
+        return dif_mean[best_index], dif_std[best_index], msd_slope_log_mean[
+            best_index], block_list[best_index]
+
+    curr_best_dif_mean = 0
+    curr_best_dif_std = 0
+    curr_best_slope = 0
+    curr_best_block = 0
+    curr_best_t1 = 0
+    curr_best_t2 = 0
+    block_dict = read_files(result_folder, block_list)
+    for t1 in range(len(time_array) - 1):
+        for t2 in range(t1 + 1, len(time_array)):
+            dif_mean, dif_std, slope, block = main_calculation(
+                block_dict, time_array[t1], time_array[t2])
+            if not math.isnan(dif_mean):
+                if np.abs(slope - 1) < np.abs(curr_best_slope - 1):
+                    curr_best_dif_mean = dif_mean
+                    curr_best_dif_std = dif_std
+                    curr_best_slope = slope
+                    curr_best_block = block
+                    curr_best_t1 = time_array[t1]
+                    curr_best_t2 = time_array[t2]
+
+    Pmdlogging.info(f'************** Best Result: '
+                    f'{curr_best_t1}-{curr_best_t2}ns **************')
+    Pmdlogging.info(curr_best_dif_mean, curr_best_dif_std, curr_best_slope,
+                    curr_best_block)
+
+    return (curr_best_dif_mean, curr_best_dif_std, curr_best_slope,
+            curr_best_block)
+
+
+# if __name__ == '__main__':
+#     main()
 
 
 def calculate_MSD(r, ir, box_bounds, id2type=[]):
