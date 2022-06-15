@@ -18,6 +18,7 @@ def main(args: Optional[Sequence[str]] = None):
             property_result = calculate_diffusivity()
     return property_result
 
+
 def parse_command_line(args: Optional[Sequence[str]] = None):
     parser = argparse.ArgumentParser(description=(
         'Analyze simulation result files using the Pmd Analysis module.'))
