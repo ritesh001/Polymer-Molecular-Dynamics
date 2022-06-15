@@ -9,10 +9,10 @@ import pandas as pd
 from scipy import optimize
 
 from pmd.util.Log import Pmdlogging
-
-warnings.filterwarnings("ignore")
 from scipy.optimize import curve_fit
 from sklearn.linear_model import LinearRegression
+
+warnings.filterwarnings("ignore")
 
 
 def calculate_Tg(result_fname: str,
@@ -88,7 +88,6 @@ def calculate_diffusivity(result_folder: str = 'result',
     Returns:
         D (float): Diffusivity of the system
     '''
-
     def read_files(dir: str, block_list: List[int]):
         process_dict = {}
         block_dict = {}
@@ -98,7 +97,8 @@ def calculate_diffusivity(result_folder: str = 'result',
                 parts = file.split('.')[0].split('_')
                 if file.endswith(".txt") and len(parts) == 3:
                     file_counter += 1
-                    # read file and add to process_dict with starting times as keys and dfs as values
+                    # read file and add to process_dict with starting times
+                    # as keys and dfs as values
                     df = pd.read_csv(os.path.join(dir, file),
                                      header=1,
                                      usecols=[0, 1],
@@ -111,9 +111,8 @@ def calculate_diffusivity(result_folder: str = 'result',
         # validate all blocks
         for block in block_list:
             if file_counter % block != 0:
-                Pmdlogging.warning(
-                    f'block numbers in the block list should be a factor of {file_counter}'
-                )
+                Pmdlogging.warning(f'block numbers in the block list should '
+                                   f'be a factor of {file_counter}')
                 continue
 
             for b in range(block):
