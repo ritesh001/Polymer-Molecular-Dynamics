@@ -1,7 +1,4 @@
-import csv
-import itertools
 import math
-import operator
 import os
 import warnings
 from typing import List, Optional
@@ -73,8 +70,8 @@ def calculate_Tg(result_fname: str,
 
 
 def calculate_diffusivity(result_folder: str = 'result',
-                          block_list: List[int]=[1, 2, 4, 5, 10, 20],
-                          time_array: List[int]=[
+                          block_list: List[int] = [1, 2, 4, 5, 10, 20],
+                          time_array: List[int] = [
                               5000000, 10000000, 20000000, 50000000, 100000000,
                               200000000
                           ]):
@@ -91,10 +88,10 @@ def calculate_diffusivity(result_folder: str = 'result',
     Returns:
         D (float): Diffusivity of the system
     '''
+
     def read_files(dir: str, block_list: List[int]):
         process_dict = {}
         block_dict = {}
-        max_value = []
         file_counter = 0
         for root, dirs, files in os.walk(dir):
             for file in files:
